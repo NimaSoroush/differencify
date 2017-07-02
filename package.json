@@ -1,0 +1,58 @@
+{
+  "name": "differencify",
+  "version": "0.0.1",
+  "description": "Perceptual diffing tool",
+  "main": "dist/index.js",
+  "scripts": {
+    "lint": "eslint . --ignore-path .gitignore",
+    "build": "babel src --source-maps --out-dir dist --ignore '**/*.test.js'",
+    "build-docs": "mkdir -p docs && jsdoc2md src/*.js > docs/api.md",
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:NimaSoroush/differencify.git"
+  },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org"
+  },
+  "keywords": [
+    "Perceptual diffing tool",
+    "Nodejs"
+  ],
+  "author": "Nima Soroush",
+  "license": "MIT",
+  "devDependencies": {
+    "babel-cli": "^6.18.0",
+    "babel-jest": "^20.0.3",
+    "babel-plugin-syntax-async-functions": "^6.13.0",
+    "babel-plugin-transform-regenerator": "^6.24.1",
+    "babel-polyfill": "^6.23.0",
+    "babel-preset-env": "^1.5.2",
+    "babel-preset-es2015": "^6.24.1",
+    "eslint": "^3.10.2",
+    "eslint-config-airbnb": "^13.0.0",
+    "eslint-plugin-import": "^2.2.0",
+    "eslint-plugin-jsx-a11y": "^2.2.3",
+    "eslint-plugin-prefer-object-spread": "^1.2.1",
+    "eslint-plugin-react": "6.6.0",
+    "jest": "^20.0.4",
+    "jest-cli": "^20.0.1",
+    "jsdoc": "^3.4.3",
+    "jsdoc-to-markdown": "^2.0.1",
+    "regenerator-runtime": "^0.10.5"
+  },
+  "dependencies": {
+    "chromy": "^0.2.12",
+    "fs": "0.0.1-security"
+  },
+  "jest": {
+    "rootDir": "src",
+    "transform": {
+      "^.+\\.js$": "babel-jest"
+    },
+    "testPathIgnorePatterns": [
+      "/node_modules/"
+    ]
+  }
+}

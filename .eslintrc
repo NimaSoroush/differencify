@@ -1,0 +1,28 @@
+{
+  "parser": "babel-eslint",
+  "extends": "airbnb",
+  "plugins": [
+    "prefer-object-spread"
+  ],
+  "rules": {
+    "prefer-object-spread/prefer-object-spread": 2,
+    "react/jsx-filename-extension": 0,
+    "react/prefer-stateless-function": 0,
+    "react/forbid-prop-types": [2, { "forbid": ["any"] }],
+    "react/sort-comp": 0,
+    "no-use-before-define": 0,
+    "no-underscore-dangle": 0,
+    "import/no-extraneous-dependencies": 0,
+    "import/no-unresolved": [2, { }],
+    "max-len": [
+      "warn",
+      120
+    ]
+  },
+  "env": {
+    "node": true,
+    "jest": true,
+    "browser": true
+  }
+}
+
