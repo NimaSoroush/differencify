@@ -13,30 +13,52 @@ class ChromyRunner {
     this.currentTestId = 0;
   }
 
-  _stepRunner(chromy, test) {
-    test.steps.forEach(async (action) => {
+  async _stepRunner(chromy, test) {
+    /* eslint-disable no-restricted-syntax */
+    for (const action of test.steps) {
+    /* eslint-enable no-restricted-syntax */
       switch (action.name) {
         case actions.goto:
-          await chromy.goto(action.value);
-          logger.log(`goto -> ${action.value}`);
+          try {
+            await chromy.goto(action.value);
+            logger.log(`goto -> ${action.value}`);
+          } catch (error) {
+            logger.error(error);
+          }
           break;
         case actions.capture:
           if (action.value === 'document') {
-            const png = await chromy.screenshotDocument();
-            fs.writeFileSync(`${test.name}.png`, png);
+            try {
+              const png = await chromy.screenshotDocument();
+              fs.writeFileSync(`${this.options.screenshots}/${test.name}.png`, png);
+            } catch (error) {
+              logger.error(error);
+            }
           } else {
-            const png = await chromy.screenshotSelector(action.value);
-            fs.writeFileSync(`${test.name}.png`, png);
+            try {
+              const png = await chromy.screenshotSelector(action.value);
+              fs.writeFileSync(`${this.options.screenshots}/${test.name}.png`, png);
+            } catch (error) {
+              logger.error(error);
+            }
           }
           logger.log(`screenshot saved in -> ${this.options.screenshots}/${test.name}`);
+          break;
+        case actions.test:
+          try {
+            await chromy.goto(action.value);
+            logger.log(`goto -> ${action.value}`);
+          } catch (error) {
+            logger.error(error);
+          }
           break;
         default:
           break;
       }
-    });
+    }
   }
 
-  run(test) {
+  async run(test) {
     const width = test.resolution.width || CHROME_WIDTH;
     const height = test.resolution.height || CHROME_HEIGHT;
     const flags = [`--window-size=${width},${height}`];
@@ -47,7 +69,12 @@ class ChromyRunner {
       visible: this.options.visible || false,
     });
     this.currentTestId += 1;
-    return this._stepRunner(chromy, test);
+    await this._stepRunner(chromy, test);
+    // try {
+    //   return chromy.close();
+    // } catch (error) {
+    //   throw new Error('close failed');
+    // }
   }
 }
 

@@ -55,6 +55,6 @@ describe('ChromyRunner', () => {
         timeout: 30000,
         visible: true,
       });
-    expect(writeFileSyncCalls).toEqual(['default.png', 'png file']);
+    expect(writeFileSyncCalls).toEqual(['./screenshots/default.png', 'png file']);
   });
 });

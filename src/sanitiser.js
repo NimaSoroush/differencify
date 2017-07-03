@@ -11,14 +11,14 @@ const sanitiseTestConfiguration = (conf) => {
   configuration.steps = hasProperty(configuration, 'steps')
     ? configuration.steps
     : defaultConfig.steps;
+  configuration.name = hasProperty(configuration, 'name')
+    ? configuration.name
+    : defaultConfig.name;
   return configuration;
 };
 
 const sanitiseGlobalConfiguration = (conf) => {
   const configuration = conf || {};
-  configuration.screenshots = hasProperty(configuration, 'screenshots')
-    ? configuration.screenshots
-    : defaultConfig.screenshots;
   configuration.debug = hasProperty(configuration, 'debug')
     ? configuration.debug
     : defaultConfig.debug;
@@ -28,6 +28,9 @@ const sanitiseGlobalConfiguration = (conf) => {
   configuration.timeout = hasProperty(configuration, 'timeout')
     ? configuration.timeout
     : defaultConfig.timeout;
+  configuration.screenshots = hasProperty(configuration, 'screenshots')
+    ? configuration.screenshots
+    : defaultConfig.screenshots;
   return configuration;
 };
 

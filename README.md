@@ -66,7 +66,7 @@ async () => {
     height: 600,
   },
   steps: [
-    { name: 'goto', value: 'www.example.com' },
+    { name: 'goto', value: 'http://www.example.com' },
     { name: 'capture', value: 'document' },
   ],
 }

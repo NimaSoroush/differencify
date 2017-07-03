@@ -17,4 +17,8 @@ const testConfig = {
   ],
 };
 
-export { globalConfig, testConfig };
+const testReportSteps = {
+  name: 'test', value: 'differencify_report',
+};
+
+export { globalConfig, testConfig, testReportSteps };
