@@ -1,0 +1,8 @@
+examples/
+dist/
+.idea/
+docs/
+.vscode/
+dist/
+differencify_report/
+screenshots/

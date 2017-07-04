@@ -3,10 +3,10 @@ import fs from 'fs';
 import { sanitiseGlobalConfiguration, sanitiseTestConfiguration } from './sanitiser';
 import { ChromyRunner } from './chromyRunner';
 import logger from './logger';
-import { testReportSteps } from './defaultConfig';
+import { configTypes, testReportStep } from './defaultConfig';
 
-const createScreenshotFolder = (path) => {
-  const screentshotsPath = `${process.env.PWD}/${path}`;
+const createDir = (path) => {
+  const screentshotsPath = `${path}`;
   if (!fs.existsSync(screentshotsPath)) {
     fs.mkdirSync(screentshotsPath);
   }
@@ -19,16 +19,21 @@ export default class Differencify {
     if (this.configuration.debug === true) {
       logger.enable();
     }
-    createScreenshotFolder(this.configuration.screenshots);
+    createDir(this.configuration.screenshots);
+    createDir(testReportStep.value);
   }
   async update(config) {
     const testConfig = sanitiseTestConfiguration(config);
-    await this.ChromyRunner.run(testConfig);
+    testConfig.type = configTypes.update;
+    const result = await this.ChromyRunner.run(testConfig);
+    return result;
   }
   async test(config) {
     const testConfig = sanitiseTestConfiguration(config);
-    testConfig.steps.push(testReportSteps);
-    await this.ChromyRunner.run(testConfig);
+    testConfig.type = configTypes.test;
+    testConfig.steps.push(testReportStep);
+    const result = await this.ChromyRunner.run(testConfig);
+    return result;
   }
 }
 

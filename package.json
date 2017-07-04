@@ -1,12 +1,13 @@
 {
   "name": "differencify",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Perceptual diffing tool",
   "main": "dist/index.js",
   "scripts": {
-    "lint": "eslint . --ignore-path .gitignore",
+    "lint": "eslint .",
     "build": "babel src --source-maps --out-dir dist --ignore '**/*.test.js'",
     "build-docs": "mkdir -p docs && jsdoc2md src/*.js > docs/api.md",
+    "pretest": "npm run lint",
     "test": "jest"
   },
   "repository": {
@@ -45,7 +46,8 @@
   },
   "dependencies": {
     "chromy": "^0.2.12",
-    "fs": "0.0.1-security"
+    "fs": "0.0.1-security",
+    "jimp": "^0.2.28"
   },
   "jest": {
     "rootDir": "src",

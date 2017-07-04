@@ -1,11 +1,22 @@
 import fs from 'fs';
 import Chromy from 'chromy';
 import logger from './logger';
+import compareImage from './compareImage';
 import actions from './actions';
+import { configTypes, testReportStep } from './defaultConfig';
 
 const CHROME_PORT = 9222;
 const CHROME_WIDTH = 800;
 const CHROME_HEIGHT = 600;
+
+const saveImage = (filename, image, testType, screenshotsPath) => {
+  if (testType === configTypes.test) {
+    logger.log(`screenshot saved in -> ${testReportStep.value}/${filename}.png`);
+    return fs.writeFileSync(`${testReportStep.value}/${filename}.png`, image);
+  }
+  logger.log(`screenshot saved in -> ${screenshotsPath}/${filename}.png`);
+  return fs.writeFileSync(`${screenshotsPath}/${filename}.png`, image);
+};
 
 class ChromyRunner {
   constructor(options) {
@@ -24,38 +35,46 @@ class ChromyRunner {
             logger.log(`goto -> ${action.value}`);
           } catch (error) {
             logger.error(error);
+            return false;
           }
           break;
         case actions.capture:
           if (action.value === 'document') {
             try {
               const png = await chromy.screenshotDocument();
-              fs.writeFileSync(`${this.options.screenshots}/${test.name}.png`, png);
+              await saveImage(test.name, png, test.type, this.options.screenshots);
             } catch (error) {
               logger.error(error);
+              return false;
             }
           } else {
             try {
               const png = await chromy.screenshotSelector(action.value);
-              fs.writeFileSync(`${this.options.screenshots}/${test.name}.png`, png);
+              await saveImage(test.name, png, test.type, this.options.screenshots);
             } catch (error) {
               logger.error(error);
+              return false;
             }
           }
-          logger.log(`screenshot saved in -> ${this.options.screenshots}/${test.name}`);
           break;
         case actions.test:
           try {
-            await chromy.goto(action.value);
-            logger.log(`goto -> ${action.value}`);
+            const result = await compareImage(`${this.options.screenshots}/${test.name}.png`,
+              `${testReportStep.value}/${test.name}.png`,
+              this.options.mismatchThreshold);
+            logger.log(result);
+            logger.log(`campare -> ${testReportStep.value}/${test.name}.png
+             and ${this.options.screenshots}/${test.name}.png`);
           } catch (error) {
             logger.error(error);
+            return false;
           }
           break;
         default:
           break;
       }
     }
+    return true;
   }
 
   async run(test) {
@@ -69,12 +88,15 @@ class ChromyRunner {
       visible: this.options.visible || false,
     });
     this.currentTestId += 1;
-    await this._stepRunner(chromy, test);
-    // try {
-    //   return chromy.close();
-    // } catch (error) {
-    //   throw new Error('close failed');
-    // }
+    const result = await this._stepRunner(chromy, test);
+    logger.log('closing browser');
+    try {
+      chromy.close();
+    } catch (error) {
+      logger.error(error);
+      return false;
+    }
+    return result;
   }
 }
 

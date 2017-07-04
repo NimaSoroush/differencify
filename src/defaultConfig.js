@@ -3,6 +3,7 @@ const globalConfig = {
   debug: false,
   visible: true,
   timeout: 30000,
+  mismatchThreshold: 0.1,
 };
 
 const testConfig = {
@@ -17,8 +18,13 @@ const testConfig = {
   ],
 };
 
-const testReportSteps = {
+const testReportStep = {
   name: 'test', value: 'differencify_report',
 };
 
-export { globalConfig, testConfig, testReportSteps };
+const configTypes = {
+  test: 'test',
+  update: 'update',
+};
+
+export { globalConfig, testConfig, configTypes, testReportStep };

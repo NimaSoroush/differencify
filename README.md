@@ -6,8 +6,6 @@ Regression Testing suite!
 </p>
 <br>
 
-[![CircleCI](https://circleci.com/gh/NimaSoroush/differencify.svg?style=svg)](https://circleci.com/gh/NimaSoroush/differencify)
-
 ## About
 
 Differencify is library for visual regression testing by comparing your locall changes with reference screenshots of your website.
@@ -22,13 +20,22 @@ Install the module:
 npm install --save-dev differencify
 ```
 ## Usage
-### Code
 ```js
 import Differencify from 'differencify';
-
+const differencify = new Differencify(GlobalOptions);
+```
+### Create reference screenshots
+```js
 async () => {
-  const differencify = new Differencify([,GlobalOptions]);
-  await differencify.test([,TestOptions]);
+  const result = await differencify.update(TestOptions);
+  console.log(result); //true if update succeded
+}
+```
+### Validate your changes
+```js
+async () => {
+  const result = await differencify.test(TestOptions);
+  console.log(result); //true if test pass
 }
 ```
 
@@ -40,6 +47,7 @@ async () => {
 |`debug`|`bool`|no|Enables console output|false|
 |`timeout`|`integer` (ms)|no|Global test timeout|30000|
 |`screenshots`|`string`|no|Stores reference screenshots in this directory|./screenshots|
+|`mismatchThreshold`|`integer`|no|Difference tolerance between referenced/testsed image|0.1|
 
 ### TestOptions
 
@@ -56,6 +64,15 @@ async () => {
 |`goto`|`string`|Url|
 |`capture`|`string`|`document` or selector name|
 
+##### Coming steps
+- wait
+- click
+- setCookie
+- deleteCookie
+- clearCookies
+- emulate (Emulates phone)
+
+
 ### TestOptions example
 
 ```
@@ -71,5 +88,7 @@ async () => {
   ],
 }
 ```
+
+See [examples](examples) usage example
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) if you want to contribute.
