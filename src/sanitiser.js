@@ -31,6 +31,9 @@ const sanitiseGlobalConfiguration = (conf) => {
   configuration.screenshots = hasProperty(configuration, 'screenshots')
     ? configuration.screenshots
     : globalConfig.screenshots;
+  configuration.testReportPath = hasProperty(configuration, 'testReportPath')
+    ? configuration.testReportPath
+    : globalConfig.testReportPath;
   configuration.mismatchThreshold = hasProperty(configuration, 'mismatchThreshold')
     ? configuration.mismatchThreshold
     : globalConfig.mismatchThreshold;

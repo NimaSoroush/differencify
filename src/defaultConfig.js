@@ -1,5 +1,6 @@
 const globalConfig = {
   screenshots: './screenshots',
+  testReportPath: './differencify_report',
   debug: false,
   visible: true,
   timeout: 30000,
@@ -18,13 +19,9 @@ const testConfig = {
   ],
 };
 
-const testReportStep = {
-  name: 'test', value: 'differencify_report',
-};
-
 const configTypes = {
   test: 'test',
   update: 'update',
 };
 
-export { globalConfig, testConfig, configTypes, testReportStep };
+export { globalConfig, testConfig, configTypes };

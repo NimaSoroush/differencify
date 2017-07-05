@@ -8,5 +8,8 @@
 - Add test functionality
 - Examples added
 
-
-
+## [0.0.3] - 2017-07-05
+### Changed
+- Save differencified screenshots in case mismatch found
+- Adding shrinkwrap file to project
+- Add option to specify testReportPath

@@ -3,16 +3,16 @@ import Chromy from 'chromy';
 import logger from './logger';
 import compareImage from './compareImage';
 import actions from './actions';
-import { configTypes, testReportStep } from './defaultConfig';
+import { configTypes } from './defaultConfig';
 
 const CHROME_PORT = 9222;
 const CHROME_WIDTH = 800;
 const CHROME_HEIGHT = 600;
 
-const saveImage = (filename, image, testType, screenshotsPath) => {
+const saveImage = (filename, image, testType, screenshotsPath, testReportPath) => {
   if (testType === configTypes.test) {
-    logger.log(`screenshot saved in -> ${testReportStep.value}/${filename}.png`);
-    return fs.writeFileSync(`${testReportStep.value}/${filename}.png`, image);
+    logger.log(`screenshot saved in -> ${testReportPath}/${filename}.png`);
+    return fs.writeFileSync(`${testReportPath}/${filename}.png`, image);
   }
   logger.log(`screenshot saved in -> ${screenshotsPath}/${filename}.png`);
   return fs.writeFileSync(`${screenshotsPath}/${filename}.png`, image);
@@ -42,7 +42,7 @@ class ChromyRunner {
           if (action.value === 'document') {
             try {
               const png = await chromy.screenshotDocument();
-              await saveImage(test.name, png, test.type, this.options.screenshots);
+              await saveImage(test.name, png, test.type, this.options.screenshots, this.options.testReportPath);
             } catch (error) {
               logger.error(error);
               return false;
@@ -50,7 +50,7 @@ class ChromyRunner {
           } else {
             try {
               const png = await chromy.screenshotSelector(action.value);
-              await saveImage(test.name, png, test.type, this.options.screenshots);
+              await saveImage(test.name, png, test.type, this.options.screenshots, this.options.testReportPath);
             } catch (error) {
               logger.error(error);
               return false;
@@ -59,11 +59,14 @@ class ChromyRunner {
           break;
         case actions.test:
           try {
-            const result = await compareImage(`${this.options.screenshots}/${test.name}.png`,
-              `${testReportStep.value}/${test.name}.png`,
-              this.options.mismatchThreshold);
+            const result = await compareImage(
+              this.options.screenshots,
+              this.options.testReportPath,
+              this.options.mismatchThreshold,
+              test.name,
+            );
             logger.log(result);
-            logger.log(`campare -> ${testReportStep.value}/${test.name}.png
+            logger.log(`campare -> ${this.options.testReportPath}/${test.name}.png
              and ${this.options.screenshots}/${test.name}.png`);
           } catch (error) {
             logger.error(error);

@@ -47,6 +47,7 @@ async () => {
 |`debug`|`bool`|no|Enables console output|false|
 |`timeout`|`integer` (ms)|no|Global test timeout|30000|
 |`screenshots`|`string`|no|Stores reference screenshots in this directory|./screenshots|
+|`testReportPath`|`string`|no|Stores test screenshots in this directory|./differencify_report|
 |`mismatchThreshold`|`integer`|no|Difference tolerance between referenced/testsed image|0.1|
 
 ### TestOptions
@@ -89,6 +90,6 @@ async () => {
 }
 ```
 
-See [examples](examples) usage example
+See [examples](examples) for usages and CI integration with jest
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) if you want to contribute.

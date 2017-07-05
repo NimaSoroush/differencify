@@ -6,6 +6,7 @@ describe('sanitiser', () => {
       const configuration = sanitiseGlobalConfiguration({});
       expect(configuration).toEqual({
         screenshots: './screenshots',
+        testReportPath: './differencify_report',
         debug: false,
         visible: true,
         timeout: 30000,
@@ -16,6 +17,7 @@ describe('sanitiser', () => {
       const configuration = sanitiseGlobalConfiguration({ screenshots: './screenshots' });
       expect(configuration).toEqual({
         screenshots: './screenshots',
+        testReportPath: './differencify_report',
         debug: false,
         visible: true,
         timeout: 30000,

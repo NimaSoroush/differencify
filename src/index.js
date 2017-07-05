@@ -3,7 +3,8 @@ import fs from 'fs';
 import { sanitiseGlobalConfiguration, sanitiseTestConfiguration } from './sanitiser';
 import { ChromyRunner } from './chromyRunner';
 import logger from './logger';
-import { configTypes, testReportStep } from './defaultConfig';
+import { configTypes } from './defaultConfig';
+import actions from './actions';
 
 const createDir = (path) => {
   const screentshotsPath = `${path}`;
@@ -20,7 +21,7 @@ export default class Differencify {
       logger.enable();
     }
     createDir(this.configuration.screenshots);
-    createDir(testReportStep.value);
+    createDir(this.configuration.testReportPath);
   }
   async update(config) {
     const testConfig = sanitiseTestConfiguration(config);
@@ -31,7 +32,7 @@ export default class Differencify {
   async test(config) {
     const testConfig = sanitiseTestConfiguration(config);
     testConfig.type = configTypes.test;
-    testConfig.steps.push(testReportStep);
+    testConfig.steps.push({ name: actions.test, value: this.configuration.testReportPath });
     const result = await this.ChromyRunner.run(testConfig);
     return result;
   }
