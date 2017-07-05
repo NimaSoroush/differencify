@@ -4,7 +4,7 @@ import logger from './logger';
 
 Jimp.read = path =>
   new Promise((resolve, reject) => {
-    if (path === 'path') {
+    if (path === 'path/test1.png') {
       return resolve('image');
     }
     return reject('error');
@@ -29,7 +29,7 @@ describe('Compare Image', () => {
     loggerCalls = [];
   });
   it('returns correct values', async () =>
-    compareImage('path', 'path', 0.1)
+    compareImage('path', 'path', 0.1, 'test1')
     .catch((result) => {
       expect(result).toEqual('Failed to read test image!');
       expect(loggerCalls[0]).toEqual('Writting the diff image to disk');

@@ -1,6 +1,6 @@
 {
   "name": "differencify",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Perceptual diffing tool",
   "main": "dist/index.js",
   "scripts": {
@@ -25,6 +25,7 @@
   "license": "MIT",
   "devDependencies": {
     "babel-cli": "^6.18.0",
+    "babel-eslint": "^7.2.3",
     "babel-jest": "^20.0.3",
     "babel-plugin-syntax-async-functions": "^6.13.0",
     "babel-plugin-transform-regenerator": "^6.24.1",
@@ -45,7 +46,7 @@
     "regenerator-runtime": "^0.10.5"
   },
   "dependencies": {
-    "chromy": "^0.2.12",
+    "chromy": "^0.3.1",
     "fs": "0.0.1-security",
     "jimp": "^0.2.28"
   },
