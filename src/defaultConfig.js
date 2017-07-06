@@ -2,9 +2,9 @@ const globalConfig = {
   screenshots: './screenshots',
   testReportPath: './differencify_report',
   debug: false,
-  visible: true,
+  visible: false,
   timeout: 30000,
-  mismatchThreshold: 0.1,
+  mismatchThreshold: 0.01,
 };
 
 const testConfig = {

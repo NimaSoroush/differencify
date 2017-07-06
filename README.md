@@ -48,7 +48,7 @@ async () => {
 |`timeout`|`integer` (ms)|no|Global test timeout|30000|
 |`screenshots`|`string`|no|Stores reference screenshots in this directory|./screenshots|
 |`testReportPath`|`string`|no|Stores test screenshots in this directory|./differencify_report|
-|`mismatchThreshold`|`integer`|no|Difference tolerance between referenced/testsed image|0.1|
+|`mismatchThreshold`|`integer`|no|Difference tolerance between referenced/testsed image|0.01|
 
 ### TestOptions
 
@@ -89,6 +89,13 @@ async () => {
   ],
 }
 ```
+
+### Interested on Docker image!
+
+A [Dockerfile](Dockerfile) with chrome-headless is availale for local and CI usage
+
+
+### Links
 
 See [examples](examples) for usages and CI integration with jest
 
