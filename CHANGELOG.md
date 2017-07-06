@@ -25,3 +25,7 @@
 - Updated logging to log difference error
 - Update Readme.md
 - Added a Dockerfile for local/CI usage
+
+## [0.0.6] - 2017-07-06
+### Changed
+- fixed logging issue

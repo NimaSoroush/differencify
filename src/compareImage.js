@@ -15,7 +15,7 @@ const compareImage = (referencePath, testPath, misMatchThreshold, testName) =>
           return resolve('No mismatch found!');
         }
         diff.image.write(`${testPath}/${testName}_differencified.png`);
-        logger.error(`Result ->  distance:${distance} diff:${diff.diff} misMatchThreshold:${misMatchThreshold}`);
+        logger.error(`Result ->  distance:${distance} diff:${diff.percent} misMatchThreshold:${misMatchThreshold}`);
         return reject('Mismatch found!');
       }).catch((err) => {
         logger.error(err);
