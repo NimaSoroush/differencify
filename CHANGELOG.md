@@ -13,3 +13,8 @@
 - Save differencified screenshots in case mismatch found
 - Adding shrinkwrap file to project
 - Add option to specify testReportPath
+
+## [0.0.4] - 2017-07-06
+### Changed
+- Upgrading chromy to 0.3.2
+- Removing shrinkwrap file to project

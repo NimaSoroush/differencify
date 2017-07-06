@@ -1,6 +1,6 @@
 {
   "name": "differencify",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Perceptual diffing tool",
   "main": "dist/index.js",
   "scripts": {
@@ -46,7 +46,7 @@
     "regenerator-runtime": "^0.10.5"
   },
   "dependencies": {
-    "chromy": "^0.3.1",
+    "chromy": "^0.3.2",
     "fs": "0.0.1-security",
     "jimp": "^0.2.28"
   },
