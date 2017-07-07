@@ -40,3 +40,7 @@
 ## [0.0.8] - 2017-07-07
 ### Changed
 - Fixed bug
+
+## [0.0.9] - 2017-07-07
+### Changed
+- Fixed bug

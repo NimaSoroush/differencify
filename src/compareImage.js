@@ -15,7 +15,7 @@ const compareImage = (options, testName) =>
         }
         if (options.saveDifferencifiedImage) {
           logger.log('Writting the diff image to disk');
-          diff.image.write(`${options.testPath}/${testName}_differencified.png`);
+          diff.image.write(`${options.testReportPath}/${testName}_differencified.png`);
         }
         logger.error(`Result ->  distance:${distance} diff:${diff.percent} 
           misMatchThreshold:${options.mismatchThreshold}`);
