@@ -36,3 +36,7 @@
 - Fixed bugs
 - Decrease mismatchThreshold
 - set default visible to false
+
+## [0.0.8] - 2017-07-07
+### Changed
+- Fixed bug

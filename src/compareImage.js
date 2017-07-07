@@ -9,8 +9,8 @@ const compareImage = (options, testName) =>
     Jimp.read(referenceFile).then((referenceImage) => {
       Jimp.read(testFile).then((testImage) => {
         const distance = Jimp.distance(referenceImage, testImage);
-        const diff = Jimp.diff(referenceImage, testImage, options.misMatchThreshold);
-        if (distance < options.misMatchThreshold || diff.percent < options.misMatchThreshold) {
+        const diff = Jimp.diff(referenceImage, testImage, options.mismatchThreshold);
+        if (distance < options.mismatchThreshold || diff.percent < options.mismatchThreshold) {
           return resolve('No mismatch found!');
         }
         if (options.saveDifferencifiedImage) {
@@ -18,7 +18,7 @@ const compareImage = (options, testName) =>
           diff.image.write(`${options.testPath}/${testName}_differencified.png`);
         }
         logger.error(`Result ->  distance:${distance} diff:${diff.percent} 
-          misMatchThreshold:${options.misMatchThreshold}`);
+          misMatchThreshold:${options.mismatchThreshold}`);
         return reject('Mismatch found!');
       }).catch((err) => {
         logger.error(err);
