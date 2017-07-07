@@ -34,6 +34,9 @@ const sanitiseGlobalConfiguration = (conf) => {
   configuration.testReportPath = hasProperty(configuration, 'testReportPath')
     ? configuration.testReportPath
     : globalConfig.testReportPath;
+  configuration.saveDifferencifiedImage = hasProperty(configuration, 'saveDifferencifiedImage')
+    ? configuration.saveDifferencifiedImage
+    : globalConfig.saveDifferencifiedImage;
   configuration.mismatchThreshold = hasProperty(configuration, 'mismatchThreshold')
     ? configuration.mismatchThreshold
     : globalConfig.mismatchThreshold;

@@ -59,12 +59,7 @@ class ChromyRunner {
           break;
         case actions.test:
           try {
-            const result = await compareImage(
-              this.options.screenshots,
-              this.options.testReportPath,
-              this.options.mismatchThreshold,
-              test.name,
-            );
+            const result = await compareImage(this.options, test.name);
             logger.log(result);
             logger.log(`campare -> ${this.options.testReportPath}/${test.name}.png
              and ${this.options.screenshots}/${test.name}.png`);

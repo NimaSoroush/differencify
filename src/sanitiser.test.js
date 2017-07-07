@@ -7,6 +7,7 @@ describe('sanitiser', () => {
       expect(configuration).toEqual({
         screenshots: './screenshots',
         testReportPath: './differencify_report',
+        saveDifferencifiedImage: true,
         debug: false,
         visible: false,
         timeout: 30000,
@@ -18,6 +19,7 @@ describe('sanitiser', () => {
       expect(configuration).toEqual({
         screenshots: './screenshots',
         testReportPath: './differencify_report',
+        saveDifferencifiedImage: true,
         debug: false,
         visible: false,
         timeout: 30000,

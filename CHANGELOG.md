@@ -29,3 +29,10 @@
 ## [0.0.6] - 2017-07-06
 ### Changed
 - fixed logging issue
+
+## [0.0.7] - 2017-07-07
+### Changed
+- Enabling option to save differencified image to disk
+- Fixed bugs
+- Decrease mismatchThreshold
+- set default visible to false

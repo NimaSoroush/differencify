@@ -1,6 +1,6 @@
 {
   "name": "differencify",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "Perceptual diffing tool",
   "main": "dist/index.js",
   "scripts": {
@@ -8,7 +8,8 @@
     "build": "babel src --source-maps --out-dir dist --ignore '**/*.test.js'",
     "build-docs": "mkdir -p docs && jsdoc2md src/*.js > docs/api.md",
     "pretest": "npm run lint",
-    "test": "jest"
+    "test": "jest",
+    "publish": "npm run build && npm publish ./"
   },
   "repository": {
     "type": "git",

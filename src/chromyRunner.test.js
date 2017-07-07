@@ -16,7 +16,7 @@ jest.mock('chromy', () => jest.fn().mockImplementation(() =>
 
 jest.mock('./compareImage', () => jest.fn(arg =>
     new Promise((resolve, reject) => {
-      if (arg === './screenshots') {
+      if (arg.screenshots === './screenshots') {
         return resolve('Writting the diff image to disk');
       }
       return reject('error');
@@ -51,6 +51,7 @@ describe('ChromyRunner', () => {
       .toEqual({
         screenshots: './screenshots',
         testReportPath: './differencify_report',
+        saveDifferencifiedImage: true,
         debug: false,
         visible: false,
         timeout: 30000,
@@ -69,6 +70,7 @@ describe('ChromyRunner', () => {
       .toEqual({
         screenshots: './screenshots',
         testReportPath: './differencify_report',
+        saveDifferencifiedImage: true,
         debug: false,
         visible: false,
         timeout: 30000,

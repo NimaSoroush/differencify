@@ -13,7 +13,7 @@ jest.mock('chromy', () => jest.fn().mockImplementation(() =>
 
 jest.mock('./compareImage', () => jest.fn(arg =>
     new Promise((resolve, reject) => {
-      if (arg === 'screenshots') {
+      if (arg.screenshots === 'screenshots') {
         return resolve('Writting the diff image to disk');
       }
       return reject('error');

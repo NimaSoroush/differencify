@@ -48,6 +48,7 @@ async () => {
 |`timeout`|`integer` (ms)|no|Global test timeout|30000|
 |`screenshots`|`string`|no|Stores reference screenshots in this directory|./screenshots|
 |`testReportPath`|`string`|no|Stores test screenshots in this directory|./differencify_report|
+|`saveDifferencifiedImage`|`bool`|no|Save differencified image to testReportPath in case of mistmach|true|
 |`mismatchThreshold`|`integer`|no|Difference tolerance between referenced/testsed image|0.01|
 
 ### TestOptions
