@@ -39,22 +39,37 @@ class ChromyRunner {
           }
           break;
         case actions.capture:
-          if (action.value === 'document') {
-            try {
-              const png = await chromy.screenshotDocument();
-              await saveImage(test.name, png, test.type, this.options.screenshots, this.options.testReportPath);
-            } catch (error) {
-              logger.error(error);
-              return false;
-            }
-          } else {
-            try {
-              const png = await chromy.screenshotSelector(action.value);
-              await saveImage(test.name, png, test.type, this.options.screenshots, this.options.testReportPath);
-            } catch (error) {
-              logger.error(error);
-              return false;
-            }
+          switch (action.value) {
+            case 'document':
+              try {
+                logger.log('Capturing screenshot of whole DOM');
+                const png = await chromy.screenshotDocument();
+                await saveImage(test.name, png, test.type, this.options.screenshots, this.options.testReportPath);
+              } catch (error) {
+                logger.error(error);
+                return false;
+              }
+              break;
+            case undefined:
+              try {
+                logger.log('Capturing screenshot of chrome window');
+                const png = await chromy.screenshot();
+                await saveImage(test.name, png, test.type, this.options.screenshots, this.options.testReportPath);
+              } catch (error) {
+                logger.error(error);
+                return false;
+              }
+              break;
+            default:
+              try {
+                logger.log(`Capturing screenshot of ${action.value} selector`);
+                const png = await chromy.screenshotSelector(action.value);
+                await saveImage(test.name, png, test.type, this.options.screenshots, this.options.testReportPath);
+              } catch (error) {
+                logger.error(error);
+                return false;
+              }
+              break;
           }
           break;
         case actions.test:
