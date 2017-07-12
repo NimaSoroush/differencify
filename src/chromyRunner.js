@@ -74,10 +74,10 @@ class ChromyRunner {
           break;
         case actions.test:
           try {
+            logger.log(`camparing -> ${this.options.testReportPath}/${test.name}.png
+             and ${this.options.screenshots}/${test.name}.png`);
             const result = await compareImage(this.options, test.name);
             logger.log(result);
-            logger.log(`campare -> ${this.options.testReportPath}/${test.name}.png
-             and ${this.options.screenshots}/${test.name}.png`);
           } catch (error) {
             logger.error(error);
             return false;

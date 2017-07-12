@@ -73,7 +73,7 @@ describe('Differencify', () => {
     expect(loggerCalls[0]).toEqual('goto -> www.example.com');
     expect(loggerCalls[1]).toEqual('Capturing screenshot of whole DOM');
     expect(loggerCalls[2]).toEqual('screenshot saved in -> ./differencify_report/default.png');
-    expect(loggerCalls[3]).toEqual('Writting the diff image to disk');
+    expect(loggerCalls[4]).toEqual('Writting the diff image to disk');
     expect(writeFileSyncCalls).toEqual(['./differencify_report/default.png', 'png file']);
   });
 });
