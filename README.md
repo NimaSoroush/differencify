@@ -64,7 +64,7 @@ async () => {
 |name|type|value|
 |----|----|-----|
 |`goto`|`string`|Url|
-|`capture`|`string`|`document` or selector name|
+|`capture`|`string`|`undefiend`, `document` or selector name|
 
 ##### Coming steps
 - wait

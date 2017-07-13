@@ -11,6 +11,7 @@ jest.mock('chromy', () => jest.fn().mockImplementation(() =>
       close: jest.fn(),
       screenshotDocument: jest.fn(() => 'png file'),
       screenshotSelector: jest.fn(() => 'png file'),
+      screenshot: jest.fn(() => 'png file'),
     }),
   ));
 
@@ -46,7 +47,8 @@ describe('ChromyRunner', () => {
     expect(result).toEqual(true);
     expect(chromyRunner.currentTestId).toEqual(1);
     expect(loggerCalls[0]).toEqual('goto -> www.example.com');
-    expect(loggerCalls[1]).toEqual('screenshot saved in -> ./screenshots/default.png');
+    expect(loggerCalls[1]).toEqual('Capturing screenshot of whole DOM');
+    expect(loggerCalls[2]).toEqual('screenshot saved in -> ./screenshots/default.png');
     expect(chromyRunner.options)
       .toEqual({
         screenshots: './screenshots',
@@ -65,7 +67,8 @@ describe('ChromyRunner', () => {
     expect(result).toEqual(true);
     expect(chromyRunner.currentTestId).toEqual(2);
     expect(loggerCalls[0]).toEqual('goto -> www.example.com');
-    expect(loggerCalls[1]).toEqual('screenshot saved in -> ./differencify_report/default.png');
+    expect(loggerCalls[1]).toEqual('Capturing screenshot of whole DOM');
+    expect(loggerCalls[2]).toEqual('screenshot saved in -> ./differencify_report/default.png');
     expect(chromyRunner.options)
       .toEqual({
         screenshots: './screenshots',
@@ -87,8 +90,9 @@ describe('ChromyRunner', () => {
       testConfig.steps.pop({ name: actions.test, value: globalConfig.testReportPath });
       expect(result).toEqual(true);
       expect(loggerCalls[0]).toEqual('goto -> www.example.com');
-      expect(loggerCalls[1]).toEqual('screenshot saved in -> ./differencify_report/default.png');
-      expect(loggerCalls[2]).toEqual('Writting the diff image to disk');
+      expect(loggerCalls[1]).toEqual('Capturing screenshot of whole DOM');
+      expect(loggerCalls[2]).toEqual('screenshot saved in -> ./differencify_report/default.png');
+      expect(loggerCalls[4]).toEqual('Writting the diff image to disk');
       expect(writeFileSyncCalls).toEqual(['./differencify_report/default.png', 'png file']);
     });
     it('Step runner: update action', async () => {
@@ -97,8 +101,74 @@ describe('ChromyRunner', () => {
       const result = await chromyRunner._stepRunner(chromy, testConfig);
       expect(result).toEqual(true);
       expect(loggerCalls[0]).toEqual('goto -> www.example.com');
-      expect(loggerCalls[1]).toEqual('screenshot saved in -> ./screenshots/default.png');
+      expect(loggerCalls[1]).toEqual('Capturing screenshot of whole DOM');
+      expect(loggerCalls[2]).toEqual('screenshot saved in -> ./screenshots/default.png');
       expect(writeFileSyncCalls).toEqual(['./screenshots/default.png', 'png file']);
+    });
+  });
+  describe('Chromy runner', () => {
+    it('Capture: screenshot', async () => {
+      const chromy = new Chromy();
+      const newConfig = {
+        name: 'default',
+        resolution: {
+          width: 800,
+          height: 600,
+        },
+        steps: [
+          { name: 'goto', value: 'www.example.com' },
+          { name: 'capture' },
+        ],
+      };
+      newConfig.type = configTypes.test;
+      const result = await chromyRunner._stepRunner(chromy, newConfig);
+      expect(result).toEqual(true);
+      expect(loggerCalls[0]).toEqual('goto -> www.example.com');
+      expect(loggerCalls[1]).toEqual('Capturing screenshot of chrome window');
+      expect(loggerCalls[2]).toEqual('screenshot saved in -> ./differencify_report/default.png');
+      expect(writeFileSyncCalls).toEqual(['./differencify_report/default.png', 'png file']);
+    });
+    it('Capture: screenshotDocument', async () => {
+      const chromy = new Chromy();
+      const newConfig = {
+        name: 'default',
+        resolution: {
+          width: 800,
+          height: 600,
+        },
+        steps: [
+          { name: 'goto', value: 'www.example.com' },
+          { name: 'capture', value: 'document' },
+        ],
+      };
+      newConfig.type = configTypes.test;
+      const result = await chromyRunner._stepRunner(chromy, newConfig);
+      expect(result).toEqual(true);
+      expect(loggerCalls[0]).toEqual('goto -> www.example.com');
+      expect(loggerCalls[1]).toEqual('Capturing screenshot of whole DOM');
+      expect(loggerCalls[2]).toEqual('screenshot saved in -> ./differencify_report/default.png');
+      expect(writeFileSyncCalls).toEqual(['./differencify_report/default.png', 'png file']);
+    });
+    it('Capture: screenshotDocument', async () => {
+      const chromy = new Chromy();
+      const newConfig = {
+        name: 'default',
+        resolution: {
+          width: 800,
+          height: 600,
+        },
+        steps: [
+          { name: 'goto', value: 'www.example.com' },
+          { name: 'capture', value: '#form' },
+        ],
+      };
+      newConfig.type = configTypes.test;
+      const result = await chromyRunner._stepRunner(chromy, newConfig);
+      expect(result).toEqual(true);
+      expect(loggerCalls[0]).toEqual('goto -> www.example.com');
+      expect(loggerCalls[1]).toEqual('Capturing screenshot of #form selector');
+      expect(loggerCalls[2]).toEqual('screenshot saved in -> ./differencify_report/default.png');
+      expect(writeFileSyncCalls).toEqual(['./differencify_report/default.png', 'png file']);
     });
   });
 });
