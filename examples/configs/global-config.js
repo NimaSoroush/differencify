@@ -1,4 +1,4 @@
-export default {
+exports.default = {
   screenshots: './screenshots',
   debug: false,
   visible: true,
