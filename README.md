@@ -12,12 +12,12 @@ Differencify is library for visual regression testing by comparing your locall c
 
 ## Requirements
 - Node > 6
-- Chrome > 59 or [Chrome Canary](https://confluence.skyscannertools.net/display/DW/Shared+Cache+Client)
+- Chrome > 59 or [Chrome Canary](https://www.google.co.uk/chrome/browser/canary.html)
 
 ## Installation
 Install the module:
 ```bash
-npm install --save-dev differencify
+npm install differencify
 ```
 ## Usage
 ```js
@@ -38,6 +38,10 @@ async () => {
   console.log(result); //true if test pass
 }
 ```
+
+### API
+
+See [API.md](API.md) for full list of API calls
 
 ### GlobalOptions
 

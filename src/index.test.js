@@ -1,4 +1,5 @@
 import fs from 'fs';
+import Chromy from 'chromy';
 import Differencify from './index';
 import logger from './logger';
 
@@ -62,6 +63,7 @@ describe('Differencify', () => {
   it('update fn', async () => {
     const result = await differencify.update(testConfig);
     expect(result).toEqual(true);
+    expect(differencify.chromeInstancesId).toEqual(9223);
     expect(loggerCalls[0]).toEqual('goto -> www.example.com');
     expect(loggerCalls[1]).toEqual('Capturing screenshot of whole DOM');
     expect(loggerCalls[2]).toEqual('screenshot saved in -> screenshots/default.png');
@@ -70,10 +72,19 @@ describe('Differencify', () => {
   it('test fn', async () => {
     const result = await differencify.test(testConfig);
     expect(result).toEqual(true);
+    expect(differencify.chromeInstancesId).toEqual(9224);
     expect(loggerCalls[0]).toEqual('goto -> www.example.com');
     expect(loggerCalls[1]).toEqual('Capturing screenshot of whole DOM');
     expect(loggerCalls[2]).toEqual('screenshot saved in -> ./differencify_report/default.png');
     expect(loggerCalls[4]).toEqual('Writting the diff image to disk');
     expect(writeFileSyncCalls).toEqual(['./differencify_report/default.png', 'png file']);
+  });
+  it('cleanup fn', async () => {
+    const chromy1 = new Chromy();
+    differencify.chromeInstances[1] = chromy1;
+    const chromy2 = new Chromy();
+    differencify.chromeInstances[2] = chromy2;
+    await differencify.cleanup();
+    expect(loggerCalls[0]).toEqual('All browsers been closed');
   });
 });

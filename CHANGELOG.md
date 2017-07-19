@@ -1,3 +1,7 @@
+## [0.0.11] - 2017-07-19
+### Added
+- Added cleanup functionality
+
 ## [0.0.10] - 2017-07-07
 ### Added
 - Added chromy.screenshot()
