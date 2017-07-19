@@ -1,13 +1,8 @@
 import fs from 'fs';
-import Chromy from 'chromy';
 import logger from './logger';
 import compareImage from './compareImage';
 import actions from './actions';
 import { configTypes } from './defaultConfig';
-
-const CHROME_PORT = 9222;
-const CHROME_WIDTH = 800;
-const CHROME_HEIGHT = 600;
 
 const saveImage = (filename, image, testType, screenshotsPath, testReportPath) => {
   if (testType === configTypes.test) {
@@ -21,10 +16,9 @@ const saveImage = (filename, image, testType, screenshotsPath, testReportPath) =
 class ChromyRunner {
   constructor(options) {
     this.options = options;
-    this.currentTestId = 0;
   }
 
-  async _stepRunner(chromy, test) {
+  async run(chromy, test) {
     /* eslint-disable no-restricted-syntax */
     for (const action of test.steps) {
     /* eslint-enable no-restricted-syntax */
@@ -88,28 +82,6 @@ class ChromyRunner {
       }
     }
     return true;
-  }
-
-  async run(test) {
-    const width = test.resolution.width || CHROME_WIDTH;
-    const height = test.resolution.height || CHROME_HEIGHT;
-    const flags = [`--window-size=${width},${height}`];
-    const chromy = new Chromy({
-      chromeFlags: flags,
-      port: CHROME_PORT + this.currentTestId,
-      waitTimeout: this.options.timeout,
-      visible: this.options.visible || false,
-    });
-    this.currentTestId += 1;
-    const result = await this._stepRunner(chromy, test);
-    logger.log('closing browser');
-    try {
-      chromy.close();
-    } catch (error) {
-      logger.error(error);
-      return false;
-    }
-    return result;
   }
 }
 

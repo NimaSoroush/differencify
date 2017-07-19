@@ -1,4 +1,4 @@
-export default {
+exports.default = {
   name: 'default',
   resolution: {
     width: 1366,
