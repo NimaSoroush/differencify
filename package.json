@@ -1,6 +1,6 @@
 {
   "name": "differencify",
-  "version": "0.0.10",
+  "version": "0.0.11",
   "description": "Perceptual diffing tool",
   "main": "dist/index.js",
   "scripts": {
@@ -33,7 +33,7 @@
     "babel-preset-env": "^1.5.2",
     "babel-preset-es2015": "^6.24.1",
     "babel-preset-jest": "^20.0.3",
-    "eslint": "^3.10.2",
+    "eslint": "^3.19.0",
     "eslint-config-airbnb": "^13.0.0",
     "eslint-plugin-import": "^2.2.0",
     "eslint-plugin-jsx-a11y": "^2.2.3",

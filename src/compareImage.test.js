@@ -33,6 +33,6 @@ describe('Compare Image', () => {
     compareImage(globalConfig, 'test1')
     .catch((result) => {
       expect(result).toEqual('Failed to read test image!');
-      expect(loggerCalls[0]).toEqual('Writting the diff image to disk');
+      expect(loggerCalls[0]).toEqual('Saving the diff image to disk');
     }));
 });
