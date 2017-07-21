@@ -5,12 +5,9 @@ import actions from './actions';
 import { configTypes } from './defaultConfig';
 
 const saveImage = (filename, image, testType, screenshotsPath, testReportPath) => {
-  if (testType === configTypes.test) {
-    logger.log(`screenshot saved in -> ${testReportPath}/${filename}.png`);
-    return fs.writeFileSync(`${testReportPath}/${filename}.png`, image);
-  }
-  logger.log(`screenshot saved in -> ${screenshotsPath}/${filename}.png`);
-  return fs.writeFileSync(`${screenshotsPath}/${filename}.png`, image);
+  const filePath = testType === configTypes.test ? testReportPath : screenshotsPath;
+  logger.log(`screenshot saved in -> ${filePath}/${filename}.png`);
+  return fs.writeFileSync(`${filePath}/${filename}.png`, image);
 };
 
 const run = async (chromy, options, test) => {
