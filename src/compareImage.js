@@ -5,6 +5,8 @@ const compareImage = async (options, testName) => {
   const referenceFile = `${options.screenshots}/${testName}.png`;
   const testFile = `${options.testReportPath}/${testName}.png`;
 
+  logger.log(`${testName}: comparing ${referenceFile} and ${testFile}`);
+
   let referenceImage;
   try {
     referenceImage = await Jimp.read(referenceFile);
@@ -24,11 +26,17 @@ const compareImage = async (options, testName) => {
   if (distance < options.mismatchThreshold || diff.percent < options.mismatchThreshold) {
     return `${testName}: no mismatch found ✅`;
   }
+
   if (options.saveDifferencifiedImage) {
-    const diffPath = `${options.testReportPath}/${testName}_differencified.png`;
-    logger.log(`${testName}: Saving the diff image to disk at ${diffPath}`);
-    diff.image.write(diffPath);
+    try {
+      const diffPath = `${options.testReportPath}/${testName}_differencified.png`;
+      diff.image.write(diffPath);
+      logger.log(`${testName}: saved the diff image to disk at ${diffPath}`);
+    } catch (err) {
+      throw new Error(`${testName}: failed to save the diff image ${err}`);
+    }
   }
+
   throw new Error(`${testName}: mismatch found❗
     Result:
       distance: ${distance}

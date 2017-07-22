@@ -1,5 +1,4 @@
 /* eslint-disable no-console */
-/* eslint-disable class-methods-use-this */
 class Logger {
   constructor() {
     if (!Logger.instance) {
