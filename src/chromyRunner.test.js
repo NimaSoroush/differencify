@@ -12,6 +12,7 @@ jest.mock('chromy', () => jest.fn(() =>
     screenshotDocument: jest.fn(() => 'png file'),
     screenshotSelector: jest.fn(() => 'png file'),
     screenshot: jest.fn(() => 'png file'),
+    wait: jest.fn(),
   }),
 ));
 
@@ -41,11 +42,17 @@ describe('ChromyRunner', () => {
   afterEach(() => {
     loggerCalls = [];
     writeFileSyncCalls = [];
+    chromy.screenshotDocument.mockClear();
+    chromy.screenshot.mockClear();
+    chromy.screenshotSelector.mockClear();
+    chromy.wait.mockClear();
   });
   it('run update', async () => {
     testConfig.type = configTypes.update;
     const result = await run(chromy, globalConfig, testConfig);
     expect(result).toEqual(true);
+    expect(chromy.goto).toHaveBeenCalledWith('www.example.com');
+    expect(chromy.screenshotDocument).toHaveBeenCalledTimes(1);
     expect(loggerCalls[0]).toEqual('goto -> www.example.com');
     expect(loggerCalls[1]).toEqual('capturing screenshot of whole DOM');
     expect(loggerCalls[2]).toEqual('screenshot saved in -> ./screenshots/default.png');
@@ -55,6 +62,8 @@ describe('ChromyRunner', () => {
     testConfig.type = configTypes.test;
     const result = await run(chromy, globalConfig, testConfig);
     expect(result).toEqual(true);
+    expect(chromy.goto).toHaveBeenCalledWith('www.example.com');
+    expect(chromy.screenshotDocument).toHaveBeenCalledTimes(1);
     expect(loggerCalls[0]).toEqual('goto -> www.example.com');
     expect(loggerCalls[1]).toEqual('capturing screenshot of whole DOM');
     expect(loggerCalls[2]).toEqual('screenshot saved in -> ./differencify_report/default.png');
@@ -67,6 +76,8 @@ describe('ChromyRunner', () => {
       const result = await run(chromy, globalConfig, testConfig);
       testConfig.steps.pop({ name: actions.test, value: globalConfig.testReportPath });
       expect(result).toEqual(true);
+      expect(chromy.goto).toHaveBeenCalledWith('www.example.com');
+      expect(chromy.screenshotDocument).toHaveBeenCalledTimes(1);
       expect(loggerCalls[0]).toEqual('goto -> www.example.com');
       expect(loggerCalls[1]).toEqual('capturing screenshot of whole DOM');
       expect(loggerCalls[2]).toEqual('screenshot saved in -> ./differencify_report/default.png');
@@ -76,6 +87,8 @@ describe('ChromyRunner', () => {
       testConfig.type = configTypes.update;
       const result = await run(chromy, globalConfig, testConfig);
       expect(result).toEqual(true);
+      expect(chromy.goto).toHaveBeenCalledWith('www.example.com');
+      expect(chromy.screenshotDocument).toHaveBeenCalledTimes(1);
       expect(loggerCalls[0]).toEqual('goto -> www.example.com');
       expect(loggerCalls[1]).toEqual('capturing screenshot of whole DOM');
       expect(loggerCalls[2]).toEqual('screenshot saved in -> ./screenshots/default.png');
@@ -98,6 +111,8 @@ describe('ChromyRunner', () => {
       newConfig.type = configTypes.test;
       const result = await run(chromy, globalConfig, newConfig);
       expect(result).toEqual(true);
+      expect(chromy.goto).toHaveBeenCalledWith('www.example.com');
+      expect(chromy.screenshot).toHaveBeenCalledTimes(1);
       expect(loggerCalls[0]).toEqual('goto -> www.example.com');
       expect(loggerCalls[1]).toEqual('capturing screenshot of chrome window');
       expect(loggerCalls[2]).toEqual('screenshot saved in -> ./differencify_report/default.png');
@@ -118,6 +133,8 @@ describe('ChromyRunner', () => {
       newConfig.type = configTypes.test;
       const result = await run(chromy, globalConfig, newConfig);
       expect(result).toEqual(true);
+      expect(chromy.goto).toHaveBeenCalledWith('www.example.com');
+      expect(chromy.screenshotDocument).toHaveBeenCalledTimes(1);
       expect(loggerCalls[0]).toEqual('goto -> www.example.com');
       expect(loggerCalls[1]).toEqual('capturing screenshot of whole DOM');
       expect(loggerCalls[2]).toEqual('screenshot saved in -> ./differencify_report/default.png');
@@ -138,10 +155,94 @@ describe('ChromyRunner', () => {
       newConfig.type = configTypes.test;
       const result = await run(chromy, globalConfig, newConfig);
       expect(result).toEqual(true);
+      expect(chromy.goto).toHaveBeenCalledWith('www.example.com');
+      expect(chromy.screenshotSelector).toHaveBeenCalledTimes(1);
       expect(loggerCalls[0]).toEqual('goto -> www.example.com');
       expect(loggerCalls[1]).toEqual('capturing screenshot of #form selector');
       expect(loggerCalls[2]).toEqual('screenshot saved in -> ./differencify_report/default.png');
       expect(writeFileSyncCalls).toEqual(['./differencify_report/default.png', 'png file']);
+    });
+  });
+  describe('Chromy runner', () => {
+    it('Wait: millisecond', async () => {
+      const newConfig = {
+        name: 'default',
+        resolution: {
+          width: 800,
+          height: 600,
+        },
+        steps: [
+          { name: 'goto', value: 'www.example.com' },
+          { name: 'wait', value: 10 },
+        ],
+      };
+      newConfig.type = configTypes.test;
+      const result = await run(chromy, globalConfig, newConfig);
+      expect(result).toEqual(true);
+      expect(chromy.goto).toHaveBeenCalledWith('www.example.com');
+      expect(chromy.wait).toHaveBeenCalledWith(10);
+      expect(loggerCalls[0]).toEqual('goto -> www.example.com');
+      expect(loggerCalls[1]).toEqual('waiting for 10 ms');
+    });
+    it('Wait: selector', async () => {
+      const newConfig = {
+        name: 'default',
+        resolution: {
+          width: 800,
+          height: 600,
+        },
+        steps: [
+          { name: 'goto', value: 'www.example.com' },
+          { name: 'wait', value: 'selector name' },
+        ],
+      };
+      newConfig.type = configTypes.test;
+      const result = await run(chromy, globalConfig, newConfig);
+      expect(result).toEqual(true);
+      expect(chromy.goto).toHaveBeenCalledWith('www.example.com');
+      expect(chromy.wait).toHaveBeenCalledWith('selector name');
+      expect(loggerCalls[0]).toEqual('goto -> www.example.com');
+      expect(loggerCalls[1]).toEqual('waiting for selector name selector');
+    });
+    it('Wait: function', async () => {
+      const newConfig = {
+        name: 'default',
+        resolution: {
+          width: 800,
+          height: 600,
+        },
+        steps: [
+          { name: 'goto', value: 'www.example.com' },
+          { name: 'wait', value: () => {} },
+        ],
+      };
+      newConfig.type = configTypes.test;
+      const result = await run(chromy, globalConfig, newConfig);
+      expect(result).toEqual(true);
+      expect(chromy.goto).toHaveBeenCalledWith('www.example.com');
+      expect(chromy.wait).toHaveBeenCalledTimes(1);
+      expect(loggerCalls[0]).toEqual('goto -> www.example.com');
+      expect(loggerCalls[1]).toEqual('waiting for function execution');
+    });
+    it('Wait: not valid', async () => {
+      const newConfig = {
+        name: 'default',
+        resolution: {
+          width: 800,
+          height: 600,
+        },
+        steps: [
+          { name: 'goto', value: 'www.example.com' },
+          { name: 'wait', value: true },
+        ],
+      };
+      newConfig.type = configTypes.test;
+      const result = await run(chromy, globalConfig, newConfig);
+      expect(result).toEqual(false);
+      expect(chromy.goto).toHaveBeenCalledWith('www.example.com');
+      expect(chromy.wait).toHaveBeenCalledTimes(0);
+      expect(loggerCalls[0]).toEqual('goto -> www.example.com');
+      expect(loggerCalls[1]).toEqual('failed to detect waiting mechanism');
     });
   });
 });

@@ -1,3 +1,10 @@
+## [0.0.12] - 2017-07-24
+### Added
+- Added wait functionality
+- Create prefix logger for tests (timestamped)
+- Refactor compare image to async function with better error handling
+- Some cleanups
+
 ## [0.0.11] - 2017-07-21
 ### Added
 - Added cleanup functionality

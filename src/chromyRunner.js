@@ -1,4 +1,5 @@
 import fs from 'fs';
+import check from 'check-types';
 import logger from './logger';
 import compareImage from './compareImage';
 import actions from './actions';
@@ -63,6 +64,24 @@ const run = async (chromy, options, test) => {
         try {
           const result = await compareImage(options, test.name);
           prefixedLogger.log(result);
+        } catch (error) {
+          prefixedLogger.error(error);
+          return false;
+        }
+        break;
+      case actions.wait:
+        try {
+          if (check.number(action.value)) {
+            prefixedLogger.log(`waiting for ${action.value} ms`);
+          } else if (check.function(action.value)) {
+            prefixedLogger.log('waiting for function execution');
+          } else if (check.string(action.value)) {
+            prefixedLogger.log(`waiting for ${action.value} selector`);
+          } else {
+            prefixedLogger.log('failed to detect waiting mechanism');
+            return false;
+          }
+          await chromy.wait(action.value);
         } catch (error) {
           prefixedLogger.error(error);
           return false;

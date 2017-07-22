@@ -1,6 +1,6 @@
 {
   "name": "differencify",
-  "version": "0.0.11",
+  "version": "0.0.12",
   "description": "Perceptual diffing tool",
   "main": "dist/index.js",
   "scripts": {
@@ -47,7 +47,8 @@
   },
   "dependencies": {
     "chalk": "^2.0.1",
-    "chromy": "^0.3.2",
+    "check-types": "^7.2.0",
+    "chromy": "^0.3.6",
     "fs": "0.0.1-security",
     "jimp": "^0.2.28"
   },
