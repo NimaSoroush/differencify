@@ -16,7 +16,9 @@ jest.mock('jimp', () => ({
 
 
 jest.mock('./logger', () => ({
-  log: jest.fn(),
+  prefix: () => ({
+    log: jest.fn(),
+  }),
 }));
 
 describe('Compare Image', () => {
@@ -40,35 +42,35 @@ describe('Compare Image', () => {
       .mockReturnValueOnce(Promise.reject('error2'));
 
     try {
-      await compareImage(mockConfig, 'test1');
+      await compareImage(mockConfig, 'test');
     } catch (err) {
-      expect(err.message).toEqual('test1: failed to read reference image error1');
+      expect(err.message).toEqual('failed to read reference image error1');
     }
 
     try {
-      expect(await compareImage(mockConfig, 'test2')).toThrow();
+      expect(await compareImage(mockConfig, 'test')).toThrow();
     } catch (err) {
-      expect(err.message).toEqual('test2: failed to read test image error2');
+      expect(err.message).toEqual('failed to read test image error2');
     }
   });
 
   it('returns correct value if difference below threshold', async () => {
     const result = await compareImage(mockConfig, 'test');
-    expect(result).toEqual('test: no mismatch found ✅');
+    expect(result).toEqual('no mismatch found ✅');
   });
 
   it('returns correct value if only difference above threshold', async () => {
     Jimp.diff.mockReturnValue({ percent: 0.02 });
 
     const result = await compareImage(mockConfig, 'test');
-    expect(result).toEqual('test: no mismatch found ✅');
+    expect(result).toEqual('no mismatch found ✅');
   });
 
   it('returns correct value if only distance above threshold', async () => {
     Jimp.distance.mockReturnValue(0.02);
 
     const result = await compareImage(mockConfig, 'test');
-    expect(result).toEqual('test: no mismatch found ✅');
+    expect(result).toEqual('no mismatch found ✅');
   });
 
   it('throws error if distance and difference are above threshold', async () => {
@@ -79,7 +81,7 @@ describe('Compare Image', () => {
     try {
       await compareImage(mockConfig, 'test');
     } catch (err) {
-      expect(err.message).toEqual(`test: mismatch found❗
+      expect(err.message).toEqual(`mismatch found❗
     Result:
       distance: 0.02
       diff: 0.02

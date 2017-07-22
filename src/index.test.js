@@ -31,6 +31,7 @@ fs.mkdirSync = (...args) => {
 };
 
 let loggerCalls = [];
+logger.prefix = () => logger;
 logger.log = (...args) => {
   loggerCalls.push(...args);
 };
@@ -67,7 +68,7 @@ describe('Differencify', () => {
     expect(result).toEqual(true);
     expect(differencify.chromeInstancesId).toEqual(9223);
     expect(loggerCalls[0]).toEqual('goto -> www.example.com');
-    expect(loggerCalls[1]).toEqual('Capturing screenshot of whole DOM');
+    expect(loggerCalls[1]).toEqual('capturing screenshot of whole DOM');
     expect(loggerCalls[2]).toEqual('screenshot saved in -> screenshots/default.png');
     expect(writeFileSyncCalls).toEqual(['screenshots', './differencify_report', 'screenshots/default.png', 'png file']);
   });
@@ -76,7 +77,7 @@ describe('Differencify', () => {
     expect(result).toEqual(true);
     expect(differencify.chromeInstancesId).toEqual(9224);
     expect(loggerCalls[0]).toEqual('goto -> www.example.com');
-    expect(loggerCalls[1]).toEqual('Capturing screenshot of whole DOM');
+    expect(loggerCalls[1]).toEqual('capturing screenshot of whole DOM');
     expect(loggerCalls[2]).toEqual('screenshot saved in -> ./differencify_report/default.png');
     expect(writeFileSyncCalls).toEqual(['./differencify_report/default.png', 'png file']);
   });
