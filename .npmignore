@@ -1,2 +1,13 @@
 src/
 examples/
+.circleci/
+.vscode/
+.idea/
+.babelrc
+.editorconfig
+.eslintignore
+.gitignore
+.eslintrc
+.nvmrc
+_config.yml
+Dockerfile

@@ -30,7 +30,7 @@ const differencify = new Differencify(GlobalOptions);
 ```js
 async () => {
   const result = await differencify.update(TestOptions);
-  console.log(result); //true if update succeded
+  console.log(result); //true if update succeeded
 }
 ```
 ### Validate your changes

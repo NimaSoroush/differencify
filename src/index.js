@@ -29,6 +29,7 @@ export default class Differencify {
     createDir(this.configuration.screenshots);
     createDir(this.configuration.testReportPath);
   }
+
   _createChromeInstance(testConfig) {
     const width = testConfig.resolution.width || CHROME_WIDTH;
     const height = testConfig.resolution.height || CHROME_HEIGHT;
@@ -41,19 +42,22 @@ export default class Differencify {
     });
     return chromy;
   }
+
   _updateChromeInstances(id, chromy) {
     this.chromeInstances[id] = chromy;
     this.chromeInstancesId += 1;
   }
+
   async _closeChrome(id, chromy) {
     try {
       logger.log('closing browser');
-      chromy.close();
+      await chromy.close();
       delete this.chromeInstances[id];
     } catch (error) {
       logger.error(error);
     }
   }
+
   async _run(config, type, step) {
     const testConfig = sanitiseTestConfiguration(config);
     const chromy = this._createChromeInstance(testConfig);
@@ -67,13 +71,16 @@ export default class Differencify {
     await this._closeChrome(testId, chromy);
     return result;
   }
+
   async update(config) {
     return await this._run(config, configTypes.update, null);
   }
+
   async test(config) {
     const testStep = { name: actions.test, value: this.configuration.testReportPath };
     return await this._run(config, configTypes.test, testStep);
   }
+
   async cleanup() {
     await Promise.all(
       Object.values(this.chromeInstances).map(chromeInstance => chromeInstance.close()),

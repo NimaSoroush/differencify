@@ -28,7 +28,7 @@
 
 ## [0.0.5] - 2017-07-06
 ### Changed
-- Decreased default threashhold to 0.01
+- Decreased default threshold to 0.01
 - Updated logging to log difference error
 - Update Readme.md
 - Added a Dockerfile for local/CI usage
