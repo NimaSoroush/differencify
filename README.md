@@ -10,7 +10,7 @@ Status: [![CircleCI](https://circleci.com/gh/NimaSoroush/differencify/tree/maste
 
 ## About
 
-Differencify is library for visual regression testing by comparing your locall changes with reference screenshots of your website.
+Differencify is library for visual regression testing by comparing your local changes with reference screenshots of your website.
 
 ## Requirements
 - Node > 6
@@ -65,21 +65,9 @@ See [API.md](API.md) for full list of API calls
 |`resolution`|`object`|no|Browser width and height|800 * 600|
 |`steps`|`object`|yes|Steps before capturing screenshot|null|
 
-### Steps
+### Steps API
 
-|name|type|value|
-|----|----|-----|
-|`goto`|`string`|Url|
-|`capture`|`string`|`undefiend`, `document` or selector name|
-
-##### Coming steps
-- wait
-- click
-- setCookie
-- deleteCookie
-- clearCookies
-- emulate (Emulates phone)
-
+See [API.md](API.md) for full list of Steps API calls
 
 ### TestOptions example
 
