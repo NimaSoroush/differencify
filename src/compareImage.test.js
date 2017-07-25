@@ -59,7 +59,7 @@ describe('Compare Image', () => {
     expect(result).toEqual('no mismatch found ✅');
   });
 
-  it('returns correct value if only difference above threshold', async () => {
+  it('returns mismatch found❗ if only difference above threshold', async () => {
     expect.assertions(1);
     Jimp.diff.mockReturnValue({ percent: 0.02 });
 
@@ -75,7 +75,7 @@ describe('Compare Image', () => {
     }
   });
 
-  it('returns correct value if only distance above threshold', async () => {
+  it('returns mismatch found❗ if only distance above threshold', async () => {
     expect.assertions(1);
     Jimp.distance.mockReturnValue(0.02);
 
