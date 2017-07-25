@@ -1,4 +1,4 @@
-<p align="center"><img alt="Differencify" src="http://i.imgur.com/0zwMggK.png" width="150">
+<p align="center"><img alt="Differencify" src="images/logo.png" width="150">
 <br>
 <strong>Differencify</strong>
 <br>
@@ -13,7 +13,7 @@ Differencify is a library for visual regression testing by comparing your local 
 
 |Reference|Local changes|
 |---------|-------------|
-|<img alt="Differencify" src="http://i.imgur.com/Vq0sVY1.png" width="400">|<img alt="Differencify" src="http://i.imgur.com/Ry11AHE.png" width="400">|
+|<img alt="Differencify" src="images/reference_screenshot.png" width="400">|<img alt="Differencify" src="images/differencified_screenshot.png" width="400">|
 
 
 ## Requirements
@@ -38,7 +38,7 @@ async () => {
 }
 ```
 <p align="center">
-<img src="https://thumbs.gfycat.com/HandmadeGrayFirecrest-size_restricted.gif" width="500">
+<img src="images/update.gif" width="500">
 </p>
 
 ### Validate your changes
@@ -49,7 +49,7 @@ async () => {
 }
 ```
 <p align="center">
-<img src="https://thumbs.gfycat.com/UnknownVariableGrayling-size_restricted.gif" width="500">
+<img src="images/test.gif" width="500">
 </p>
 
 ### API
