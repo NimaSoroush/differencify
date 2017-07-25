@@ -24,7 +24,7 @@ const compareImage = async (options, testName) => {
 
   const distance = Jimp.distance(referenceImage, testImage);
   const diff = Jimp.diff(referenceImage, testImage, options.mismatchThreshold);
-  if (distance < options.mismatchThreshold || diff.percent < options.mismatchThreshold) {
+  if (distance < options.mismatchThreshold && diff.percent < options.mismatchThreshold) {
     return 'no mismatch found ✅';
   }
 

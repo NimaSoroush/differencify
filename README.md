@@ -1,4 +1,4 @@
-<p align="center"><img alt="Differencify" src="http://i.imgur.com/D0Eapjx.png" width="150">
+<p align="center"><img alt="Differencify" src="images/logo.png" width="150">
 <br>
 <strong>Differencify</strong>
 <br>
@@ -9,8 +9,12 @@ Regression Testing suite!
 Status: [![CircleCI](https://circleci.com/gh/NimaSoroush/differencify/tree/master.svg?style=svg)](https://circleci.com/gh/NimaSoroush/differencify/tree/master)
 
 ## About
+Differencify is a library for visual regression testing by comparing your local changes with reference screenshots of your website.
 
-Differencify is library for visual regression testing by comparing your local changes with reference screenshots of your website.
+|Reference|Local changes|
+|---------|-------------|
+|<img alt="Differencify" src="images/reference_screenshot.png" width="400">|<img alt="Differencify" src="images/differencified_screenshot.png" width="400">|
+
 
 ## Requirements
 - Node > 6
@@ -33,6 +37,10 @@ async () => {
   console.log(result); //true if update succeeded
 }
 ```
+<p align="center">
+<img src="images/update.gif" width="500">
+</p>
+
 ### Validate your changes
 ```js
 async () => {
@@ -40,6 +48,9 @@ async () => {
   console.log(result); //true if test pass
 }
 ```
+<p align="center">
+<img src="images/test.gif" width="500">
+</p>
 
 ### API
 
