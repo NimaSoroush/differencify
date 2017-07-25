@@ -1,3 +1,8 @@
+## [0.0.13] - 2017-07-25
+### Added
+- Updating readme file
+- Bug fixes
+
 ## [0.0.12] - 2017-07-24
 ### Added
 - Added wait functionality
