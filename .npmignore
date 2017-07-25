@@ -11,3 +11,4 @@ examples/
 .nvmrc
 _config.yml
 Dockerfile
+images/
