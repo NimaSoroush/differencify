@@ -1,40 +1,33 @@
 import fs from 'fs';
 import Chromy from 'chromy';
+import getPort from 'get-port';
 import Differencify from './index';
 import logger from './logger';
+import run from './chromyRunner';
 
-let chromyCloseCallsCounter = 0;
-jest.mock('chromy', () => jest.fn(() =>
-    ({
-      goto: jest.fn(),
-      close: jest.fn(() => { chromyCloseCallsCounter += 1; }),
-      screenshotDocument: jest.fn(() => 'png file'),
-      screenshotSelector: jest.fn(() => 'png file'),
-    }),
-  ));
+jest.mock('get-port', () => jest.fn(() => 3000));
+const mockClose = jest.fn();
+jest.mock('chromy', () => () =>
+  ({
+    close: mockClose,
+    options: { port: 3000 },
+  }));
+jest.mock('./chromyRunner', () => jest.fn(() => true));
 
-jest.mock('./compareImage', () => jest.fn(arg =>
-    new Promise((resolve, reject) => {
-      if (arg.screenshots === 'screenshots') {
-        return resolve('Saving the diff image to disk');
-      }
-      return reject('error');
-    }),
-  ));
+jest.mock('fs', () => ({
+  mkdirSync: jest.fn(),
+  existsSync: jest.fn(),
+}));
 
-let writeFileSyncCalls = [];
-fs.writeFileSync = (...args) => {
-  writeFileSyncCalls.push(...args);
-};
-fs.mkdirSync = (...args) => {
-  writeFileSyncCalls.push(...args);
-};
-
-let loggerCalls = [];
-logger.prefix = () => logger;
-logger.log = (...args) => {
-  loggerCalls.push(...args);
-};
+const mockLog = jest.fn();
+jest.mock('./logger', () => ({
+  prefix: jest.fn(() => ({
+    log: mockLog,
+  })),
+  log: jest.fn(),
+  error: jest.fn(),
+  enable: jest.fn(),
+}));
 
 const globalConfig = {
   screenshots: 'screenshots',
@@ -59,35 +52,53 @@ const differencify = new Differencify(globalConfig);
 
 describe('Differencify', () => {
   afterEach(() => {
-    loggerCalls = [];
-    writeFileSyncCalls = [];
-    chromyCloseCallsCounter = 0;
+    mockLog.mockClear();
+    logger.log.mockClear();
+    run.mockClear();
+    mockClose.mockClear();
+  });
+  it('constructor fn', async () => {
+    expect(fs.mkdirSync).toHaveBeenCalledWith('screenshots');
+    expect(fs.mkdirSync).toHaveBeenCalledWith('./differencify_report');
   });
   it('update fn', async () => {
     const result = await differencify.update(testConfig);
     expect(result).toEqual(true);
-    expect(differencify.chromeInstancesId).toEqual(9223);
-    expect(loggerCalls[0]).toEqual('goto -> www.example.com');
-    expect(loggerCalls[1]).toEqual('capturing screenshot of whole DOM');
-    expect(loggerCalls[2]).toEqual('screenshot saved in -> screenshots/default.png');
-    expect(writeFileSyncCalls).toEqual(['screenshots', './differencify_report', 'screenshots/default.png', 'png file']);
+    expect(differencify.chromeInstances[3000]).toEqual(undefined);
+    expect(mockClose).toHaveBeenCalledTimes(1);
+    expect(mockLog).toHaveBeenCalledWith('closing browser');
+    expect(run).toHaveBeenCalledTimes(1);
   });
   it('test fn', async () => {
     const result = await differencify.test(testConfig);
     expect(result).toEqual(true);
-    expect(differencify.chromeInstancesId).toEqual(9224);
-    expect(loggerCalls[0]).toEqual('goto -> www.example.com');
-    expect(loggerCalls[1]).toEqual('capturing screenshot of whole DOM');
-    expect(loggerCalls[2]).toEqual('screenshot saved in -> ./differencify_report/default.png');
-    expect(writeFileSyncCalls).toEqual(['./differencify_report/default.png', 'png file']);
+    expect(differencify.chromeInstances[3000]).toEqual(undefined);
+    expect(mockClose).toHaveBeenCalledTimes(1);
+    expect(mockLog).toHaveBeenCalledWith('closing browser');
+    expect(run).toHaveBeenCalledTimes(1);
+  });
+  it('chromyRunner will fail test fn', async () => {
+    run.mockReturnValueOnce(Promise.resolve(false));
+    const result = await differencify.test(testConfig);
+    expect(result).toEqual(false);
+    expect(differencify.chromeInstances[3000]).toEqual(undefined);
+    expect(mockClose).toHaveBeenCalledTimes(1);
+    expect(mockLog).toHaveBeenCalledWith('closing browser');
+    expect(run).toHaveBeenCalledTimes(1);
   });
   it('cleanup fn', async () => {
     const chromy1 = new Chromy();
-    differencify.chromeInstances[1] = chromy1;
     const chromy2 = new Chromy();
-    differencify.chromeInstances[2] = chromy2;
+    differencify.chromeInstances = [chromy1, chromy2];
     await differencify.cleanup();
-    expect(chromyCloseCallsCounter).toEqual(2);
-    expect(loggerCalls[0]).toEqual('All browsers been closed');
+    expect(mockClose).toHaveBeenCalledTimes(2);
+    expect(differencify.chromeInstances).toEqual({});
+    expect(logger.log).toHaveBeenCalledWith('All browsers been closed');
+  });
+  it('get-port fails test', async () => {
+    getPort.mockReturnValueOnce(Promise.reject());
+    const result = await differencify.test(testConfig);
+    expect(result).toEqual(false);
+    expect(logger.error).toHaveBeenCalledWith('Failed to get a free port', undefined);
   });
 });
