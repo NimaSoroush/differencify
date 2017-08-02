@@ -1,13 +1,13 @@
 import 'babel-polyfill';
 import fs from 'fs';
 import Chromy from 'chromy';
+import getPort from 'get-port';
 import { sanitiseGlobalConfiguration, sanitiseTestConfiguration } from './sanitiser';
 import run from './chromyRunner';
 import logger from './logger';
 import { configTypes } from './defaultConfig';
 import actions from './actions';
 
-const CHROME_PORT = 9222;
 const CHROME_WIDTH = 800;
 const CHROME_HEIGHT = 600;
 
@@ -18,11 +18,19 @@ const createDir = (path) => {
   }
 };
 
+const getFreePort = async () => {
+  try {
+    return await getPort();
+  } catch (error) {
+    logger.error('Failed to get a free port', error);
+    return null;
+  }
+};
+
 export default class Differencify {
   constructor(conf) {
     this.configuration = sanitiseGlobalConfiguration(conf);
     this.chromeInstances = {};
-    this.chromeInstancesId = CHROME_PORT;
     if (this.configuration.debug === true) {
       logger.enable();
     }
@@ -30,61 +38,64 @@ export default class Differencify {
     createDir(this.configuration.testReportPath);
   }
 
-  _createChromeInstance(testConfig) {
+  async _createChromeInstance(testConfig) {
     const width = testConfig.resolution.width || CHROME_WIDTH;
     const height = testConfig.resolution.height || CHROME_HEIGHT;
     const flags = [`--window-size=${width},${height}`];
+    const port = await getFreePort();
+    if (!port) {
+      return null;
+    }
     const chromy = new Chromy({
+      port,
       chromeFlags: flags,
-      port: this.chromeInstancesId,
       waitTimeout: this.configuration.timeout,
       visible: this.configuration.visible,
     });
     return chromy;
   }
 
-  _updateChromeInstances(id, chromy) {
-    this.chromeInstances[id] = chromy;
-    this.chromeInstancesId += 1;
+  _updateChromeInstances(chromy) {
+    this.chromeInstances[chromy.options.port] = chromy;
   }
 
-  async _closeChrome(id, chromy) {
+  async _closeChrome(chromy, testName) {
     try {
-      logger.log('closing browser');
+      logger.prefix(testName).log('closing browser');
       await chromy.close();
-      delete this.chromeInstances[id];
+      delete this.chromeInstances[chromy.options.port];
     } catch (error) {
-      logger.error(error);
+      logger.prefix(testName).log(error);
     }
   }
 
-  async _run(config, type, step) {
+  async _run(config, type) {
     const testConfig = sanitiseTestConfiguration(config);
-    const chromy = this._createChromeInstance(testConfig);
-    const testId = this.chromeInstancesId;
-    this._updateChromeInstances(testId, chromy);
-    testConfig.type = type;
-    if (step) {
-      testConfig.steps.push(step);
+    const chromy = await this._createChromeInstance(testConfig);
+    if (!chromy) {
+      return false;
     }
+    this._updateChromeInstances(chromy);
+    testConfig.type = type;
     const result = await run(chromy, this.configuration, testConfig);
-    await this._closeChrome(testId, chromy);
+    await this._closeChrome(chromy, testConfig.name);
     return result;
   }
 
   async update(config) {
-    return await this._run(config, configTypes.update, null);
+    return await this._run(config, configTypes.update);
   }
 
   async test(config) {
-    const testStep = { name: actions.test, value: this.configuration.testReportPath };
-    return await this._run(config, configTypes.test, testStep);
+    config.steps.push({ name: actions.test, value: this.configuration.testReportPath });
+    return await this._run(config, configTypes.test);
   }
 
   async cleanup() {
     await Promise.all(
       Object.values(this.chromeInstances).map(chromeInstance => chromeInstance.close()),
     );
+    this.chromeInstances = {};
     logger.log('All browsers been closed');
   }
 }
