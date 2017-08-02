@@ -3,4 +3,5 @@ export default {
   capture: 'capture',
   test: 'test',
   wait: 'wait',
+  evaluate: 'evaluate',
 };

@@ -87,6 +87,20 @@ const run = async (chromy, options, test) => {
           return false;
         }
         break;
+      case actions.evaluate:
+        try {
+          if (check.function(action.value)) {
+            prefixedLogger.log('waiting for to evaluate function in browser');
+            await chromy.evaluate(action.value);
+          } else {
+            prefixedLogger.log('failed to detect evaluate function');
+            return false;
+          }
+        } catch (error) {
+          prefixedLogger.error(error);
+          return false;
+        }
+        break;
       default:
         break;
     }
