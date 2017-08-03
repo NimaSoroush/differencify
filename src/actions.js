@@ -4,4 +4,5 @@ export default {
   test: 'test',
   wait: 'wait',
   evaluate: 'evaluate',
+  freezeImage: 'freezeImge',
 };

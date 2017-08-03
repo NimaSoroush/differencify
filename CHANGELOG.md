@@ -1,3 +1,8 @@
+## [0.0.15] - 2017-08-03
+### Added
+- Adding evaluate functionality to evaluate expression on browser
+- Adding freeze image functionality to freeze animations
+
 ## [0.0.14] - 2017-08-01
 ### Added
 - Assign free ports to run chrome instances
