@@ -13,6 +13,7 @@ jest.mock('chromy', () => jest.fn(() =>
     screenshotSelector: jest.fn(() => 'png file'),
     screenshot: jest.fn(() => 'png file'),
     wait: jest.fn(),
+    evaluate: jest.fn(),
   }),
 ));
 
@@ -46,6 +47,7 @@ describe('ChromyRunner', () => {
     chromy.screenshot.mockClear();
     chromy.screenshotSelector.mockClear();
     chromy.wait.mockClear();
+    chromy.evaluate.mockClear();
   });
   it('run update', async () => {
     testConfig.type = configTypes.update;
@@ -243,6 +245,40 @@ describe('ChromyRunner', () => {
       expect(chromy.wait).toHaveBeenCalledTimes(0);
       expect(loggerCalls[0]).toEqual('goto -> www.example.com');
       expect(loggerCalls[1]).toEqual('failed to detect waiting mechanism');
+    });
+  });
+  describe('Chromy runner', () => {
+    it('Evaluate: function', async () => {
+      const newConfig = {
+        name: 'default',
+        resolution: {
+          width: 800,
+          height: 600,
+        },
+        steps: [
+          { name: 'evaluate', value: () => {} },
+        ],
+      };
+      const result = await run(chromy, globalConfig, newConfig);
+      expect(result).toEqual(true);
+      expect(chromy.evaluate).toHaveBeenCalledTimes(1);
+      expect(loggerCalls[0]).toEqual('waiting for to evaluate function in browser');
+    });
+    it('Evaluate: non-function', async () => {
+      const newConfig = {
+        name: 'default',
+        resolution: {
+          width: 800,
+          height: 600,
+        },
+        steps: [
+          { name: 'evaluate', value: 123 },
+        ],
+      };
+      const result = await run(chromy, globalConfig, newConfig);
+      expect(result).toEqual(false);
+      expect(chromy.evaluate).toHaveBeenCalledTimes(0);
+      expect(loggerCalls[0]).toEqual('failed to detect evaluate function');
     });
   });
 });
