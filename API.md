@@ -12,7 +12,8 @@
 |----|----|-----|
 |`goto`|`string`|Url|
 |`wait`|`string`, `integer` or `func`|waiting time in millisecond `or` waiting for a selector `or` waiting until the function you supplied is evaluated as true|
-|`evaluate`|`func`|Evaluates a expression in the browser context|
+|`execute`|`func`|execute an expression in the browser context|
+|`freezeImage`|`string`|Selector name of a <img> tag containing animated image to be freezed before taking screenshot|
 |`capture`|`string`|`undefiend`, `document` or selector name|
 
 #### Steps example
@@ -23,7 +24,8 @@
   steps: [
     { name: 'goto', value: 'http://www.example.com' },
     { name: 'wait', value: 5000 },
-    { name: 'evaluate', value: () => { alert("Hello! I am an alert box!!") } },
+    { name: 'freezeImage', value: '#myImage' },
+    { name: 'execute', value: () => { alert("Hello! I am an alert box!!") } },
     { name: 'capture', value: 'document' },
   ],
   ...

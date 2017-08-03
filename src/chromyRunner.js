@@ -2,6 +2,7 @@ import fs from 'fs';
 import check from 'check-types';
 import logger from './logger';
 import compareImage from './compareImage';
+import freezeImage from './freezeImage';
 import actions from './actions';
 import { configTypes } from './defaultConfig';
 
@@ -94,6 +95,19 @@ const run = async (chromy, options, test) => {
             await chromy.evaluate(action.value);
           } else {
             prefixedLogger.log('failed to detect evaluate function');
+            return false;
+          }
+        } catch (error) {
+          prefixedLogger.error(error);
+          return false;
+        }
+        break;
+      case actions.freezeImage:
+        try {
+          prefixedLogger.log(`Freezing image ${action.value} in browser`);
+          const result = await chromy.evaluate(freezeImage(action.value));
+          if (!result) {
+            prefixedLogger.log(`Tag with selector ${action.value} is not a valid image`);
             return false;
           }
         } catch (error) {
