@@ -4,8 +4,9 @@ import run from './chromyRunner';
 import logger from './logger';
 import { globalConfig, testConfig, configTypes } from './defaultConfig';
 import actions from './actions';
+import freezeImage from './freezeImage';
 
-jest.mock('chromy', () => jest.fn(() =>
+jest.mock('chromy', () => () =>
   ({
     goto: jest.fn(),
     close: jest.fn(),
@@ -13,9 +14,10 @@ jest.mock('chromy', () => jest.fn(() =>
     screenshotSelector: jest.fn(() => 'png file'),
     screenshot: jest.fn(() => 'png file'),
     wait: jest.fn(),
-    evaluate: jest.fn(),
-  }),
-));
+    evaluate: jest.fn(fn =>
+      fn(),
+    ),
+  }));
 
 jest.mock('./compareImage', () => jest.fn(arg =>
   new Promise((resolve, reject) => {
@@ -25,6 +27,8 @@ jest.mock('./compareImage', () => jest.fn(arg =>
     return reject('error');
   }),
 ));
+
+jest.mock('./freezeImage', () => jest.fn(() => true));
 
 let loggerCalls = [];
 logger.prefix = () => logger;
@@ -48,6 +52,7 @@ describe('ChromyRunner', () => {
     chromy.screenshotSelector.mockClear();
     chromy.wait.mockClear();
     chromy.evaluate.mockClear();
+    freezeImage.mockClear();
   });
   it('run update', async () => {
     testConfig.type = configTypes.update;
@@ -248,7 +253,7 @@ describe('ChromyRunner', () => {
     });
   });
   describe('Chromy runner', () => {
-    it('Evaluate: function', async () => {
+    it('Execute: function', async () => {
       const newConfig = {
         name: 'default',
         resolution: {
@@ -256,15 +261,15 @@ describe('ChromyRunner', () => {
           height: 600,
         },
         steps: [
-          { name: 'evaluate', value: () => {} },
+          { name: 'execute', value: () => {} },
         ],
       };
       const result = await run(chromy, globalConfig, newConfig);
       expect(result).toEqual(true);
       expect(chromy.evaluate).toHaveBeenCalledTimes(1);
-      expect(loggerCalls[0]).toEqual('waiting for to evaluate function in browser');
+      expect(loggerCalls[0]).toEqual('waiting for to execute function in browser');
     });
-    it('Evaluate: non-function', async () => {
+    it('Execute: non-function', async () => {
       const newConfig = {
         name: 'default',
         resolution: {
@@ -272,13 +277,52 @@ describe('ChromyRunner', () => {
           height: 600,
         },
         steps: [
-          { name: 'evaluate', value: 123 },
+          { name: 'execute', value: 123 },
         ],
       };
       const result = await run(chromy, globalConfig, newConfig);
       expect(result).toEqual(false);
       expect(chromy.evaluate).toHaveBeenCalledTimes(0);
-      expect(loggerCalls[0]).toEqual('failed to detect evaluate function');
+      expect(loggerCalls[0]).toEqual('failed to detect execute function');
+    });
+  });
+  describe('Chromy runner', () => {
+    it('FreezeImage: existing selector', async () => {
+      freezeImage.mockReturnValueOnce(true);
+      const newConfig = {
+        name: 'default',
+        resolution: {
+          width: 800,
+          height: 600,
+        },
+        steps: [
+          { name: 'freezeImage', value: 'selector' },
+        ],
+      };
+      const result = await run(chromy, globalConfig, newConfig);
+      expect(result).toEqual(true);
+      expect(chromy.evaluate).toHaveBeenCalledTimes(1);
+      expect(freezeImage).toHaveBeenCalledWith('selector');
+      expect(loggerCalls[0]).toEqual('Freezing image selector in browser');
+    });
+    it('FreezeImage: non-existing selector', async () => {
+      freezeImage.mockReturnValueOnce(false);
+      const newConfig = {
+        name: 'default',
+        resolution: {
+          width: 800,
+          height: 600,
+        },
+        steps: [
+          { name: 'freezeImage', value: 'selector' },
+        ],
+      };
+      const result = await run(chromy, globalConfig, newConfig);
+      expect(result).toEqual(false);
+      expect(chromy.evaluate).toHaveBeenCalledTimes(1);
+      expect(freezeImage).toHaveBeenCalledWith('selector');
+      expect(loggerCalls[0]).toEqual('Freezing image selector in browser');
+      expect(loggerCalls[1]).toEqual('Tag with selector selector is not a valid image');
     });
   });
 });
