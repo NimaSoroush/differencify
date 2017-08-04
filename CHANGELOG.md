@@ -1,3 +1,7 @@
+## [0.0.16] - 2017-08-04
+### Added
+- Bug fixes
+
 ## [0.0.15] - 2017-08-03
 ### Added
 - Adding evaluate functionality to evaluate expression on browser

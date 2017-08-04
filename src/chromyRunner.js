@@ -88,13 +88,13 @@ const run = async (chromy, options, test) => {
           return false;
         }
         break;
-      case actions.evaluate:
+      case actions.execute:
         try {
           if (check.function(action.value)) {
-            prefixedLogger.log('waiting for to evaluate function in browser');
+            prefixedLogger.log('waiting for to execute function in browser');
             await chromy.evaluate(action.value);
           } else {
-            prefixedLogger.log('failed to detect evaluate function');
+            prefixedLogger.log('failed to detect execute function');
             return false;
           }
         } catch (error) {
@@ -105,7 +105,7 @@ const run = async (chromy, options, test) => {
       case actions.freezeImage:
         try {
           prefixedLogger.log(`Freezing image ${action.value} in browser`);
-          const result = await chromy.evaluate(freezeImage(action.value));
+          const result = await chromy.evaluate(() => freezeImage(action.value));
           if (!result) {
             prefixedLogger.log(`Tag with selector ${action.value} is not a valid image`);
             return false;
