@@ -1,3 +1,7 @@
+## [0.0.17] - 2017-08-07
+### Added
+- Upgrading Chromy to version 0.4.5
+
 ## [0.0.16] - 2017-08-04
 ### Added
 - Bug fixes
