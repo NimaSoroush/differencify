@@ -7,6 +7,7 @@ import run from './chromyRunner';
 import logger from './logger';
 import { configTypes } from './defaultConfig';
 import actions from './actions';
+import Reporter from './Reporter';
 
 const CHROME_WIDTH = 800;
 const CHROME_HEIGHT = 600;
@@ -28,9 +29,10 @@ const getFreePort = async () => {
 };
 
 export default class Differencify {
-  constructor(conf) {
+  constructor(conf, reporter = new Reporter()) {
     this.configuration = sanitiseGlobalConfiguration(conf);
     this.chromeInstances = {};
+    this.reporter = reporter;
     if (this.configuration.debug === true) {
       logger.enable();
     }
@@ -77,7 +79,7 @@ export default class Differencify {
     }
     this._updateChromeInstances(chromy);
     testConfig.type = type;
-    const result = await run(chromy, this.configuration, testConfig);
+    const result = await run(chromy, this.configuration, testConfig, this.reporter);
     await this._closeChrome(chromy, testConfig.name);
     return result;
   }
@@ -89,6 +91,10 @@ export default class Differencify {
   async test(config) {
     config.steps.push({ name: actions.test, value: this.configuration.testReportPath });
     return await this._run(config, configTypes.test);
+  }
+
+  async generateReport(config) {
+    return await this.reporter.generate(config, this.configuration.testReportPath);
   }
 
   async cleanup() {

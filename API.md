@@ -5,6 +5,7 @@
 |`update`|[TestOptions](https://github.com/NimaSoroush/differencify#testoptions)|Creates reference screenshots|
 |`test`|[TestOptions](https://github.com/NimaSoroush/differencify#testoptions)|Validate your changes by testing against reference screenshots|
 |`cleanup`|no argument|Closes all leftover browser instances|
+|`generateReport`|Config object, for example: `{ html: 'index.html' }`|Generates a report file. Supports `html` and `json` report types|
 
 ### Steps Methods
 

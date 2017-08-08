@@ -1,6 +1,7 @@
 import fs from 'fs';
 import Chromy from 'chromy';
 import getPort from 'get-port';
+import Reporter from './Reporter';
 import Differencify from './index';
 import logger from './logger';
 import run from './chromyRunner';
@@ -27,6 +28,12 @@ jest.mock('./logger', () => ({
   log: jest.fn(),
   error: jest.fn(),
   enable: jest.fn(),
+}));
+
+jest.mock('./Reporter');
+
+Reporter.mockImplementation(() => ({
+  generate: jest.fn(),
 }));
 
 const globalConfig = {
@@ -85,6 +92,14 @@ describe('Differencify', () => {
     expect(mockClose).toHaveBeenCalledTimes(1);
     expect(mockLog).toHaveBeenCalledWith('closing browser');
     expect(run).toHaveBeenCalledTimes(1);
+  });
+  it('generateReport fn', async () => {
+    const config = {
+      html: 'index.html',
+      json: 'asset-manifest.json',
+    };
+    differencify.generateReport(config);
+    expect(differencify.reporter.generate).toHaveBeenCalledWith(config, globalConfig.testReportPath);
   });
   it('cleanup fn', async () => {
     const chromy1 = new Chromy();
