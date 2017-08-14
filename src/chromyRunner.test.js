@@ -4,6 +4,7 @@ import run from './chromyRunner';
 import logger from './logger';
 import { globalConfig, testConfig, configTypes } from './defaultConfig';
 import actions from './actions';
+import functionToString from './helpers/functionToString';
 import freezeImage from './freezeImage';
 
 jest.mock('chromy', () => () =>
@@ -14,9 +15,7 @@ jest.mock('chromy', () => () =>
     screenshotSelector: jest.fn(() => 'png file'),
     screenshot: jest.fn(() => 'png file'),
     wait: jest.fn(),
-    evaluate: jest.fn(fn =>
-      fn(),
-    ),
+    evaluate: jest.fn(),
   }));
 
 jest.mock('./compareImage', () => jest.fn(arg =>
@@ -28,7 +27,7 @@ jest.mock('./compareImage', () => jest.fn(arg =>
   }),
 ));
 
-jest.mock('./freezeImage', () => jest.fn(() => true));
+jest.mock('./helpers/functionToString');
 
 let loggerCalls = [];
 logger.prefix = () => logger;
@@ -52,7 +51,7 @@ describe('ChromyRunner', () => {
     chromy.screenshotSelector.mockClear();
     chromy.wait.mockClear();
     chromy.evaluate.mockClear();
-    freezeImage.mockClear();
+    functionToString.mockClear();
   });
   it('run update', async () => {
     testConfig.type = configTypes.update;
@@ -288,7 +287,8 @@ describe('ChromyRunner', () => {
   });
   describe('Chromy runner', () => {
     it('FreezeImage: existing selector', async () => {
-      freezeImage.mockReturnValueOnce(true);
+      chromy.evaluate.mockReturnValueOnce(true);
+      functionToString.mockReturnValueOnce('return string function');
       const newConfig = {
         name: 'default',
         resolution: {
@@ -301,12 +301,13 @@ describe('ChromyRunner', () => {
       };
       const result = await run(chromy, globalConfig, newConfig);
       expect(result).toEqual(true);
-      expect(chromy.evaluate).toHaveBeenCalledTimes(1);
-      expect(freezeImage).toHaveBeenCalledWith('selector');
+      expect(chromy.evaluate).toHaveBeenCalledWith('return string function');
+      expect(functionToString).toHaveBeenCalledWith(freezeImage, 'selector');
       expect(loggerCalls[0]).toEqual('Freezing image selector in browser');
     });
     it('FreezeImage: non-existing selector', async () => {
-      freezeImage.mockReturnValueOnce(false);
+      chromy.evaluate.mockReturnValueOnce(false);
+      functionToString.mockReturnValueOnce('return string function');
       const newConfig = {
         name: 'default',
         resolution: {
@@ -319,8 +320,8 @@ describe('ChromyRunner', () => {
       };
       const result = await run(chromy, globalConfig, newConfig);
       expect(result).toEqual(false);
-      expect(chromy.evaluate).toHaveBeenCalledTimes(1);
-      expect(freezeImage).toHaveBeenCalledWith('selector');
+      expect(chromy.evaluate).toHaveBeenCalledWith('return string function');
+      expect(functionToString).toHaveBeenCalledWith(freezeImage, 'selector');
       expect(loggerCalls[0]).toEqual('Freezing image selector in browser');
       expect(loggerCalls[1]).toEqual('Tag with selector selector is not a valid image');
     });

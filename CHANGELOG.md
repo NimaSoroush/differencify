@@ -1,3 +1,8 @@
+## [0.0.18] - 2017-08-14
+### Added
+- Fixing issue with freezing image
+- Upgrading Chromy to version 0.4.7
+
 ## [0.0.17] - 2017-08-07
 ### Added
 - Upgrading Chromy to version 0.4.5
