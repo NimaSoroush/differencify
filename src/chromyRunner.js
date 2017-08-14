@@ -3,6 +3,7 @@ import check from 'check-types';
 import logger from './logger';
 import compareImage from './compareImage';
 import freezeImage from './freezeImage';
+import functionToString from './helpers/functionToString';
 import actions from './actions';
 import { configTypes } from './defaultConfig';
 
@@ -105,7 +106,8 @@ const run = async (chromy, options, test) => {
       case actions.freezeImage:
         try {
           prefixedLogger.log(`Freezing image ${action.value} in browser`);
-          const result = await chromy.evaluate(() => freezeImage(action.value));
+          const strFunc = functionToString(freezeImage, action.value);
+          const result = await chromy.evaluate(strFunc);
           if (!result) {
             prefixedLogger.log(`Tag with selector ${action.value} is not a valid image`);
             return false;

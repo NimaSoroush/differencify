@@ -12,7 +12,7 @@
 |----|----|-----|
 |`goto`|`string`|Url|
 |`wait`|`string`, `integer` or `func`|waiting time in millisecond `or` waiting for a selector `or` waiting until the function you supplied is evaluated as true|
-|`execute`|`func`|execute an expression in the browser context|
+|`execute`|`func` or `string`|execute an expression in the browser context|
 |`freezeImage`|`string`|Selector name of a <img> tag containing animated image to be freezed before taking screenshot|
 |`capture`|`string`|`undefiend`, `document` or selector name|
 
