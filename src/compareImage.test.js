@@ -67,6 +67,15 @@ describe('Compare Image', () => {
     expect(result).toEqual('no mismatch found ✅');
   });
 
+  it('adds a result to reporter if difference below threshold', async () => {
+    await compareImage(mockConfig, 'test', mockReporter);
+    expect(mockReporter.addResult).toHaveBeenCalledWith({
+      outcome: true,
+      result: 'no mismatch found ✅',
+      testName: 'test',
+    });
+  });
+
   it('returns mismatch found❗ if only difference above threshold', async () => {
     expect.assertions(1);
     Jimp.diff.mockReturnValue({ percent: 0.02 });

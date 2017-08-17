@@ -1,33 +1,33 @@
 import fs from 'fs';
 import Reporter, { getHtmlReport, getJsonReport } from './Reporter';
 import logger from './logger';
+import { globalConfig } from './defaultConfig';
 
 jest.mock('fs', () => ({
   writeFileSync: jest.fn(),
+  readdirSync: jest.fn(() => []),
 }));
 
 jest.mock('./logger', () => ({
   log: jest.fn(),
+  error: jest.fn(),
 }));
 
 const results = [
   {
     outcome: true,
-    fileName: 'image1.png',
-    message: 'no mismatch found',
-    diff: null,
+    testName: 'default',
+    result: 'no mismatch found',
   },
   {
     outcome: true,
-    fileName: 'image2.png',
-    message: 'no mismatch found',
-    diff: null,
+    testName: 'default2',
+    result: 'no mismatch found',
   },
   {
     outcome: false,
-    fileName: 'image2.png',
-    message: 'mismatch found!',
-    diff: 'image2_diff.png',
+    testName: 'default3',
+    result: 'mismatch found!',
   },
 ];
 
@@ -35,19 +35,19 @@ describe('Generate report index', () => {
   let reporter;
 
   beforeEach(() => {
-    reporter = new Reporter();
+    reporter = new Reporter(globalConfig);
     results.forEach(result =>
-      reporter.addResult(
-        result.outcome,
-        result.fileName,
-        result.message,
-        result.diff,
-      ),
+      reporter.addResult({
+        outcome: result.outcome,
+        testName: result.testName,
+        result: result.result,
+      }),
     );
   });
 
   afterEach(() => {
     fs.writeFileSync.mockClear();
+    fs.readdirSync.mockClear();
     logger.log.mockClear();
   });
 
@@ -58,9 +58,10 @@ describe('Generate report index', () => {
       },
       './example/path',
     );
+    expect(fs.readdirSync).toHaveBeenCalledWith(globalConfig.testReportPath);
     expect(fs.writeFileSync).toHaveBeenCalledWith(
       'example/path/index.html',
-      getHtmlReport(results),
+      getHtmlReport(reporter.getResults()),
     );
   });
 
@@ -71,9 +72,10 @@ describe('Generate report index', () => {
       },
       './example/path',
     );
+    expect(fs.readdirSync).toHaveBeenCalledWith(globalConfig.testReportPath);
     expect(fs.writeFileSync).toHaveBeenCalledWith(
       'example/path/report.json',
-      getJsonReport(results),
+      getJsonReport(reporter.getResults()),
     );
   });
 
@@ -90,6 +92,21 @@ describe('Generate report index', () => {
     );
     expect(logger.log).toHaveBeenCalledWith(
       'Generated html report at example/path/index.html',
+    );
+  });
+
+  it('logs the error', () => {
+    fs.writeFileSync.mockImplementation(() => {
+      throw new Error('write file error');
+    });
+    reporter.generate(
+      {
+        html: 'index.html',
+      },
+      './example/path',
+    );
+    expect(logger.error).toHaveBeenCalledWith(
+      'Unable to generate html report at example/path/index.html: Error: write file error',
     );
   });
 });

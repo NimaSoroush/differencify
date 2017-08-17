@@ -67,6 +67,11 @@ const run = async (chromy, options, test, reporter) => {
           const result = await compareImage(options, test.name, reporter);
           prefixedLogger.log(result);
         } catch (error) {
+          reporter.addResult({
+            outcome: false,
+            testName: test.name,
+            result: error.message || '',
+          });
           prefixedLogger.error(error);
           return false;
         }

@@ -26,31 +26,30 @@ const compareImage = async (options, testName, reporter) => {
   const diff = Jimp.diff(referenceImage, testImage, options.mismatchThreshold);
   if (distance < options.mismatchThreshold && diff.percent < options.mismatchThreshold) {
     const result = 'no mismatch found ✅';
-    reporter.addResult(true, testFile, result);
+    reporter.addResult({
+      outcome: true,
+      testName,
+      result,
+    });
     return result;
   }
-
-  const result = `mismatch found❗
-    Result:
-      distance: ${distance}
-      diff: ${diff.percent}
-      misMatchThreshold: ${options.mismatchThreshold}
-  `;
 
   if (options.saveDifferencifiedImage) {
     try {
       const diffPath = `${options.testReportPath}/${testName}_differencified.png`;
       diff.image.write(diffPath);
       prefixedLogger.log(`saved the diff image to disk at ${diffPath}`);
-      reporter.addResult(false, testFile, result, diffPath);
     } catch (err) {
       throw new Error(`failed to save the diff image ${err}`);
     }
-  } else {
-    reporter.addResult(false, testFile, result);
   }
 
-  throw new Error(result);
+  throw new Error(`mismatch found❗
+    Result:
+      distance: ${distance}
+      diff: ${diff.percent}
+      misMatchThreshold: ${options.mismatchThreshold}
+  `);
 };
 
 export default compareImage;

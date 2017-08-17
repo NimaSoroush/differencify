@@ -3,9 +3,8 @@ import getJsonReport from './jsonReport';
 const results = [
   {
     outcome: true,
-    fileName: 'image1.png',
-    message: 'no mismatch found',
-    diff: null,
+    testName: 'default',
+    result: 'no mismatch found',
   },
 ];
 

@@ -29,10 +29,10 @@ const getFreePort = async () => {
 };
 
 export default class Differencify {
-  constructor(conf, reporter = new Reporter()) {
+  constructor(conf, reporter) {
     this.configuration = sanitiseGlobalConfiguration(conf);
     this.chromeInstances = {};
-    this.reporter = reporter;
+    this.reporter = reporter || new Reporter(this.configuration);
     if (this.configuration.debug === true) {
       logger.enable();
     }

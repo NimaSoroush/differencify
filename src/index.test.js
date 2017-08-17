@@ -1,10 +1,10 @@
 import fs from 'fs';
 import Chromy from 'chromy';
 import getPort from 'get-port';
-import Reporter from './Reporter';
 import Differencify from './index';
 import logger from './logger';
 import run from './chromyRunner';
+import Reporter from './Reporter';
 
 jest.mock('get-port', () => jest.fn(() => 3000));
 const mockClose = jest.fn();
@@ -30,9 +30,7 @@ jest.mock('./logger', () => ({
   enable: jest.fn(),
 }));
 
-jest.mock('./Reporter');
-
-Reporter.mockImplementation(() => ({
+jest.mock('./Reporter', () => () => ({
   generate: jest.fn(),
 }));
 
@@ -55,7 +53,8 @@ const testConfig = {
   ],
 };
 
-const differencify = new Differencify(globalConfig);
+const mockReporter = new Reporter();
+const differencify = new Differencify(globalConfig, mockReporter);
 
 describe('Differencify', () => {
   afterEach(() => {
@@ -99,7 +98,7 @@ describe('Differencify', () => {
       json: 'asset-manifest.json',
     };
     differencify.generateReport(config);
-    expect(differencify.reporter.generate).toHaveBeenCalledWith(config, globalConfig.testReportPath);
+    expect(mockReporter.generate).toHaveBeenCalledWith(config, globalConfig.testReportPath);
   });
   it('cleanup fn', async () => {
     const chromy1 = new Chromy();

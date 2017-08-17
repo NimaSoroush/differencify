@@ -4,9 +4,8 @@ import logger from './logger';
 import getHtmlReport from './reportTypes/htmlReport';
 import getJsonReport from './reportTypes/jsonReport';
 
-const saveReport = (filepath, contents) => {
+const saveReport = (filepath, contents) =>
   fs.writeFileSync(filepath, contents);
-};
 
 const getReport = (key, results) => {
   switch (key) {
@@ -18,23 +17,44 @@ const getReport = (key, results) => {
   }
 };
 
-class Reporter {
+const getImages = dir =>
+  fs
+    .readdirSync(dir)
+    .filter(file => fs.lstatSync(path.join(dir, file)).isFile());
 
-  constructor() {
+const getImagePath = (files, file) =>
+  (files.indexOf(file) !== -1 ? file : null);
+
+class Reporter {
+  constructor(options = {}) {
+    this.options = options;
     this.results = [];
   }
 
-  addResult(outcome, fileName, message, diff) {
+  addResult({ outcome, testName, result }) {
     this.results.push({
       outcome,
-      fileName: path.basename(fileName),
-      message,
-      diff: diff ? path.basename(diff) : null,
+      testName,
+      result,
     });
   }
 
   getResults() {
-    return this.results;
+    const { testReportPath, saveDifferencifiedImage } = this.options;
+    const images = getImages(testReportPath);
+    return this.results.map(result =>
+      // eslint-disable-next-line prefer-object-spread/prefer-object-spread
+      Object.assign(
+        {
+          referenceFileName: getImagePath(images, `${result.testName}.png`),
+          diffFileName:
+            !result.outcome && saveDifferencifiedImage
+              ? getImagePath(images, `${result.testName}_differencified.png`)
+              : null,
+        },
+        result,
+      ),
+    );
   }
 
   generate(types, testReportPath) {
@@ -45,10 +65,11 @@ class Reporter {
         saveReport(filepath, template);
         logger.log(`Generated ${type} report at ${filepath}`);
       } catch (err) {
-        logger.error(`Unable to generate ${type} report at ${filepath}: ${err}`);
+        logger.error(
+          `Unable to generate ${type} report at ${filepath}: ${err}`,
+        );
       }
     });
-    return true;
   }
 }
 

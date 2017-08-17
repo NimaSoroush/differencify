@@ -6,6 +6,7 @@ import { globalConfig, testConfig, configTypes } from './defaultConfig';
 import actions from './actions';
 import functionToString from './helpers/functionToString';
 import freezeImage from './freezeImage';
+import Reporter from './Reporter';
 
 jest.mock('chromy', () => () =>
   ({
@@ -29,6 +30,10 @@ jest.mock('./compareImage', () => jest.fn(arg =>
 
 jest.mock('./helpers/functionToString');
 
+jest.mock('./Reporter', () => () => ({
+  addResult: jest.fn(),
+}));
+
 let loggerCalls = [];
 logger.prefix = () => logger;
 logger.log = (...args) => {
@@ -40,9 +45,15 @@ fs.writeFileSync = (...args) => {
   writeFileSyncCalls.push(...args);
 };
 
+let mockReporter;
+
 const chromy = new Chromy();
 
 describe('ChromyRunner', () => {
+  beforeEach(() => {
+    mockReporter = new Reporter();
+  });
+
   afterEach(() => {
     loggerCalls = [];
     writeFileSyncCalls = [];
@@ -55,7 +66,7 @@ describe('ChromyRunner', () => {
   });
   it('run update', async () => {
     testConfig.type = configTypes.update;
-    const result = await run(chromy, globalConfig, testConfig);
+    const result = await run(chromy, globalConfig, testConfig, mockReporter);
     expect(result).toEqual(true);
     expect(chromy.goto).toHaveBeenCalledWith('www.example.com');
     expect(chromy.screenshotDocument).toHaveBeenCalledTimes(1);
@@ -66,7 +77,7 @@ describe('ChromyRunner', () => {
   });
   it('run test', async () => {
     testConfig.type = configTypes.test;
-    const result = await run(chromy, globalConfig, testConfig);
+    const result = await run(chromy, globalConfig, testConfig, mockReporter);
     expect(result).toEqual(true);
     expect(chromy.goto).toHaveBeenCalledWith('www.example.com');
     expect(chromy.screenshotDocument).toHaveBeenCalledTimes(1);
@@ -75,11 +86,24 @@ describe('ChromyRunner', () => {
     expect(loggerCalls[2]).toEqual('screenshot saved in -> ./differencify_report/default.png');
     expect(writeFileSyncCalls).toEqual(['./differencify_report/default.png', 'png file']);
   });
+  it('run test fail', async () => {
+    // eslint-disable-next-line prefer-object-spread/prefer-object-spread
+    const failTestConfig = Object.assign({}, testConfig);
+    failTestConfig.steps = [{
+      name: 'test',
+    }];
+    // eslint-disable-next-line prefer-object-spread/prefer-object-spread
+    const failGlobalConfig = Object.assign({}, globalConfig);
+    failGlobalConfig.screenshots = null;
+    const result = await run(chromy, failGlobalConfig, failTestConfig, mockReporter);
+    expect(result).toEqual(false);
+    expect(mockReporter.addResult).toHaveBeenCalledWith({ outcome: false, result: '', testName: 'default' });
+  });
   describe('Chromy runner', () => {
     it('Step runner: test action', async () => {
       testConfig.type = configTypes.test;
       testConfig.steps.push({ name: actions.test, value: globalConfig.testReportPath });
-      const result = await run(chromy, globalConfig, testConfig);
+      const result = await run(chromy, globalConfig, testConfig, mockReporter);
       testConfig.steps.pop({ name: actions.test, value: globalConfig.testReportPath });
       expect(result).toEqual(true);
       expect(chromy.goto).toHaveBeenCalledWith('www.example.com');
@@ -91,7 +115,7 @@ describe('ChromyRunner', () => {
     });
     it('Step runner: update action', async () => {
       testConfig.type = configTypes.update;
-      const result = await run(chromy, globalConfig, testConfig);
+      const result = await run(chromy, globalConfig, testConfig, mockReporter);
       expect(result).toEqual(true);
       expect(chromy.goto).toHaveBeenCalledWith('www.example.com');
       expect(chromy.screenshotDocument).toHaveBeenCalledTimes(1);
@@ -115,7 +139,7 @@ describe('ChromyRunner', () => {
         ],
       };
       newConfig.type = configTypes.test;
-      const result = await run(chromy, globalConfig, newConfig);
+      const result = await run(chromy, globalConfig, newConfig, mockReporter);
       expect(result).toEqual(true);
       expect(chromy.goto).toHaveBeenCalledWith('www.example.com');
       expect(chromy.screenshot).toHaveBeenCalledTimes(1);
@@ -137,7 +161,7 @@ describe('ChromyRunner', () => {
         ],
       };
       newConfig.type = configTypes.test;
-      const result = await run(chromy, globalConfig, newConfig);
+      const result = await run(chromy, globalConfig, newConfig, mockReporter);
       expect(result).toEqual(true);
       expect(chromy.goto).toHaveBeenCalledWith('www.example.com');
       expect(chromy.screenshotDocument).toHaveBeenCalledTimes(1);
@@ -159,7 +183,7 @@ describe('ChromyRunner', () => {
         ],
       };
       newConfig.type = configTypes.test;
-      const result = await run(chromy, globalConfig, newConfig);
+      const result = await run(chromy, globalConfig, newConfig, mockReporter);
       expect(result).toEqual(true);
       expect(chromy.goto).toHaveBeenCalledWith('www.example.com');
       expect(chromy.screenshotSelector).toHaveBeenCalledTimes(1);
@@ -183,7 +207,7 @@ describe('ChromyRunner', () => {
         ],
       };
       newConfig.type = configTypes.test;
-      const result = await run(chromy, globalConfig, newConfig);
+      const result = await run(chromy, globalConfig, newConfig, mockReporter);
       expect(result).toEqual(true);
       expect(chromy.goto).toHaveBeenCalledWith('www.example.com');
       expect(chromy.wait).toHaveBeenCalledWith(10);
@@ -203,7 +227,7 @@ describe('ChromyRunner', () => {
         ],
       };
       newConfig.type = configTypes.test;
-      const result = await run(chromy, globalConfig, newConfig);
+      const result = await run(chromy, globalConfig, newConfig, mockReporter);
       expect(result).toEqual(true);
       expect(chromy.goto).toHaveBeenCalledWith('www.example.com');
       expect(chromy.wait).toHaveBeenCalledWith('selector name');
@@ -223,7 +247,7 @@ describe('ChromyRunner', () => {
         ],
       };
       newConfig.type = configTypes.test;
-      const result = await run(chromy, globalConfig, newConfig);
+      const result = await run(chromy, globalConfig, newConfig, mockReporter);
       expect(result).toEqual(true);
       expect(chromy.goto).toHaveBeenCalledWith('www.example.com');
       expect(chromy.wait).toHaveBeenCalledTimes(1);
@@ -243,7 +267,7 @@ describe('ChromyRunner', () => {
         ],
       };
       newConfig.type = configTypes.test;
-      const result = await run(chromy, globalConfig, newConfig);
+      const result = await run(chromy, globalConfig, newConfig, mockReporter);
       expect(result).toEqual(false);
       expect(chromy.goto).toHaveBeenCalledWith('www.example.com');
       expect(chromy.wait).toHaveBeenCalledTimes(0);
@@ -263,7 +287,7 @@ describe('ChromyRunner', () => {
           { name: 'execute', value: () => {} },
         ],
       };
-      const result = await run(chromy, globalConfig, newConfig);
+      const result = await run(chromy, globalConfig, newConfig, mockReporter);
       expect(result).toEqual(true);
       expect(chromy.evaluate).toHaveBeenCalledTimes(1);
       expect(loggerCalls[0]).toEqual('waiting for to execute function in browser');
@@ -279,7 +303,7 @@ describe('ChromyRunner', () => {
           { name: 'execute', value: 123 },
         ],
       };
-      const result = await run(chromy, globalConfig, newConfig);
+      const result = await run(chromy, globalConfig, newConfig, mockReporter);
       expect(result).toEqual(false);
       expect(chromy.evaluate).toHaveBeenCalledTimes(0);
       expect(loggerCalls[0]).toEqual('failed to detect execute function');
@@ -299,7 +323,7 @@ describe('ChromyRunner', () => {
           { name: 'freezeImage', value: 'selector' },
         ],
       };
-      const result = await run(chromy, globalConfig, newConfig);
+      const result = await run(chromy, globalConfig, newConfig, mockReporter);
       expect(result).toEqual(true);
       expect(chromy.evaluate).toHaveBeenCalledWith('return string function');
       expect(functionToString).toHaveBeenCalledWith(freezeImage, 'selector');
@@ -318,7 +342,7 @@ describe('ChromyRunner', () => {
           { name: 'freezeImage', value: 'selector' },
         ],
       };
-      const result = await run(chromy, globalConfig, newConfig);
+      const result = await run(chromy, globalConfig, newConfig, mockReporter);
       expect(result).toEqual(false);
       expect(chromy.evaluate).toHaveBeenCalledWith('return string function');
       expect(functionToString).toHaveBeenCalledWith(freezeImage, 'selector');
