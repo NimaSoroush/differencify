@@ -7,4 +7,8 @@ const differencify = new Differencify(globalConfig);
 differencify.test(testConfig).then((result) => {
   console.log(result); // true or false
   differencify.cleanup();
+  differencify.generateReport({
+    html: 'index.html',
+    json: 'report.json',
+  });
 });

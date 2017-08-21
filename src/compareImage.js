@@ -1,7 +1,7 @@
 import Jimp from 'jimp';
 import logger from './logger';
 
-const compareImage = async (options, testName) => {
+const compareImage = async (options, testName, reporter) => {
   const prefixedLogger = logger.prefix(testName);
   const referenceFile = `${options.screenshots}/${testName}.png`;
   const testFile = `${options.testReportPath}/${testName}.png`;
@@ -25,7 +25,13 @@ const compareImage = async (options, testName) => {
   const distance = Jimp.distance(referenceImage, testImage);
   const diff = Jimp.diff(referenceImage, testImage, options.mismatchThreshold);
   if (distance < options.mismatchThreshold && diff.percent < options.mismatchThreshold) {
-    return 'no mismatch found ✅';
+    const result = 'no mismatch found ✅';
+    reporter.addResult({
+      outcome: true,
+      testName,
+      result,
+    });
+    return result;
   }
 
   if (options.saveDifferencifiedImage) {

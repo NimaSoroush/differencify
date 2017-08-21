@@ -4,6 +4,7 @@ import getPort from 'get-port';
 import Differencify from './index';
 import logger from './logger';
 import run from './chromyRunner';
+import Reporter from './Reporter';
 
 jest.mock('get-port', () => jest.fn(() => 3000));
 const mockClose = jest.fn();
@@ -29,6 +30,10 @@ jest.mock('./logger', () => ({
   enable: jest.fn(),
 }));
 
+jest.mock('./Reporter', () => () => ({
+  generate: jest.fn(),
+}));
+
 const globalConfig = {
   screenshots: 'screenshots',
   debug: true,
@@ -48,7 +53,8 @@ const testConfig = {
   ],
 };
 
-const differencify = new Differencify(globalConfig);
+const mockReporter = new Reporter();
+const differencify = new Differencify(globalConfig, mockReporter);
 
 describe('Differencify', () => {
   afterEach(() => {
@@ -85,6 +91,14 @@ describe('Differencify', () => {
     expect(mockClose).toHaveBeenCalledTimes(1);
     expect(mockLog).toHaveBeenCalledWith('closing browser');
     expect(run).toHaveBeenCalledTimes(1);
+  });
+  it('generateReport fn', async () => {
+    const config = {
+      html: 'index.html',
+      json: 'asset-manifest.json',
+    };
+    differencify.generateReport(config);
+    expect(mockReporter.generate).toHaveBeenCalledWith(config, globalConfig.testReportPath);
   });
   it('cleanup fn', async () => {
     const chromy1 = new Chromy();

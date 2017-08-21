@@ -7,6 +7,10 @@ const differencify = new Differencify(globalConfig.default);
 describe('My website', () => {
   afterAll(() => {
     differencify.cleanup();
+    differencify.generateReport({
+      html: 'index.html',
+      json: 'report.json',
+    });
   });
   it('validate visual regression test', async () => {
     const result = await differencify.test(testConfig.default);

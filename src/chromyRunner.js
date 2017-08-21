@@ -14,7 +14,7 @@ const saveImage = (testName, image, testType, screenshotsPath, testReportPath) =
   return fs.writeFileSync(filePath, image);
 };
 
-const run = async (chromy, options, test) => {
+const run = async (chromy, options, test, reporter) => {
   const prefixedLogger = logger.prefix(test.name);
   // eslint-disable-next-line no-restricted-syntax
   for (const action of test.steps) {
@@ -64,9 +64,14 @@ const run = async (chromy, options, test) => {
         break;
       case actions.test:
         try {
-          const result = await compareImage(options, test.name);
+          const result = await compareImage(options, test.name, reporter);
           prefixedLogger.log(result);
         } catch (error) {
+          reporter.addResult({
+            outcome: false,
+            testName: test.name,
+            result: error.message || '',
+          });
           prefixedLogger.error(error);
           return false;
         }

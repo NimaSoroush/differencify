@@ -34,3 +34,5 @@ docs/
 .vscode/
 differencify_report/
 screenshots/
+# OSX hidden files
+.DS_Store
