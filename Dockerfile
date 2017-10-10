@@ -1,29 +1,33 @@
-FROM debian:sid
+FROM node:8-slim
 
-# Install deps + add Chrome Stable + purge all the things
-RUN apt-get update && apt-get install -y --force-yes \
-  apt-transport-https \
-  ca-certificates \
-  curl \
-  gnupg \
-  --no-install-recommends
-RUN curl -sSL https://dl.google.com/linux/linux_signing_key.pub | apt-key add -
-RUN echo "deb [arch=amd64] https://dl.google.com/linux/chrome/deb/ stable main" > /etc/apt/sources.list.d/google-chrome.list
-RUN apt-get update && apt-get install -y \
-	google-chrome-stable \
-	--no-install-recommends
-# RUN apt-get -f purge --auto-remove -y --force-yes curl gnupg
-RUN apt-get -f -y --force-yes remove --purge curl
-# RUN apt-get -f -y --force-yes remove --purge gnupg
-RUN rm -rf /var/lib/apt/lists/*
+# Install latest chrome dev package.
+# Note: this installs the necessary libs to make the bundled version of Chromium that Pupppeteer
+# installs, work.
+RUN apt-get update && apt-get install -y wget --no-install-recommends \
+    && wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - \
+    && sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list' \
+    && apt-get update \
+    && apt-get install -y google-chrome-unstable \
+      --no-install-recommends \
+    && rm -rf /var/lib/apt/lists/* \
+    && apt-get purge --auto-remove -y curl \
+    && rm -rf /src/*.deb
 
-# Add Chrome as a user
-RUN groupadd -r chrome && useradd -r -g chrome -G audio,video chrome \
-    && mkdir -p /home/chrome && chown -R chrome:chrome /home/chrome
+# Uncomment to skip the chromium download when installing puppeteer. If you do,
+# you'll need to launch puppeteer with:
+#     browser.launch({executablePath: 'google-chrome-unstable'})
+# ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD true
 
-EXPOSE 9222
+# Install puppeteer so it's available in the container.
+RUN yarn add puppeteer
 
-# Autorun chrome headless with no GPU
-ENTRYPOINT [ "google-chrome-stable" ]
+# Add pptr user.
+RUN groupadd -r pptruser && useradd -r -g pptruser -G audio,video pptruser \
+    && mkdir -p /home/pptruser/Downloads \
+    && chown -R pptruser:pptruser /home/pptruser \
+    && chown -R pptruser:pptruser /node_modules
 
-CMD [ "--headless", "--disable-gpu", "--remote-debugging-address=0.0.0.0", "--remote-debugging-port=9222" ]
+# Run user as non privileged.
+USER pptruser
+
+CMD ["google-chrome-unstable"]

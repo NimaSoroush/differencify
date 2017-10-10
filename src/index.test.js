@@ -1,26 +1,24 @@
 import fs from 'fs';
-import Chromy from 'chromy';
-import getPort from 'get-port';
+import puppeteer from 'puppeteer';
+import chainProxy from './helpers/proxyChain';
 import Differencify from './index';
-import logger from './logger';
-import run from './chromyRunner';
+import logger from './utils/logger';
+import Page from './page';
 
-jest.mock('get-port', () => jest.fn(() => 3000));
-const mockClose = jest.fn();
-jest.mock('chromy', () => () =>
-  ({
-    close: mockClose,
-    options: { port: 3000 },
-  }));
-jest.mock('./chromyRunner', () => jest.fn(() => true));
+jest.mock('./page');
+jest.mock('./helpers/proxyChain');
 
 jest.mock('fs', () => ({
   mkdirSync: jest.fn(),
   existsSync: jest.fn(),
 }));
 
+jest.mock('puppeteer', () => ({
+  launch: jest.fn(),
+}));
+
 const mockLog = jest.fn();
-jest.mock('./logger', () => ({
+jest.mock('./utils/logger', () => ({
   prefix: jest.fn(() => ({
     log: mockLog,
   })),
@@ -29,76 +27,79 @@ jest.mock('./logger', () => ({
   enable: jest.fn(),
 }));
 
-const globalConfig = {
-  screenshots: 'screenshots',
-  debug: true,
-  visible: true,
-  timeout: 30000,
-};
-
-const testConfig = {
-  name: 'default',
-  resolution: {
-    width: 800,
-    height: 600,
-  },
-  steps: [
-    { name: 'goto', value: 'www.example.com' },
-    { name: 'capture', value: 'document' },
-  ],
-};
-
-const differencify = new Differencify(globalConfig);
+const differencify = new Differencify();
 
 describe('Differencify', () => {
   afterEach(() => {
     mockLog.mockClear();
     logger.log.mockClear();
-    run.mockClear();
-    mockClose.mockClear();
+    differencify.browser = null;
+    differencify.testId = 0;
+    puppeteer.launch.mockClear();
+    chainProxy.mockClear();
   });
-  it('constructor fn', async () => {
-    expect(fs.mkdirSync).toHaveBeenCalledWith('screenshots');
+  it('constructor', async () => {
+    expect(fs.mkdirSync).toHaveBeenCalledWith('./screenshots');
     expect(fs.mkdirSync).toHaveBeenCalledWith('./differencify_report');
   });
-  it('update fn', async () => {
-    const result = await differencify.update(testConfig);
-    expect(result).toEqual(true);
-    expect(differencify.chromeInstances[3000]).toEqual(undefined);
-    expect(mockClose).toHaveBeenCalledTimes(1);
-    expect(mockLog).toHaveBeenCalledWith('closing browser');
-    expect(run).toHaveBeenCalledTimes(1);
+  it('launchBrowser', async () => {
+    await differencify.launchBrowser();
+    expect(puppeteer.launch).toHaveBeenCalledWith({
+      args: [],
+      dumpio: false,
+      executablePath: undefined,
+      headless: true,
+      ignoreHTTPSErrors: false,
+      slowMo: 0,
+      timeout: 30000,
+    });
+    expect(logger.log).toHaveBeenCalledWith('Launching browser...');
   });
-  it('test fn', async () => {
-    const result = await differencify.test(testConfig);
-    expect(result).toEqual(true);
-    expect(differencify.chromeInstances[3000]).toEqual(undefined);
-    expect(mockClose).toHaveBeenCalledTimes(1);
-    expect(mockLog).toHaveBeenCalledWith('closing browser');
-    expect(run).toHaveBeenCalledTimes(1);
+  it('does not relaunch browser if one browser instance exists', async () => {
+    differencify.browser = true;
+    await differencify.launchBrowser();
+    expect(puppeteer.launch).toHaveBeenCalledTimes(0);
+    expect(logger.log).toHaveBeenCalledWith('Using existing browser instance');
   });
-  it('chromyRunner will fail test fn', async () => {
-    run.mockReturnValueOnce(Promise.resolve(false));
-    const result = await differencify.test(testConfig);
-    expect(result).toEqual(false);
-    expect(differencify.chromeInstances[3000]).toEqual(undefined);
-    expect(mockClose).toHaveBeenCalledTimes(1);
-    expect(mockLog).toHaveBeenCalledWith('closing browser');
-    expect(run).toHaveBeenCalledTimes(1);
+  it('init', async () => {
+    await differencify.init();
+    expect(chainProxy).toHaveBeenCalledTimes(1);
+  });
+  it('init without chaining', async () => {
+    await differencify.init({ chain: false });
+    expect(Page).toHaveBeenCalledWith(null,
+      {
+        chain: false,
+        newWindow: false,
+        testName: 'test1',
+      },
+      {
+        debug: false,
+        isUpdate: false,
+        mismatchThreshold: 0.01,
+        puppeteer: {
+          args: [],
+          dumpio: false,
+          executablePath: undefined,
+          headless: true,
+          ignoreHTTPSErrors: false,
+          slowMo: 0,
+          timeout: 30000,
+        },
+        saveDifferencifiedImage: true,
+        screenshots: './screenshots',
+        testReports: './differencify_report',
+      });
+    expect(chainProxy).toHaveBeenCalledTimes(0);
+    expect(mockLog).toHaveBeenCalledWith('Opening new tab...');
   });
   it('cleanup fn', async () => {
-    const chromy1 = new Chromy();
-    const chromy2 = new Chromy();
-    differencify.chromeInstances = [chromy1, chromy2];
+    const close = jest.fn();
+    differencify.browser = {
+      close,
+    };
     await differencify.cleanup();
-    expect(mockClose).toHaveBeenCalledTimes(2);
-    expect(differencify.chromeInstances).toEqual({});
-    expect(logger.log).toHaveBeenCalledWith('All browsers been closed');
-  });
-  it('get-port fails test', async () => {
-    getPort.mockReturnValueOnce(Promise.reject());
-    const result = await differencify.test(testConfig);
-    expect(result).toEqual(false);
-    expect(logger.error).toHaveBeenCalledWith('Failed to get a free port', undefined);
+    expect(close).toHaveBeenCalledTimes(1);
+    expect(logger.log).toHaveBeenCalledWith('Closing browser...');
   });
 });

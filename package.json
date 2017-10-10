@@ -1,6 +1,6 @@
 {
   "name": "differencify",
-  "version": "0.0.18",
+  "version": "1.0.0",
   "description": "Perceptual diffing tool",
   "main": "dist/index.js",
   "scripts": {
@@ -19,7 +19,11 @@
   },
   "keywords": [
     "Perceptual diffing tool",
-    "Nodejs"
+    "Visual test",
+    "Nodejs",
+    "Chrome",
+    "ChromeHeadless",
+    "Puppeteer"
   ],
   "author": "Nima Soroush",
   "license": "MIT",
@@ -48,10 +52,10 @@
   "dependencies": {
     "chalk": "^2.0.1",
     "check-types": "^7.2.0",
-    "chromy": "^0.4.7",
     "fs": "0.0.1-security",
-    "get-port": "^3.1.0",
-    "jimp": "^0.2.28"
+    "jimp": "^0.2.28",
+    "puppeteer": "^0.9.0",
+    "type-detect": "^4.0.3"
   },
   "jest": {
     "rootDir": "src",

@@ -3,7 +3,7 @@ import compareImage from './compareImage';
 
 const mockConfig = {
   screenshots: './screenshots',
-  testReportPath: './differencify_report',
+  testReports: './differencify_report',
   saveDifferencifiedImage: false,
   mismatchThreshold: 0.01,
 };
@@ -14,11 +14,13 @@ jest.mock('jimp', () => ({
   diff: jest.fn(),
 }));
 
-
-jest.mock('./logger', () => ({
-  prefix: () => ({
-    log: jest.fn(),
-  }),
+const mockLog = jest.fn();
+const mockError = jest.fn();
+jest.mock('./utils/logger', () => ({
+  prefix: jest.fn(() => ({
+    log: mockLog,
+    error: mockError,
+  })),
 }));
 
 describe('Compare Image', () => {
@@ -37,30 +39,19 @@ describe('Compare Image', () => {
   it('throws correct error if it cannot read image', async () => {
     expect.assertions(2);
     Jimp.read
-      .mockReturnValueOnce(Promise.reject('error1'))
-      .mockReturnValueOnce(Promise.resolve())
-      .mockReturnValueOnce(Promise.reject('error2'));
-
-    try {
-      await compareImage(mockConfig, 'test');
-    } catch (err) {
-      expect(err.message).toEqual('failed to read reference image error1');
-    }
-
-    try {
-      expect(await compareImage(mockConfig, 'test')).toThrow();
-    } catch (err) {
-      expect(err.message).toEqual('failed to read test image error2');
-    }
+      .mockReturnValueOnce(Promise.reject('error1'));
+    const result = await compareImage(mockConfig, 'test');
+    expect(result).toEqual(false);
+    expect(mockError).toHaveBeenCalledWith('failed to read reference image error1');
   });
 
   it('returns correct value if difference below threshold', async () => {
     const result = await compareImage(mockConfig, 'test');
-    expect(result).toEqual('no mismatch found ✅');
+    expect(result).toEqual(true);
+    expect(mockLog).toHaveBeenCalledWith('no mismatch found ✅');
   });
 
   it('returns mismatch found❗ if only difference above threshold', async () => {
-    expect.assertions(1);
     Jimp.diff.mockReturnValue({ percent: 0.02 });
 
     try {
@@ -76,7 +67,6 @@ describe('Compare Image', () => {
   });
 
   it('returns mismatch found❗ if only distance above threshold', async () => {
-    expect.assertions(1);
     Jimp.distance.mockReturnValue(0.02);
 
     try {
@@ -92,7 +82,6 @@ describe('Compare Image', () => {
   });
 
   it('throws error if distance and difference are above threshold', async () => {
-    expect.assertions(1);
     Jimp.distance.mockReturnValue(0.02);
     Jimp.diff.mockReturnValue({ percent: 0.02 });
 
@@ -109,7 +98,6 @@ describe('Compare Image', () => {
   });
 
   it('writes to disk diff image if saveDifferencifiedImage is true', async () => {
-    expect.assertions(1);
     Jimp.distance.mockReturnValue(0.02);
     const mockWrite = jest.fn();
     Jimp.diff.mockReturnValue({

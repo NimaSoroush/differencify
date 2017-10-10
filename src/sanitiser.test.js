@@ -6,57 +6,58 @@ describe('sanitiser', () => {
       const configuration = sanitiseGlobalConfiguration({});
       expect(configuration).toEqual({
         screenshots: './screenshots',
-        testReportPath: './differencify_report',
+        testReports: './differencify_report',
         saveDifferencifiedImage: true,
         debug: false,
-        visible: false,
-        timeout: 30000,
         mismatchThreshold: 0.01,
+        isUpdate: false,
+        puppeteer: {
+          args: [],
+          dumpio: false,
+          executablePath: undefined,
+          headless: true,
+          ignoreHTTPSErrors: false,
+          slowMo: 0,
+          timeout: 30000,
+        },
       });
     });
     it('sanitise if screenshots config provided', () => {
-      const configuration = sanitiseGlobalConfiguration({ screenshots: './screenshots' });
+      const configuration = sanitiseGlobalConfiguration({ screenshots: './somewhere' });
       expect(configuration).toEqual({
-        screenshots: './screenshots',
-        testReportPath: './differencify_report',
+        screenshots: './somewhere',
+        testReports: './differencify_report',
         saveDifferencifiedImage: true,
         debug: false,
-        visible: false,
-        timeout: 30000,
         mismatchThreshold: 0.01,
+        isUpdate: false,
+        puppeteer: {
+          args: [],
+          dumpio: false,
+          executablePath: undefined,
+          headless: true,
+          ignoreHTTPSErrors: false,
+          slowMo: 0,
+          timeout: 30000,
+        },
       });
     });
   });
   describe('sanitise test configuration', () => {
     it('sanitise if no config provided', () => {
-      const configuration = sanitiseTestConfiguration({});
+      const configuration = sanitiseTestConfiguration({}, 1);
       expect(configuration).toEqual({
-        name: 'default',
-        resolution: {
-          width: 800,
-          height: 600,
-        },
-        steps: [
-          { name: 'goto', value: 'www.example.com' },
-          { name: 'capture', value: 'document' },
-        ],
+        chain: true,
+        newWindow: false,
+        testName: 'test1',
       });
     });
-    it('sanitise if resolution config provided', () => {
-      const configuration = sanitiseTestConfiguration({ resolution: {
-        width: 1366,
-        height: 768,
-      } });
+    it('sanitise if some config provided', () => {
+      const configuration = sanitiseTestConfiguration({ newWindow: true }, 1);
       expect(configuration).toEqual({
-        name: 'default',
-        resolution: {
-          width: 1366,
-          height: 768,
-        },
-        steps: [
-          { name: 'goto', value: 'www.example.com' },
-          { name: 'capture', value: 'document' },
-        ],
+        chain: true,
+        newWindow: true,
+        testName: 'test1',
       });
     });
   });

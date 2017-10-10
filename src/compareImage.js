@@ -1,10 +1,10 @@
 import Jimp from 'jimp';
-import logger from './logger';
+import logger from './utils/logger';
 
 const compareImage = async (options, testName) => {
   const prefixedLogger = logger.prefix(testName);
   const referenceFile = `${options.screenshots}/${testName}.png`;
-  const testFile = `${options.testReportPath}/${testName}.png`;
+  const testFile = `${options.testReports}/${testName}.png`;
 
   prefixedLogger.log(`comparing ${referenceFile} and ${testFile}`);
 
@@ -12,38 +12,42 @@ const compareImage = async (options, testName) => {
   try {
     referenceImage = await Jimp.read(referenceFile);
   } catch (err) {
-    throw new Error(`failed to read reference image ${err}`);
+    prefixedLogger.error(`failed to read reference image ${err}`);
+    return false;
   }
 
   let testImage;
   try {
     testImage = await Jimp.read(testFile);
   } catch (err) {
-    throw new Error(`failed to read test image ${err}`);
+    prefixedLogger.error(`failed to read test image ${err}`);
+    return false;
   }
 
   const distance = Jimp.distance(referenceImage, testImage);
   const diff = Jimp.diff(referenceImage, testImage, options.mismatchThreshold);
   if (distance < options.mismatchThreshold && diff.percent < options.mismatchThreshold) {
-    return 'no mismatch found ✅';
+    prefixedLogger.log('no mismatch found ✅');
+    return true;
   }
 
   if (options.saveDifferencifiedImage) {
     try {
-      const diffPath = `${options.testReportPath}/${testName}_differencified.png`;
+      const diffPath = `${options.testReports}/${testName}_differencified.png`;
       diff.image.write(diffPath);
       prefixedLogger.log(`saved the diff image to disk at ${diffPath}`);
     } catch (err) {
-      throw new Error(`failed to save the diff image ${err}`);
+      prefixedLogger.error(`failed to save the diff image: ${err}`);
     }
   }
 
-  throw new Error(`mismatch found❗
+  prefixedLogger.error(`mismatch found❗
     Result:
       distance: ${distance}
       diff: ${diff.percent}
       misMatchThreshold: ${options.mismatchThreshold}
   `);
+  return false;
 };
 
 export default compareImage;
