@@ -22,6 +22,11 @@ jest.mock('puppeteer', () => ({
   })),
 }));
 
+jest.mock('path', () => ({
+  join: jest.fn(),
+  resolve: jest.fn(() => '/differencify_report/test.png'),
+}));
+
 jest.mock('./compareImage', () => jest.fn(arg =>
   new Promise((resolve, reject) => {
     if (arg.screenshots === './screenshots') {
@@ -79,10 +84,10 @@ describe('Page', () => {
     page._saveImage('image');
     expect(mockLog)
       .toHaveBeenCalledWith(
-        'screenshot saved in -> /Users/nimasoroushhaddadi/Documents/projects/differencify/differencify_report/test.png',
+        'screenshot saved in -> /differencify_report/test.png',
       );
     expect(fs.writeFileSync)
-      .toHaveBeenCalledWith('/Users/nimasoroushhaddadi/Documents/projects/differencify/differencify_report/test.png',
+      .toHaveBeenCalledWith('/differencify_report/test.png',
       'image');
   });
   describe('goto', () => {
