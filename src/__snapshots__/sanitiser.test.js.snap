@@ -39,3 +39,19 @@ Object {
   "testReports": "./differencify_report",
 }
 `;
+
+exports[`sanitiser sanitise test configuration sanitise if no config provided 1`] = `
+Object {
+  "chain": true,
+  "newWindow": false,
+  "testName": "test1",
+}
+`;
+
+exports[`sanitiser sanitise test configuration sanitise if some config provided 1`] = `
+Object {
+  "chain": true,
+  "newWindow": true,
+  "testName": "test1",
+}
+`;

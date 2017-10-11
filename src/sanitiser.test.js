@@ -14,19 +14,11 @@ describe('sanitiser', () => {
   describe('sanitise test configuration', () => {
     it('sanitise if no config provided', () => {
       const configuration = sanitiseTestConfiguration({}, 1);
-      expect(configuration).toEqual({
-        chain: true,
-        newWindow: false,
-        testName: 'test1',
-      });
+      expect(configuration).toMatchSnapshot();
     });
     it('sanitise if some config provided', () => {
       const configuration = sanitiseTestConfiguration({ newWindow: true }, 1);
-      expect(configuration).toEqual({
-        chain: true,
-        newWindow: true,
-        testName: 'test1',
-      });
+      expect(configuration).toMatchSnapshot();
     });
   });
 });
