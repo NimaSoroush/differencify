@@ -3,19 +3,19 @@ import type from 'type-detect';
 import logger from './utils/logger';
 import { globalConfig, testConfig } from './config/config';
 
-const error = (name, wrongType, correctType) =>
+const logError = (name, wrongType, correctType) =>
   logger.error(`Invalid argument ${name} with type ${wrongType} been passed. Argument should be ${correctType}`);
 
 const checkProperty = (obj, property, checkType) => {
-  if (obj) {
-    const hasProperty = Object.prototype.hasOwnProperty.call(obj, property);
-    if (!check[checkType](obj[property]) && hasProperty) {
-      error(property, type(obj[property]), checkType);
-      return false;
-    }
-    return hasProperty;
+  if (!obj) {
+    return false;
   }
-  return false;
+  const hasProperty = Object.prototype.hasOwnProperty.call(obj, property);
+  if (!check[checkType](obj[property]) && hasProperty) {
+    logError(property, type(obj[property]), checkType);
+    return false;
+  }
+  return hasProperty;
 };
 
 const sanitiseTestConfiguration = (conf, testId) => {

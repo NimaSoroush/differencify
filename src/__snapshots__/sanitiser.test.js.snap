@@ -1,0 +1,41 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`sanitiser sanitise global configuration sanitise if no config provided 1`] = `
+Object {
+  "debug": false,
+  "isUpdate": false,
+  "mismatchThreshold": 0.01,
+  "puppeteer": Object {
+    "args": Array [],
+    "dumpio": false,
+    "executablePath": undefined,
+    "headless": true,
+    "ignoreHTTPSErrors": false,
+    "slowMo": 0,
+    "timeout": 30000,
+  },
+  "saveDifferencifiedImage": true,
+  "screenshots": "./screenshots",
+  "testReports": "./differencify_report",
+}
+`;
+
+exports[`sanitiser sanitise global configuration sanitise if screenshots config provided 1`] = `
+Object {
+  "debug": false,
+  "isUpdate": false,
+  "mismatchThreshold": 0.01,
+  "puppeteer": Object {
+    "args": Array [],
+    "dumpio": false,
+    "executablePath": undefined,
+    "headless": true,
+    "ignoreHTTPSErrors": false,
+    "slowMo": 0,
+    "timeout": 30000,
+  },
+  "saveDifferencifiedImage": true,
+  "screenshots": "./somewhere",
+  "testReports": "./differencify_report",
+}
+`;

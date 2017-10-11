@@ -98,6 +98,7 @@ describe('Compare Image', () => {
   });
 
   it('writes to disk diff image if saveDifferencifiedImage is true', async () => {
+    expect.assertions(0);
     Jimp.distance.mockReturnValue(0.02);
     const mockWrite = jest.fn();
     Jimp.diff.mockReturnValue({

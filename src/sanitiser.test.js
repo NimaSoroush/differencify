@@ -4,43 +4,11 @@ describe('sanitiser', () => {
   describe('sanitise global configuration', () => {
     it('sanitise if no config provided', () => {
       const configuration = sanitiseGlobalConfiguration({});
-      expect(configuration).toEqual({
-        screenshots: './screenshots',
-        testReports: './differencify_report',
-        saveDifferencifiedImage: true,
-        debug: false,
-        mismatchThreshold: 0.01,
-        isUpdate: false,
-        puppeteer: {
-          args: [],
-          dumpio: false,
-          executablePath: undefined,
-          headless: true,
-          ignoreHTTPSErrors: false,
-          slowMo: 0,
-          timeout: 30000,
-        },
-      });
+      expect(configuration).toMatchSnapshot();
     });
     it('sanitise if screenshots config provided', () => {
       const configuration = sanitiseGlobalConfiguration({ screenshots: './somewhere' });
-      expect(configuration).toEqual({
-        screenshots: './somewhere',
-        testReports: './differencify_report',
-        saveDifferencifiedImage: true,
-        debug: false,
-        mismatchThreshold: 0.01,
-        isUpdate: false,
-        puppeteer: {
-          args: [],
-          dumpio: false,
-          executablePath: undefined,
-          headless: true,
-          ignoreHTTPSErrors: false,
-          slowMo: 0,
-          timeout: 30000,
-        },
-      });
+      expect(configuration).toMatchSnapshot();
     });
   });
   describe('sanitise test configuration', () => {

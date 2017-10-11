@@ -23,8 +23,8 @@ jest.mock('puppeteer', () => ({
 }));
 
 jest.mock('path', () => ({
-  join: jest.fn(),
-  resolve: jest.fn(() => '/differencify_report/test.png'),
+  join: jest.fn(() => '/'),
+  resolve: jest.fn((a, b, c, d) => `root${b}${d}`),
 }));
 
 jest.mock('./compareImage', () => jest.fn(arg =>
@@ -80,15 +80,27 @@ describe('Page', () => {
     expect(mockNewPage).toHaveBeenCalledTimes(1);
     expect(page.config.newWindow).toEqual(true);
   });
-  it('save image', async () => {
-    page._saveImage('image');
-    expect(mockLog)
-      .toHaveBeenCalledWith(
-        'screenshot saved in -> /differencify_report/test.png',
-      );
-    expect(fs.writeFileSync)
-      .toHaveBeenCalledWith('/differencify_report/test.png',
-      'image');
+  describe('save image', () => {
+    it('saves with default type', async () => {
+      page._saveImage('image');
+      expect(mockLog)
+        .toHaveBeenCalledWith(
+          'screenshot saved in -> root/test.png',
+        );
+      expect(fs.writeFileSync)
+        .toHaveBeenCalledWith('root/test.png',
+        'image');
+    });
+    it('saves with with different type', async () => {
+      page._saveImage('image', { type: 'jpeg' });
+      expect(mockLog)
+        .toHaveBeenCalledWith(
+          'screenshot saved in -> root/test.jpeg',
+        );
+      expect(fs.writeFileSync)
+        .toHaveBeenCalledWith('root/test.jpeg',
+        'image');
+    });
   });
   describe('goto', () => {
     beforeEach(() => {

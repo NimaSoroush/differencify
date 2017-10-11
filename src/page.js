@@ -16,7 +16,7 @@ export default class Page {
     this.error = false;
   }
 
-  async _logError(error) {
+  _logError(error) {
     this.error = true;
     this.prefixedLogger.error(error);
   }
@@ -64,7 +64,7 @@ export default class Page {
       try {
         const image = await this.tab.screenshot(options);
         this.prefixedLogger.log('capturing screenshot');
-        this._saveImage(image);
+        this._saveImage(image, options);
       } catch (error) {
         this._logError(error);
       }
