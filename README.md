@@ -90,9 +90,9 @@ See [API.md](API.md) for full list of API calls
 
 |Parameter|type|required|description|default|
 |---------|----|--------|-----------|-------|
-|`testName`|`string`|yes|Unique name for your test case|test|
+|`testName`|`string`|no|Unique name for your test case|test|
 |`newWindow`|`boolean`|no|Whether to open test execution on new browser window or not. By default it opens on new tab|false|
-|`chain`|`boolean`|yes|Whether to chain differencify commands or not. More details on [examples](examples)|null|
+|`chain`|`boolean`|no|Whether to chain differencify commands or not. More details on [examples](examples)|true|
 
 ### Steps API
 
