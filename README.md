@@ -9,7 +9,7 @@ Regression Testing suite!
 Status: [![CircleCI](https://circleci.com/gh/NimaSoroush/differencify/tree/master.svg?style=svg)](https://circleci.com/gh/NimaSoroush/differencify/tree/master)
 
 ## About
-Differencify is a library for visual regression testing by comparing your local changes with reference screenshots of your website.
+Differencify is a library for visual regression testing by comparing your local changes with reference screenshots of your website. It is built on top of chrome headless using [Puppeteer](https://github.com/GoogleChrome/puppeteer)
 
 |Reference|Local changes|
 |---------|-------------|
@@ -17,7 +17,7 @@ Differencify is a library for visual regression testing by comparing your local 
 
 
 ## Requirements
-- Node > 6
+- Node > 7.6.0
 - Chrome > 59 or [Chrome Canary](https://www.google.co.uk/chrome/browser/canary.html)
 
 ## Installation
@@ -30,26 +30,40 @@ npm install differencify
 import Differencify from 'differencify';
 const differencify = new Differencify(GlobalOptions);
 ```
-### Create reference screenshots
-```js
-async () => {
-  const result = await differencify.update(TestOptions);
-  console.log(result); //true if update succeeded
-}
-```
-<p align="center">
-<img src="images/update.gif" width="500">
-</p>
 
 ### Validate your changes
 ```js
-async () => {
-  const result = await differencify.test(TestOptions);
-  console.log(result); //true if test pass
-}
+(async () => {
+  const result = await differencify
+    .init()
+    .resize({ width: 1600, height: 1200 })
+    .goto('http://www.google.com')
+    .wait(3000)
+    .capture()
+    .close()
+    .end();
+  
+  // or unchained
+
+  const page = await differencify.init({ chain: false });
+  await page.resize({ width: 1600, height: 1200 });
+  await page.goto('http://www.msn.com');
+  await page.wait(3000);
+  await page.capture();
+  const result = await page.close();
+
+  console.log(result); // Prints true or false
+})();
 ```
 <p align="center">
 <img src="images/test.gif" width="500">
+</p>
+
+### Create/Update reference screenshots
+Simply set environment variable `update=true` and run the same code.
+
+<p align="center">
+<img src="images/update.gif" width="500">
 </p>
 
 ### API
@@ -60,45 +74,42 @@ See [API.md](API.md) for full list of API calls
 
 |Parameter|type|required|description|default|
 |---------|----|--------|-----------|-------|
-|`visible`|`bool`|no|Browser is launched in visible mode|false|
-|`debug`|`bool`|no|Enables console output|false|
-|`timeout`|`integer` (ms)|no|Global test timeout|30000|
+|`headless`|`boolean`|no|Browser is launched in visible mode|true|
+|`debug`|`boolean`|no|Enables console output|false|
+|`timeout`|`integer` (ms)|no|Maximum time in milliseconds to wait for the Chrome instance to start|30000|
 |`screenshots`|`string`|no|Stores reference screenshots in this directory|./screenshots|
-|`testReportPath`|`string`|no|Stores test screenshots in this directory|./differencify_report|
-|`saveDifferencifiedImage`|`bool`|no|Save differencified image to testReportPath in case of mistmach|true|
-|`mismatchThreshold`|`integer`|no|Difference tolerance between referenced/testsed image|0.01|
+|`testReports`|`string`|no|Stores test screenshots in this directory|./differencify_report|
+|`saveDifferencifiedImage`|`boolean`|no|Save differencified image to testReportPath in case of mismatch|true|
+|`mismatchThreshold`|`integer`|no|Difference tolerance between reference/test image|0.01|
+|`ignoreHTTPSErrors`|`boolean`|no|Whether to ignore HTTPS errors during navigation|false|
+|`slowMo`|`integer`|no|Slows down browser operations by the specified amount of milliseconds|0|
+|`browserArgs`|`Array`|no|Additional arguments to pass to the browser instance. List of Chromium flags can be found [here](http://peter.sh/experiments/chromium-command-line-switches/)|[]|
+|`dumpio`|`boolean`|no|Whether to pipe browser process stdout and stderr into process.stdout and process.stderr|false|
 
 ### TestOptions
 
 |Parameter|type|required|description|default|
 |---------|----|--------|-----------|-------|
-|`name`|`string`|yes|Unique name for your test case|default|
-|`resolution`|`object`|no|Browser width and height|800 * 600|
-|`steps`|`object`|yes|Steps before capturing screenshot|null|
+|`testName`|`string`|yes|Unique name for your test case|test|
+|`newWindow`|`boolean`|no|Whether to open test execution on new browser window or not. By default it opens on new tab|false|
+|`chain`|`boolean`|yes|Whether to chain differencify commands or not. More details on [examples](examples)|null|
 
 ### Steps API
 
 See [API.md](API.md) for full list of Steps API calls
 
-### TestOptions example
-
-```
-{
-  name: 'default',
-  resolution: {
-    width: 800,
-    height: 600,
-  },
-  steps: [
-    { name: 'goto', value: 'http://www.example.com' },
-    { name: 'capture', value: 'document' },
-  ],
-}
-```
 
 ### Interested on Docker image!
 
-A [Dockerfile](Dockerfile) with chrome-headless is availale for local and CI usage
+A [Dockerfile](Dockerfile) with chrome-headless is available for local and CI usage
+
+Build the container:
+
+```docker build -t puppeteer-chrome-linux .```
+
+Run the container by passing node -e "<yourscript.js content as a string> as the command:
+
+```docker run -i --rm --name puppeteer-chrome puppeteer-chrome-linux node -e "`cat yourscript.js`"```
 
 
 ### Links

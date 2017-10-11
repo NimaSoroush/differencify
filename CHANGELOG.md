@@ -1,3 +1,12 @@
+## [1.0.0] - 2017-10-10
+### Changed
+- Replacing chromy with puppeteer as backend
+- Add functionality to chain differencify methods
+- Add resize functionality
+- Removed dependency to config files
+- Better logging
+- Bug fixes
+
 ## [0.0.18] - 2017-08-14
 ### Added
 - Fixing issue with freezing image

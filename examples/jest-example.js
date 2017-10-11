@@ -1,15 +1,36 @@
-import Differencify from 'differencify';
-import globalConfig from './configs/global-config';
-import testConfig from './configs/test-config';
+const Differencify = require('differencify');
 
-const differencify = new Differencify(globalConfig.default);
+const differencify = new Differencify();
 
-describe('My website', () => {
-  afterAll(() => {
-    differencify.cleanup();
+describe('tests', () => {
+  beforeAll(async () => {
+    await differencify.launchBrowser();
   });
-  it('validate visual regression test', async () => {
-    const result = await differencify.test(testConfig.default);
+  afterAll(async () => {
+    await differencify.cleanup();
+  });
+  it('google', async () => {
+    const result = await differencify
+      .init()
+      .resize({ width: 1600, height: 1200 })
+      .goto('http://www.google.com')
+      .wait(3000)
+      .capture()
+      .close()
+      .end();
+
     expect(result).toEqual(true);
-  }, 30000);
+  }, 20000);
+  it('github', async () => {
+    await differencify
+      .init()
+      .goto('http://www.github.com')
+      .close()
+      .end();
+  }, 7000);
+  it('msn', async () => {
+    const page = await differencify.init({ chain: false });
+    await page.goto('http://www.msn.com');
+    await page.close();
+  }, 7000);
 });
