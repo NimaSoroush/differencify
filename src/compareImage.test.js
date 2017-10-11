@@ -30,8 +30,9 @@ describe('Compare Image', () => {
   });
 
   it('calls Jimp with correct image names', async () => {
-    expect.assertions(2);
-    await compareImage(mockConfig, 'test');
+    expect.assertions(3);
+    const result = await compareImage(mockConfig, 'test');
+    expect(result).toEqual(true);
     expect(Jimp.read).toHaveBeenCalledWith('./differencify_report/test.png');
     expect(Jimp.read).toHaveBeenCalledWith('./screenshots/test.png');
   });
@@ -46,59 +47,54 @@ describe('Compare Image', () => {
   });
 
   it('returns correct value if difference below threshold', async () => {
+    expect.assertions(2);
     const result = await compareImage(mockConfig, 'test');
     expect(result).toEqual(true);
     expect(mockLog).toHaveBeenCalledWith('no mismatch found ✅');
   });
 
   it('returns mismatch found❗ if only difference above threshold', async () => {
+    expect.assertions(2);
     Jimp.diff.mockReturnValue({ percent: 0.02 });
-
-    try {
-      await compareImage(mockConfig, 'test');
-    } catch (err) {
-      expect(err.message).toEqual(`mismatch found❗
+    const result = await compareImage(mockConfig, 'test');
+    expect(result).toEqual(false);
+    expect(mockError).toHaveBeenCalledWith(`mismatch found❗
     Result:
       distance: 0
       diff: 0.02
       misMatchThreshold: 0.01
   `);
-    }
   });
 
   it('returns mismatch found❗ if only distance above threshold', async () => {
+    expect.assertions(2);
     Jimp.distance.mockReturnValue(0.02);
-
-    try {
-      await compareImage(mockConfig, 'test');
-    } catch (err) {
-      expect(err.message).toEqual(`mismatch found❗
+    const result = await compareImage(mockConfig, 'test');
+    expect(result).toEqual(false);
+    expect(mockError).toHaveBeenCalledWith(`mismatch found❗
     Result:
-      distance: 0.02
-      diff: 0
-      misMatchThreshold: 0.01
-  `);
-    }
-  });
-
-  it('throws error if distance and difference are above threshold', async () => {
-    Jimp.distance.mockReturnValue(0.02);
-    Jimp.diff.mockReturnValue({ percent: 0.02 });
-
-    try {
-      await compareImage(mockConfig, 'test');
-    } catch (err) {
-      expect(err.message).toEqual(`mismatch found❗
-    Result:
-      distance: 0.02
+      distance: 0
       diff: 0.02
       misMatchThreshold: 0.01
   `);
-    }
+  });
+
+  it('throws error if distance and difference are above threshold', async () => {
+    expect.assertions(2);
+    Jimp.distance.mockReturnValue(0.02);
+    Jimp.diff.mockReturnValue({ percent: 0.02 });
+    const result = await compareImage(mockConfig, 'test');
+    expect(result).toEqual(false);
+    expect(mockError).toHaveBeenCalledWith(`mismatch found❗
+    Result:
+      distance: 0
+      diff: 0.02
+      misMatchThreshold: 0.01
+  `);
   });
 
   it('writes to disk diff image if saveDifferencifiedImage is true', async () => {
-    expect.assertions(0);
+    expect.assertions(2);
     Jimp.distance.mockReturnValue(0.02);
     const mockWrite = jest.fn();
     Jimp.diff.mockReturnValue({
@@ -107,11 +103,9 @@ describe('Compare Image', () => {
         write: mockWrite,
       },
     });
-    try {
-      // eslint-disable-next-line prefer-object-spread/prefer-object-spread
-      await compareImage(Object.assign({}, mockConfig, { saveDifferencifiedImage: true }), 'test');
-    } catch (err) {
-      expect(mockWrite).toHaveBeenCalledWith('./differencify_report/test_differencified.png');
-    }
+    // eslint-disable-next-line prefer-object-spread/prefer-object-spread
+    const result = await compareImage(Object.assign({}, mockConfig, { saveDifferencifiedImage: true }), 'test');
+    expect(result).toEqual(false);
+    expect(mockWrite).toHaveBeenCalledWith('./differencify_report/test_differencified.png');
   });
 });
