@@ -1,7 +1,7 @@
 import check from 'check-types';
 import type from 'type-detect';
 import logger from './utils/logger';
-import { globalConfig, testConfig } from './config/config';
+import { globalConfig, testConfig } from './config/defaultConfigs';
 
 const logError = (name, wrongType, correctType) =>
   logger.error(`Invalid argument ${name} with type ${wrongType} been passed. Argument should be ${correctType}`);

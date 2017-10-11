@@ -1,7 +1,7 @@
 import fs from 'fs';
 import puppeteer from 'puppeteer';
 import Page from './page';
-import { globalConfig, testConfig } from './config/config';
+import { globalConfig, testConfig } from './config/defaultConfigs';
 import functionToString from './helpers/functionToString';
 import freezeImage from './freezeImage';
 import { sanitiseGlobalConfiguration } from './sanitiser';
