@@ -17,7 +17,7 @@ jest.mock('fs', () => ({
 jest.mock('path', () => ({
   dirname: jest.fn(() => '/parent'),
   join: jest.fn((a, b) => `${a}/${b}`),
-  resolve: jest.fn(() => `dir`),
+  resolve: jest.fn(() => 'dir'),
 }));
 
 const mockLog = jest.fn();
