@@ -1,12 +1,11 @@
 const globalConfig = {
-  screenshots: './screenshots',
-  testReports: './differencify_report',
+  imageSnapshotPath: 'differencify_reports',
   saveDifferencifiedImage: true,
+  imageType: 'png',
   debug: false,
-  isUpdate: false,
   headless: true,
   timeout: 30000,
-  mismatchThreshold: 0.01,
+  mismatchThreshold: 0.001,
   ignoreHTTPSErrors: false,
   slowMo: 0,
   browserArgs: [],
@@ -17,6 +16,7 @@ const testConfig = {
   testName: 'test',
   newWindow: false,
   chain: true,
+  isUpdate: false,
 };
 
 export { globalConfig, testConfig };

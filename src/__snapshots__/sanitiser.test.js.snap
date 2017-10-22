@@ -3,8 +3,8 @@
 exports[`sanitiser sanitise global configuration sanitise if no config provided 1`] = `
 Object {
   "debug": false,
-  "isUpdate": false,
-  "mismatchThreshold": 0.01,
+  "imageSnapshotPath": "differencify_reports",
+  "mismatchThreshold": 0.001,
   "puppeteer": Object {
     "args": Array [],
     "dumpio": false,
@@ -15,16 +15,14 @@ Object {
     "timeout": 30000,
   },
   "saveDifferencifiedImage": true,
-  "screenshots": "./screenshots",
-  "testReports": "./differencify_report",
 }
 `;
 
 exports[`sanitiser sanitise global configuration sanitise if screenshots config provided 1`] = `
 Object {
   "debug": false,
-  "isUpdate": false,
-  "mismatchThreshold": 0.01,
+  "imageSnapshotPath": "differencify_reports",
+  "mismatchThreshold": 0.001,
   "puppeteer": Object {
     "args": Array [],
     "dumpio": false,
@@ -35,14 +33,13 @@ Object {
     "timeout": 30000,
   },
   "saveDifferencifiedImage": true,
-  "screenshots": "./somewhere",
-  "testReports": "./differencify_report",
 }
 `;
 
 exports[`sanitiser sanitise test configuration sanitise if no config provided 1`] = `
 Object {
   "chain": true,
+  "isUpdate": false,
   "newWindow": false,
   "testName": "test1",
 }
@@ -51,6 +48,7 @@ Object {
 exports[`sanitiser sanitise test configuration sanitise if some config provided 1`] = `
 Object {
   "chain": true,
+  "isUpdate": false,
   "newWindow": true,
   "testName": "test1",
 }

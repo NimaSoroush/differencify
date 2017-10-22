@@ -16,20 +16,21 @@ class ChainObject {
 
   async end() {
     let result = null;
-    const actions = this.actions;
+    let actions = this.actions;
     this.actions = [];
-    try {
-      // eslint-disable-next-line no-restricted-syntax
-      for (const action of actions) {
-        if (RESULT_FUNCTION_NAME === action.name) {
-          result = await action.args[0].apply(null, [result]);
-        } else {
-          result = await this.target[action.name](...action.args);
-        }
+    actions.forEach((action) => {
+      if (action.name === 'toMatchSnapshot') {
+        this.target[action.name](...action.args);
       }
-    } catch (e) {
-      logger.error(e);
-      throw e;
+    });
+    actions = actions.filter(action => action.name !== 'toMatchSnapshot');
+    // eslint-disable-next-line no-restricted-syntax
+    for (const action of actions) {
+      if (RESULT_FUNCTION_NAME === action.name) {
+        result = await action.args[0].apply(null, [result]);
+      } else {
+        result = await this.target[action.name](...action.args);
+      }
     }
     return result;
   }
@@ -40,9 +41,7 @@ const makeHandler = (target, options) =>
     get: (chainObj, name) => {
       if (name === options.endFuncName) {
         return () => {
-          if (!options.isUpdate) {
-            chainObj.addAction(options.updateFunctionName, arguments);
-          }
+          chainObj.addAction(options.updateFunctionName, arguments);
           return chainObj.end(chainObj, arguments)
             .then(result => result)
             .catch((e) => {
@@ -72,11 +71,10 @@ const makeHandler = (target, options) =>
     },
   });
 
-const chainProxy = (target, isUpdate = false) => {
+const chainProxy = (target) => {
   const defaultParams = {
     resultFuncName: 'result',
     endFuncName: 'end',
-    isUpdate,
     updateFunctionName: '_compareImage',
   };
   const chainObject = new ChainObject(target, defaultParams);

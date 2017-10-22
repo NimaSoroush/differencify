@@ -1,4 +1,3 @@
-import fs from 'fs';
 import puppeteer from 'puppeteer';
 import Page from './page';
 import { globalConfig, testConfig } from './config/defaultConfigs';
@@ -47,10 +46,6 @@ jest.mock('./utils/logger', () => ({
   })),
 }));
 
-jest.mock('fs', () => ({
-  writeFileSync: jest.fn(),
-}));
-
 const browser = puppeteer.launch();
 const page = new Page(browser, testConfig, sanitiseGlobalConfiguration(globalConfig));
 
@@ -78,29 +73,7 @@ describe('Page', () => {
       timeout: 30000,
     });
     expect(mockNewPage).toHaveBeenCalledTimes(1);
-    expect(page.config.newWindow).toEqual(true);
-  });
-  describe('save image', () => {
-    it('saves with default type', async () => {
-      page._saveImage('image');
-      expect(mockLog)
-        .toHaveBeenCalledWith(
-          'screenshot saved in -> root/test.png',
-        );
-      expect(fs.writeFileSync)
-        .toHaveBeenCalledWith('root/test.png',
-        'image');
-    });
-    it('saves with with different type', async () => {
-      page._saveImage('image', { type: 'jpeg' });
-      expect(mockLog)
-        .toHaveBeenCalledWith(
-          'screenshot saved in -> root/test.jpeg',
-        );
-      expect(fs.writeFileSync)
-        .toHaveBeenCalledWith('root/test.jpeg',
-        'image');
-    });
+    expect(page.testConfig.newWindow).toEqual(true);
   });
   describe('goto', () => {
     beforeEach(() => {
@@ -175,6 +148,15 @@ describe('Page', () => {
       await page.resize('exp');
       expect(tabMocks.setViewport).toHaveBeenCalledWith('exp');
       expect(mockLog).toHaveBeenCalledWith('Resizing window');
+    });
+  });
+  describe('toMatchSnapshot', () => {
+    it('will set test to jest mode', async () => {
+      page.toMatchSnapshot();
+      expect(page.testConfig.isJest).toEqual(true);
+      expect(page.testStats).not.toBeNull();
+      expect(page.testConfig.testName).toEqual('Page toMatchSnapshot will set test to jest mode');
+      expect(mockErr).toHaveBeenCalledTimes(0);
     });
   });
   describe('FreezeImage', () => {

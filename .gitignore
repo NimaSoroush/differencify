@@ -32,5 +32,5 @@ dist/
 # Built docs
 docs/
 .vscode/
-differencify_report/
-screenshots/
+differencify_reports/
+__image_snapshots__/

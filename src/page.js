@@ -1,19 +1,19 @@
-import fs from 'fs';
-import path from 'path';
 import puppeteer from 'puppeteer';
 import logger from './utils/logger';
+import toMatchImageSnapshot from './utils/jestMatchImageSnapshot';
 import compareImage from './compareImage';
 import functionToString from './helpers/functionToString';
 import freezeImage from './freezeImage';
 
 export default class Page {
-  constructor(browser, config, globalConfig) {
+  constructor(browser, testConfig, globalConfig) {
     this.globalConfig = globalConfig;
-    this.config = config;
+    this.testConfig = testConfig;
     this.browser = browser;
     this.tab = null;
-    this.prefixedLogger = logger.prefix(this.config.testName);
+    this.prefixedLogger = logger.prefix(this.testConfig.testName);
     this.error = false;
+    this.image = null;
   }
 
   _logError(error) {
@@ -22,29 +22,19 @@ export default class Page {
   }
 
   async _init() {
-    if (!this.browser || this.config.newWindow) {
+    if (!this.browser || this.testConfig.newWindow) {
       try {
         this.prefixedLogger.log('Launching browser...');
         this.browser = await puppeteer.launch(this.globalConfig.puppeteer);
-        this.config.newWindow = true;
+        this.testConfig.newWindow = true;
       } catch (error) {
         this._logError(error);
       }
     }
     if (!this.tab) {
+      this.prefixedLogger.log('Opening new tab...');
       this.tab = await this.browser.newPage();
     }
-  }
-
-  _saveImage(image, options) {
-    const directory = this.globalConfig.isUpdate ?
-      this.globalConfig.screenshots :
-      this.globalConfig.testReports;
-    const fileExtension = (options && options.type) || 'png';
-    const rootPath = path.join(__dirname, '../');
-    const filePath = path.resolve(__dirname, rootPath, directory, `${this.config.testName}.${fileExtension}`);
-    this.prefixedLogger.log(`screenshot saved in -> ${filePath}`);
-    return fs.writeFileSync(filePath, image);
   }
 
   async goto(url) {
@@ -62,9 +52,9 @@ export default class Page {
   async capture(options) {
     if (!this.error) {
       try {
-        const image = await this.tab.screenshot(options);
+        this.image = await this.tab.screenshot(options);
+        this.testConfig.imageType = (options && options.type) || 'png';
         this.prefixedLogger.log('capturing screenshot');
-        this._saveImage(image, options);
       } catch (error) {
         this._logError(error);
       }
@@ -120,12 +110,35 @@ export default class Page {
     }
   }
 
+  toMatchSnapshot() {
+    this.testConfig.isJest = true;
+    this.testStats = (expect.getState && expect.getState()) || null;
+    if (this.testStats) {
+      this.testConfig.testName = this.testStats.currentTestName;
+      this.prefixedLogger = logger.prefix(this.testConfig.testName);
+      this.testConfig.testPath = this.testStats.testPath;
+      this.testConfig.isUpdate = this.testStats.snapshotState._updateSnapshot === 'all' || false;
+    } else {
+      this._logError('Failed to get Jest test status.');
+    }
+  }
+
   async _compareImage() {
     if (!this.error) {
+      let result;
       try {
-        return await compareImage(this.globalConfig, this.config.testName);
+        result = await compareImage(this.image, this.globalConfig, this.testConfig);
       } catch (error) {
         this._logError(error);
+        throw error;
+        // return false;
+      }
+      if (this.testConfig.isJest === true) {
+        expect.extend({ toMatchImageSnapshot });
+        expect(result).toMatchImageSnapshot(this.testStats);
+      }
+      if (result.matched || result.updated || result.added) {
+        return true;
       }
     }
     return false;
@@ -135,7 +148,7 @@ export default class Page {
     if (!this.error) {
       try {
         await this.tab.close();
-        if (this.config.newWindow) {
+        if (this.testConfig.newWindow) {
           await this.browser.close();
         }
         this.prefixedLogger.log('closing tab');
