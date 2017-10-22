@@ -14,6 +14,12 @@ jest.mock('fs', () => ({
   writeFileSync: jest.fn(),
 }));
 
+jest.mock('path', () => ({
+  dirname: jest.fn(() => '/parent'),
+  join: jest.fn((a, b) => `${a}/${b}`),
+  resolve: jest.fn(() => `dir`),
+}));
+
 const mockLog = jest.fn();
 const mockError = jest.fn();
 jest.mock('./utils/logger', () => ({
@@ -53,7 +59,7 @@ describe('Compare Image', () => {
         imageType: 'png',
       });
       expect(result).toEqual({ added: true });
-      expect(fs.writeFileSync).toHaveBeenCalledWith('/src/__image_snapshots__/test.snap.png', Object);
+      expect(fs.writeFileSync).toHaveBeenCalledWith('/parent/__image_snapshots__/test.snap.png', Object);
     });
     it('ًWill update snapshot when isUpdate=true', async () => {
       const result = await compareImage(Object, mockConfig, {
@@ -64,7 +70,7 @@ describe('Compare Image', () => {
         imageType: 'png',
       });
       expect(result).toEqual({ updated: true });
-      expect(fs.writeFileSync).toHaveBeenCalledWith('/src/__image_snapshots__/test.snap.png', Object);
+      expect(fs.writeFileSync).toHaveBeenCalledWith('/parent/__image_snapshots__/test.snap.png', Object);
     });
   });
 
@@ -80,8 +86,7 @@ describe('Compare Image', () => {
       expect(result).toEqual({ added: true });
       expect(fs.writeFileSync)
       .toHaveBeenCalledWith(
-        '/Users/nimasoroushhaddadi/Documents/projects/differencify/differencify_report/' +
-        '__image_snapshots__/test.snap.png',
+        'dir/__image_snapshots__/test.snap.png',
         Object,
       );
     });
@@ -96,8 +101,7 @@ describe('Compare Image', () => {
       expect(result).toEqual({ updated: true });
       expect(fs.writeFileSync)
       .toHaveBeenCalledWith(
-        '/Users/nimasoroushhaddadi/Documents/projects/differencify/differencify_report/' +
-        '__image_snapshots__/test.snap.png',
+        'dir/__image_snapshots__/test.snap.png',
         Object,
       );
     });
@@ -130,7 +134,7 @@ describe('Compare Image', () => {
     fs.existsSync.mockReturnValueOnce(true);
     const result = await compareImage(Object, mockConfig, mockTestConfig);
     expect(result).toEqual({
-      diffPath: '/src/__image_snapshots__/__differencified_output__/test.differencified.png',
+      diffPath: '/parent/__image_snapshots__/__differencified_output__/test.differencified.png',
       matched: false,
     });
     expect(mockError).toHaveBeenCalledWith(`mismatch found❗
@@ -152,7 +156,7 @@ describe('Compare Image', () => {
     fs.existsSync.mockReturnValueOnce(true);
     const result = await compareImage(Object, mockConfig, mockTestConfig);
     expect(result).toEqual({
-      diffPath: '/src/__image_snapshots__/__differencified_output__/test.differencified.png',
+      diffPath: '/parent/__image_snapshots__/__differencified_output__/test.differencified.png',
       matched: false,
     });
     expect(mockError).toHaveBeenCalledWith(`mismatch found❗
@@ -174,7 +178,7 @@ describe('Compare Image', () => {
     fs.existsSync.mockReturnValueOnce(true);
     const result = await compareImage(Object, mockConfig, mockTestConfig);
     expect(result).toEqual({
-      diffPath: '/src/__image_snapshots__/__differencified_output__/test.differencified.png',
+      diffPath: '/parent/__image_snapshots__/__differencified_output__/test.differencified.png',
       matched: false,
     });
     expect(mockError).toHaveBeenCalledWith(`mismatch found❗
@@ -203,10 +207,10 @@ describe('Compare Image', () => {
       mockTestConfig,
     );
     expect(result).toEqual({
-      diffPath: '/src/__image_snapshots__/__differencified_output__/test.differencified.png',
+      diffPath: '/parent/__image_snapshots__/__differencified_output__/test.differencified.png',
       matched: false,
     });
     expect(mockWrite)
-      .toHaveBeenCalledWith('/src/__image_snapshots__/__differencified_output__/test.differencified.png');
+      .toHaveBeenCalledWith('/parent/__image_snapshots__/__differencified_output__/test.differencified.png');
   });
 });
