@@ -16,6 +16,7 @@
 |`freezeImage`|`string`|Selector name of a <img> tag containing animated image to be freezed before taking screenshot|
 |`capture`|`object`|[screenshot options](https://github.com/NimaSoroush/differencify/blob/master/API.md#screenshot-options)|
 |`resize`|`object`|[viewport](https://github.com/NimaSoroush/differencify/blob/master/API.md#viewport)|
+|`toMatchSnapshot`|`null`|To support jest snapshot testing. This is not tested for other test frameworks|
 
 
 #### screenshot options

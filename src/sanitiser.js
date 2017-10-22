@@ -29,24 +29,20 @@ const sanitiseTestConfiguration = (conf, testId) => {
   configuration.testName = checkProperty(conf, 'testName', 'string')
     ? conf.testName
     : testConfig.testName + testId;
+  configuration.isUpdate = (process.env.update && process.env.update === 'true')
+    ? process.env.update
+    : testConfig.isUpdate;
   return configuration;
 };
 
 const sanitiseGlobalConfiguration = (conf) => {
   const configuration = {};
-  configuration.isUpdate = (process.env.update && process.env.update === 'true')
-    ? process.env.update
-    : globalConfig.isUpdate;
-
   configuration.debug = checkProperty(conf, 'debug', 'boolean')
     ? conf.debug
     : globalConfig.debug;
-  configuration.screenshots = checkProperty(conf, 'screenshots', 'string')
-    ? conf.screenshots
-    : globalConfig.screenshots;
-  configuration.testReports = checkProperty(conf, 'testReports', 'string')
-    ? conf.testReports
-    : globalConfig.testReports;
+  configuration.imageSnapshotPath = checkProperty(conf, 'imageSnapshotPath', 'string')
+    ? conf.imageSnapshotPath
+    : globalConfig.imageSnapshotPath;
   configuration.saveDifferencifiedImage = checkProperty(conf, 'saveDifferencifiedImage', 'boolean')
     ? conf.saveDifferencifiedImage
     : globalConfig.saveDifferencifiedImage;

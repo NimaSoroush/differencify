@@ -9,6 +9,7 @@ class ForTest {
   }
 
   _compareImage() { return this._value; }
+  toMatchSnapshot() { this._value = 'Executed first'; }
 
   async echo(text) {
     this.dummy = null;
@@ -52,6 +53,29 @@ describe('chainProxy', () => {
       .end()
       .then((value) => {
         expect(value).toEqual('321');
+      });
+  });
+  it('executes toMatchSnapshot first', async () => {
+    const obj = chainProxy(new ForTest());
+    await obj
+      .f1()
+      .toMatchSnapshot()
+      .value()
+      .end()
+      .then((value) => {
+        expect(value).toEqual('Executed first1');
+      });
+  });
+  it('remove duplicate toMatchSnapshot steps', async () => {
+    const obj = chainProxy(new ForTest());
+    await obj
+      .f1()
+      .toMatchSnapshot()
+      .toMatchSnapshot()
+      .value()
+      .end()
+      .then((value) => {
+        expect(value).toEqual('Executed first1');
       });
   });
   describe('#result', () => {

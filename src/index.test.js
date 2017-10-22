@@ -1,4 +1,3 @@
-import fs from 'fs';
 import puppeteer from 'puppeteer';
 import chainProxy from './helpers/proxyChain';
 import Differencify from './index';
@@ -7,11 +6,6 @@ import Page from './page';
 
 jest.mock('./page');
 jest.mock('./helpers/proxyChain');
-
-jest.mock('fs', () => ({
-  mkdirSync: jest.fn(),
-  existsSync: jest.fn(),
-}));
 
 jest.mock('puppeteer', () => ({
   launch: jest.fn(),
@@ -25,6 +19,7 @@ jest.mock('./utils/logger', () => ({
   log: jest.fn(),
   error: jest.fn(),
   enable: jest.fn(),
+  warn: jest.fn(),
 }));
 
 const differencify = new Differencify();
@@ -37,10 +32,6 @@ describe('Differencify', () => {
     differencify.testId = 0;
     puppeteer.launch.mockClear();
     chainProxy.mockClear();
-  });
-  it('constructor', async () => {
-    expect(fs.mkdirSync).toHaveBeenCalledWith('./screenshots');
-    expect(fs.mkdirSync).toHaveBeenCalledWith('./differencify_report');
   });
   it('launchBrowser', async () => {
     await differencify.launchBrowser();
@@ -66,17 +57,18 @@ describe('Differencify', () => {
     expect(chainProxy).toHaveBeenCalledTimes(1);
   });
   it('init without chaining', async () => {
+    process.env.update = true;
     await differencify.init({ chain: false });
     expect(Page).toHaveBeenCalledWith(null,
       {
         chain: false,
         newWindow: false,
         testName: 'test1',
+        isUpdate: 'true',
       },
       {
         debug: false,
-        isUpdate: false,
-        mismatchThreshold: 0.01,
+        mismatchThreshold: 0.001,
         puppeteer: {
           args: [],
           dumpio: false,
@@ -87,11 +79,11 @@ describe('Differencify', () => {
           timeout: 30000,
         },
         saveDifferencifiedImage: true,
-        screenshots: './screenshots',
-        testReports: './differencify_report',
+        imageSnapshotPath: 'differencify_reports',
       });
     expect(chainProxy).toHaveBeenCalledTimes(0);
-    expect(mockLog).toHaveBeenCalledWith('Opening new tab...');
+    expect(logger.warn).toHaveBeenCalledWith('Your tests are running on update mode. Test screenshots will be updated');
+    delete process.env.update;
   });
   it('cleanup fn', async () => {
     const close = jest.fn();

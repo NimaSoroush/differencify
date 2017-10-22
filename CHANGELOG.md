@@ -1,3 +1,9 @@
+## [1.1.0] - 2017-10-19
+### Changed
+- Add jest snapshot support
+- Performance improvement
+- Better logging
+
 ## [1.0.0] - 2017-10-10
 ### Changed
 - Replacing chromy with puppeteer as backend

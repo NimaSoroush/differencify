@@ -1,5 +1,6 @@
 Differencify operates under a forking model. In order to contribute, please fork the project and submit a PR. Once the merge request has been accepted you will be able to see your change available on master.
 ## Notes
+* This library been developed and tested by latest version of node
 * Please raise an issue to discuss the change
 * Please add enough unit test for coverage 
 * Please update README.md & CHANGELOG.md
