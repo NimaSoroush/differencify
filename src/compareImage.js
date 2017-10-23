@@ -19,7 +19,6 @@ const compareImage = async (capturedImage, globalConfig, testConfig) => {
   const snapshotsDir = path.join(testRoot, '__image_snapshots__');
   const snapshotPath = path.join(snapshotsDir, `${testConfig.testName}.snap.${testConfig.imageType}`);
 
-  let result = {};
   const diffDir = path.join(snapshotsDir, '__differencified_output__');
   const diffPath = path.join(diffDir, `${testConfig.testName}.differencified.${testConfig.imageType}`);
   if (fs.existsSync(snapshotPath) && !testConfig.isUpdate) {
@@ -75,8 +74,7 @@ const compareImage = async (capturedImage, globalConfig, testConfig) => {
     fs.mkdirSync(snapshotsDir);
   }
   fs.writeFileSync(snapshotPath, capturedImage);
-  result = testConfig.isUpdate ? { updated: true } : { added: true };
-  return result;
+  return testConfig.isUpdate ? { updated: true } : { added: true };
 };
 
 export default compareImage;

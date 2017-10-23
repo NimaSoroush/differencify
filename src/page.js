@@ -130,8 +130,6 @@ export default class Page {
         result = await compareImage(this.image, this.globalConfig, this.testConfig);
       } catch (error) {
         this._logError(error);
-        throw error;
-        // return false;
       }
       if (this.testConfig.isJest === true) {
         expect.extend({ toMatchImageSnapshot });
