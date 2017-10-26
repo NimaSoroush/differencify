@@ -1,3 +1,8 @@
+## [1.1.2] - 2017-10-26
+### Changed
+- Made explicit that library targets node 8.6+
+- Set babel target to node 8.6
+
 ## [1.1.1] - 2017-10-23
 ### Changed
 - Bug fix
