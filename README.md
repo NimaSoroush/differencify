@@ -17,8 +17,7 @@ Differencify is a library for visual regression testing by comparing your local 
 
 
 ## Installation
-> *Note: Differencify uses async/await and targets Node 8.6+. It may work with older versions of Node but it is not tested
-against them* 
+> *Note: Differencify uses async/await and targets Node v7.6.0 or greater* 
 
 Install the module:
 ```bash
