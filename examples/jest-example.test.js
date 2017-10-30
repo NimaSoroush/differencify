@@ -20,4 +20,15 @@ describe('tests differencify', () => {
       .close()
       .end();
   }, 40000);
+  it('validate google page appear correctly', async () => {
+    await differencify
+      .init()
+      .goto('https://www.google.co.uk/')
+      .wait(1000)
+      .freezeImage('#hplogo')
+      .capture()
+      .toMatchSnapshot()
+      .close()
+      .end();
+  }, 40000);
 });
