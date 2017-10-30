@@ -85,13 +85,21 @@ describe('Differencify', () => {
     expect(logger.warn).toHaveBeenCalledWith('Your tests are running on update mode. Test screenshots will be updated');
     delete process.env.update;
   });
-  it('cleanup fn', async () => {
-    const close = jest.fn();
-    differencify.browser = {
-      close,
-    };
-    await differencify.cleanup();
-    expect(close).toHaveBeenCalledTimes(1);
-    expect(logger.log).toHaveBeenCalledWith('Closing browser...');
+  describe('Cleanup fn', () => {
+    it('closes browser instance', async () => {
+      const close = jest.fn();
+      differencify.browser = {
+        close,
+      };
+      await differencify.cleanup();
+      expect(close).toHaveBeenCalledTimes(1);
+      expect(logger.log).toHaveBeenCalledWith('Closing browser...');
+    });
+    it('will not close if there is no browser instance', async () => {
+      differencify.init();
+      await differencify.cleanup();
+      expect(differencify.browser).toBeNull();
+      expect(logger.log).toHaveBeenCalledWith('Closing browser...');
+    });
   });
 });

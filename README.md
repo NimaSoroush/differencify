@@ -61,9 +61,6 @@ Only need to add `toMatchSnapshot()` to your test steps.
 import Differencify from 'differencify';
 const differencify = new Differencify();
 describe('tests differencify', () => {
-  afterAll(async () => {
-    await differencify.cleanup();
-  });
   it('validate github page appear correctly', async () => {
     await differencify
       .init()
@@ -75,6 +72,7 @@ describe('tests differencify', () => {
   });
 });
 ```
+See more jest examples [here](examples/jest-example.test.js).
 
 ### Test <span style="color:green">PASS</span>
 

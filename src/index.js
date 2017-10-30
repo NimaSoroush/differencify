@@ -43,7 +43,9 @@ export default class Differencify {
   async cleanup() {
     logger.log('Closing browser...');
     try {
-      await this.browser.close();
+      if (this.browser) {
+        await this.browser.close();
+      }
     } catch (error) {
       logger.error(error);
     }

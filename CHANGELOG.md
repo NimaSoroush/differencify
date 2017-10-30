@@ -1,3 +1,8 @@
+## [1.1.3] - 2017-10-30
+### Changed
+- Fixed issue with calling cleanup
+- Improved readme file
+
 ## [1.1.2] - 2017-10-26
 ### Changed
 - Made explicit that library targets node 8.6+
