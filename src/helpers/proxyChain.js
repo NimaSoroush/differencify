@@ -75,7 +75,7 @@ const chainProxy = (target) => {
   const defaultParams = {
     resultFuncName: 'result',
     endFuncName: 'end',
-    updateFunctionName: '_compareImage',
+    updateFunctionName: '_evaluateResult',
   };
   const chainObject = new ChainObject(target, defaultParams);
   return new Proxy(

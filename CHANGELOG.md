@@ -1,5 +1,9 @@
+## [1.1.4] - 2017-11-03
+### Fixed
+- Fixed issue with jest failure if error happens in steps
+
 ## [1.1.3] - 2017-10-30
-### Changed
+### Fixed
 - Fixed issue with calling cleanup
 - Improved readme file
 
