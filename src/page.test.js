@@ -4,6 +4,18 @@ import { globalConfig, testConfig } from './config/defaultConfigs';
 import functionToString from './helpers/functionToString';
 import freezeImage from './freezeImage';
 import { sanitiseGlobalConfiguration } from './sanitiser';
+import jestMatchers from './utils/jestMatchers';
+import compareImage from './compareImage';
+
+const mockMatcher = jest.fn(() => ({
+  message: 'message',
+  pass: true,
+}));
+
+jestMatchers.toNotError = mockMatcher;
+jestMatchers.toMatchImageSnapshot = mockMatcher;
+
+jest.mock('./compareImage');
 
 const tabMocks = {
   goto: jest.fn(),
@@ -53,7 +65,10 @@ describe('Page', () => {
   afterEach(() => {
     puppeteer.launch.mockClear();
     mockLog.mockClear();
+    mockErr.mockClear();
     functionToString.mockClear();
+    mockMatcher.mockClear();
+    compareImage.mockClear();
     page.error = false;
   });
   beforeEach(() => {
@@ -157,6 +172,27 @@ describe('Page', () => {
       expect(page.testStats).not.toBeNull();
       expect(page.testConfig.testName).toEqual('Page toMatchSnapshot will set test to jest mode');
       expect(mockErr).toHaveBeenCalledTimes(0);
+    });
+  });
+  describe('_evaluateResult', () => {
+    it('it calls toNotError if error happens in any steps when in jest mode', async () => {
+      page.error = new Error('Error happened');
+      const result = await page._evaluateResult();
+      expect(jestMatchers.toNotError).toHaveBeenCalled();
+      expect(result).toEqual(false);
+    });
+    it('it wont calls toMatchImageSnapshot when in jest mode and compareImage throws', async () => {
+      const result = await page._evaluateResult();
+      expect(compareImage).toHaveBeenCalled();
+      expect(jestMatchers.toMatchImageSnapshot).not.toHaveBeenCalled();
+      expect(result).toEqual(false);
+    });
+    it('it calls toMatchImageSnapshot when in jest mode', async () => {
+      compareImage.mockReturnValueOnce({ matched: true });
+      const result = await page._evaluateResult();
+      expect(compareImage).toHaveBeenCalled();
+      expect(jestMatchers.toMatchImageSnapshot).toHaveBeenCalled();
+      expect(result).toEqual(true);
     });
   });
   describe('FreezeImage', () => {

@@ -1,6 +1,6 @@
 import puppeteer from 'puppeteer';
 import logger from './utils/logger';
-import toMatchImageSnapshot from './utils/jestMatchImageSnapshot';
+import jestMatchers from './utils/jestMatchers';
 import compareImage from './compareImage';
 import functionToString from './helpers/functionToString';
 import freezeImage from './freezeImage';
@@ -12,12 +12,12 @@ export default class Page {
     this.browser = browser;
     this.tab = null;
     this.prefixedLogger = logger.prefix(this.testConfig.testName);
-    this.error = false;
+    this.error = null;
     this.image = null;
   }
 
   _logError(error) {
-    this.error = true;
+    this.error = error;
     this.prefixedLogger.error(error);
   }
 
@@ -123,7 +123,7 @@ export default class Page {
     }
   }
 
-  async _compareImage() {
+  async _evaluateResult() {
     if (!this.error) {
       let result;
       try {
@@ -131,13 +131,22 @@ export default class Page {
       } catch (error) {
         this._logError(error);
       }
+      if (this.error) {
+        return false;
+      }
       if (this.testConfig.isJest === true) {
+        const toMatchImageSnapshot = jestMatchers.toMatchImageSnapshot;
         expect.extend({ toMatchImageSnapshot });
         expect(result).toMatchImageSnapshot(this.testStats);
       }
       if (result.matched || result.updated || result.added) {
         return true;
       }
+    }
+    if (this.testConfig.isJest && this.error) {
+      const toNotError = jestMatchers.toNotError;
+      expect.extend({ toNotError });
+      expect(this.error).toNotError(this.testStats);
     }
     return false;
   }

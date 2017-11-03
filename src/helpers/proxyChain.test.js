@@ -8,7 +8,7 @@ class ForTest {
     return this._value;
   }
 
-  _compareImage() { return this._value; }
+  _evaluateResult() { return this._value; }
   toMatchSnapshot() { this._value = 'Executed first'; }
 
   async echo(text) {

@@ -28,4 +28,21 @@ const toMatchImageSnapshot = (result, testState) => {
   };
 };
 
-export default toMatchImageSnapshot;
+const toNotError = (error, testState) => {
+  const snapshotState = testState;
+  expect.setState(snapshotState, {
+    _counters: snapshotState.snapshotState._counters.set(
+      snapshotState.currentTestName,
+      (snapshotState.snapshotState._counters.get(snapshotState.currentTestName) || 0) + 1,
+    ),
+  });
+
+  const message = () => 'Failed to run your test.\n'
+                  + `${chalk.bold.red('Cause:')} ${chalk.red(error)}`;
+  return {
+    message,
+    pass: false,
+  };
+};
+
+export default { toMatchImageSnapshot, toNotError };
