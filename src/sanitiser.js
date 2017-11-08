@@ -60,8 +60,8 @@ const sanitiseGlobalConfiguration = (conf) => {
   configuration.puppeteer.slowMo = checkProperty(conf, 'slowMo', 'number')
     ? conf.slowMo
     : globalConfig.slowMo;
-  configuration.puppeteer.args = checkProperty(conf, 'args', 'array')
-    ? conf.args
+  configuration.puppeteer.args = checkProperty(conf, 'browserArgs', 'array')
+    ? conf.browserArgs
     : globalConfig.browserArgs;
   configuration.puppeteer.dumpio = checkProperty(conf, 'dumpio', 'boolean')
     ? conf.dumpio

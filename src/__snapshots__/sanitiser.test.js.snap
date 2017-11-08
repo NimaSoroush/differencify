@@ -18,6 +18,27 @@ Object {
 }
 `;
 
+exports[`sanitiser sanitise global configuration sanitise if puppeteer specific configuration provided 1`] = `
+Object {
+  "debug": false,
+  "imageSnapshotPath": "differencify_reports",
+  "mismatchThreshold": 0.001,
+  "puppeteer": Object {
+    "args": Array [
+      "--no-sandbox",
+      "--disable-setuid-sandbox",
+    ],
+    "dumpio": false,
+    "executablePath": undefined,
+    "headless": true,
+    "ignoreHTTPSErrors": false,
+    "slowMo": 0,
+    "timeout": 30000,
+  },
+  "saveDifferencifiedImage": true,
+}
+`;
+
 exports[`sanitiser sanitise global configuration sanitise if screenshots config provided 1`] = `
 Object {
   "debug": false,
