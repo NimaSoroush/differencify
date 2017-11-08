@@ -6,12 +6,12 @@ import logger from './utils/logger';
 
 export default class Differencify {
   constructor(conf) {
+    if (conf && conf.debug === true) {
+      logger.enable();
+    }
     this.configuration = sanitiseGlobalConfiguration(conf);
     this.browser = null;
     this.testId = 0;
-    if (this.configuration.debug === true) {
-      logger.enable();
-    }
   }
 
   async launchBrowser() {

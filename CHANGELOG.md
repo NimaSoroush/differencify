@@ -1,3 +1,9 @@
+## [1.1.5] - 2017-11-08
+### Fixed
+- Update to puppeteer@0.12.0
+- Fixing issue with passing browserArgs to chrome headless
+- Enhanced debugging for parameter sanitization
+
 ## [1.1.4] - 2017-11-03
 ### Fixed
 - Fixed issue with jest failure if error happens in steps

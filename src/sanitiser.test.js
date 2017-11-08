@@ -10,6 +10,10 @@ describe('sanitiser', () => {
       const configuration = sanitiseGlobalConfiguration({ screenshots: './somewhere' });
       expect(configuration).toMatchSnapshot();
     });
+    it('sanitise if puppeteer specific configuration provided', () => {
+      const configuration = sanitiseGlobalConfiguration({ browserArgs: ['--no-sandbox', '--disable-setuid-sandbox'] });
+      expect(configuration).toMatchSnapshot();
+    });
   });
   describe('sanitise test configuration', () => {
     it('sanitise if no config provided', () => {
