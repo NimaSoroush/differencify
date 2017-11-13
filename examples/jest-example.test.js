@@ -19,7 +19,7 @@ describe('tests differencify', () => {
       .toMatchSnapshot()
       .close()
       .end();
-  }, 40000);
+  }, 10000);
   it('validate google page appear correctly', async () => {
     await differencify
       .init()
@@ -30,5 +30,5 @@ describe('tests differencify', () => {
       .toMatchSnapshot()
       .close()
       .end();
-  }, 40000);
+  }, 10000);
 });
