@@ -1,3 +1,7 @@
+##[1.1.6] - 2017-11-14
+### Changed
+- `goto` now supports options
+
 ## [1.1.5] - 2017-11-08
 ### Fixed
 - Update to puppeteer@0.12.0

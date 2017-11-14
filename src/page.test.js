@@ -101,8 +101,16 @@ describe('Page', () => {
     });
     it('Will run correctly', async () => {
       await page.goto('url');
-      expect(tabMocks.goto).toHaveBeenCalledWith('url');
+      expect(tabMocks.goto).toHaveBeenCalledWith('url', undefined);
       expect(mockLog).toHaveBeenCalledWith('goto -> url');
+    });
+    it('Supports additional options', async () => {
+      await page.goto('url', {
+        waitUntil: 'networkidle',
+      });
+      expect(tabMocks.goto).toHaveBeenCalledWith('url', {
+        waitUntil: 'networkidle',
+      });
     });
   });
   describe('capture', () => {
