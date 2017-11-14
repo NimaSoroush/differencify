@@ -37,11 +37,11 @@ export default class Page {
     }
   }
 
-  async goto(url) {
+  async goto(url, options) {
     if (!this.error) {
       try {
         await this._init();
-        await this.tab.goto(url);
+        await this.tab.goto(url, options);
         this.prefixedLogger.log(`goto -> ${url}`);
       } catch (error) {
         this._logError(error);
