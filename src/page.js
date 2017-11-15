@@ -37,12 +37,11 @@ export default class Page {
     }
   }
 
-  async goto(url) {
+  async handleFunc(func) {
     if (!this.error) {
       try {
-        await this._init();
-        await this.tab.goto(url);
-        this.prefixedLogger.log(`goto -> ${url}`);
+        await this.tab[func.name](...func.args);
+        this.prefixedLogger.log(`Executing ${func.name} step`);
       } catch (error) {
         this._logError(error);
       }
@@ -86,7 +85,6 @@ export default class Page {
   async resize(viewport) {
     if (!this.error) {
       try {
-        await this._init();
         await this.tab.setViewport(viewport);
         this.prefixedLogger.log('Resizing window');
       } catch (error) {

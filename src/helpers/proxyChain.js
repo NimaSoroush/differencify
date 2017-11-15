@@ -18,9 +18,10 @@ class ChainObject {
     let result = null;
     let actions = this.actions;
     this.actions = [];
+    await this.target._init();
     actions.forEach((action) => {
       if (action.name === 'toMatchSnapshot') {
-        this.target[action.name](...action.args);
+        this.target[action.name](action.args);
       }
     });
     actions = actions.filter(action => action.name !== 'toMatchSnapshot');
@@ -29,7 +30,7 @@ class ChainObject {
       if (RESULT_FUNCTION_NAME === action.name) {
         result = await action.args[0].apply(null, [result]);
       } else {
-        result = await this.target[action.name](...action.args);
+        result = await this.target[action.name](action.args);
       }
     }
     return result;
@@ -41,8 +42,8 @@ const makeHandler = (target, options) =>
     get: (chainObj, name) => {
       if (name === options.endFuncName) {
         return () => {
-          chainObj.addAction(options.updateFunctionName, arguments);
-          return chainObj.end(chainObj, arguments)
+          chainObj.addAction(options.updateFunctionName);
+          return chainObj.end()
             .then(result => result)
             .catch((e) => {
               logger.error(e);
@@ -51,20 +52,21 @@ const makeHandler = (target, options) =>
         };
       } else if (name === options.resultFuncName) {
         return function handle() {
-          chainObj.addAction(RESULT_FUNCTION_NAME, arguments);
+          chainObj.addAction(RESULT_FUNCTION_NAME, ...arguments);
           return this;
         };
-      } else if (name === 'target') {
-        return target;
       } else if (typeof (target[name]) === 'function') {
         return function handle() {
-          chainObj.addAction(name, arguments);
+          chainObj.addAction(name, ...arguments);
           return this;
         };
       } else if (name in target) {
         return target[name];
       }
-      throw new Error(`'${name}' is not defined on a target object.`);
+      return function handle() {
+        chainObj.addAction(options.funcHandler, { name, args: arguments });
+        return this;
+      };
     },
     set: (chainObj, name, value) => {
       throw new Error(`You cannot set a ${value} to Proxy object.`);
@@ -76,6 +78,7 @@ const chainProxy = (target) => {
     resultFuncName: 'result',
     endFuncName: 'end',
     updateFunctionName: '_evaluateResult',
+    funcHandler: 'handleFunc',
   };
   const chainObject = new ChainObject(target, defaultParams);
   return new Proxy(
