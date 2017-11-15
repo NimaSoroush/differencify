@@ -33,4 +33,4 @@ dist/
 docs/
 .vscode/
 differencify_reports/
-__image_snapshots__/
+trace.json

@@ -2,7 +2,7 @@ version: 2
 jobs:
   build:
     docker:
-      - image: circleci/node:8.6.0
+      - image: nimasoroush/differencify
     steps:
       - checkout
       - restore_cache:
@@ -17,6 +17,9 @@ jobs:
       - run:
           name: test
           command: npm test
+      - run:
+          name: test:integration
+          command: npm run test:integration
       
 workflows:
   version: 2

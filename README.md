@@ -29,34 +29,47 @@ import Differencify from 'differencify';
 const differencify = new Differencify(GlobalOptions);
 ```
 
+Differencify matches [Puppeteer](https://github.com/GoogleChrome/puppeteer/blob/master/docs/api.md)'s API completely. Look at [API.md](API.md) for more details.
+
 ### Validate your changes
 ```js
 (async () => {
   const result = await differencify
     .init(TestOptions)
-    .resize({ width: 1600, height: 1200 })
+    .launch()
+    .newPage()
+    .setViewport({ width: 1600, height: 1200 })
     .goto('https://github.com/NimaSoroush/differencify')
-    .wait(3000)
-    .capture()
+    .wait(1000)
+    .screenshot()
+    .toMatchSnapshot()
+    .result((result) => {
+      console.log(result); // Prints true or false
+    })
     .close()
     .end();
   
   // or unchained
-
-  const page = await differencify.init({ chain: false });
-  await page.resize({ width: 1600, height: 1200 });
+  
+  const target = differencify.init({ chain: false });
+  await target.launch();
+  const page = await target.newPage();
+  await page.setViewport({ width: 1600, height: 1200 });
   await page.goto('https://github.com/NimaSoroush/differencify');
-  await page.wait(3000);
-  await page.capture();
-  result = await page.close();
+  await page.wait(1000);
+  const image = await page.screenshot();
+  const result = await page.toMatchSnapshot(image)
+  await page.close();
+  await target.close();
 
   console.log(result); // Prints true or false
 })();
 ```
+See more examples [here](API.md)
 
 ## Usage with <span style="color:#930a36">JEST</span><img src="images/jest.svg" width="50" height="50">
 
-Only need to add `toMatchSnapshot()` to your test steps.
+Only need to wrap your steps into `it()` function
 ```js
 import Differencify from 'differencify';
 const differencify = new Differencify();
@@ -65,14 +78,14 @@ describe('tests differencify', () => {
     await differencify
       .init()
       .goto('https://github.com/NimaSoroush/differencify')
-      .capture()
+      .screenshot()
       .toMatchSnapshot()
       .close()
       .end();
   });
 });
 ```
-See more jest examples [here](examples/jest-example.test.js).
+As you can see, you don't need to return `result` as `toMatchSnapshot` will automatically validate result. See more jest examples [here](src/integration.tests/integration.tests.js).
 
 ### Test <span style="color:green">PASS</span>
 
@@ -112,10 +125,21 @@ const differencify = new Differencify({ debug: true });
 </p>
 
 ## Visible mode
-By default differencify runs chrome in headless mode. If you want to see browser in non-headless mode set `headless:false` as global config in Differencify class. See full list of configs [below](https://github.com/NimaSoroush/differencify#globaloptions)
+By default differencify runs chrome in headless mode. If you want to see browser in non-headless mode set `headless:false` when launching browser. See more details [here](https://github.com/GoogleChrome/puppeteer/blob/master/docs/api.md#puppeteerlaunchoptions)
 
 ```js
-const differencify = new Differencify({ headless: false });
+const differencify = new Differencify();
+(async () => {
+  await differencify
+    .init()
+    .launch({ headless: false })
+    .newPage()
+    .goto('https://github.com/NimaSoroush/differencify')
+    .screenshot()
+    .toMatchSnapshot()
+    .close()
+    .end();
+})();
 ```
 
 
@@ -127,41 +151,34 @@ See [API.md](API.md) for full list of API calls
 
 |Parameter|type|required|description|default|
 |---------|----|--------|-----------|-------|
-|`headless`|`boolean`|no|Browser is launched in visible mode|true|
 |`debug`|`boolean`|no|Enables console output|false|
-|`timeout`|`integer` (ms)|no|Maximum time in milliseconds to wait for the Chrome instance to start|30000|
 |`imageSnapshotPath`|`string`|no|Stores reference screenshots in this directory|./differencify_reports|
 |`saveDifferencifiedImage`|`boolean`|no|Save differencified image to testReportPath in case of mismatch|true|
 |`mismatchThreshold`|`integer`|no|Difference tolerance between reference/test image|0.001|
-|`ignoreHTTPSErrors`|`boolean`|no|Whether to ignore HTTPS errors during navigation|false|
-|`slowMo`|`integer`|no|Slows down browser operations by the specified amount of milliseconds|0|
-|`browserArgs`|`Array`|no|Additional arguments to pass to the browser instance. List of Chromium flags can be found [here](http://peter.sh/experiments/chromium-command-line-switches/)|[]|
-|`dumpio`|`boolean`|no|Whether to pipe browser process stdout and stderr into process.stdout and process.stderr|false|
 
 ## TestOptions
 
 |Parameter|type|required|description|default|
 |---------|----|--------|-----------|-------|
 |`testName`|`string`|no|Unique name for your test case|test|
-|`newWindow`|`boolean`|no|Whether to open test execution on new browser window or not. By default it opens on new tab|false|
 |`chain`|`boolean`|no|Whether to chain differencify commands or not. More details on [examples](examples)|true|
 
 ## Steps API
 
-See [API.md](API.md) for full list of Steps API calls
+See [API.md](API.md) for full list of API calls and examples
 
 
 ## Interested on Docker image!
 
-A [Dockerfile](Dockerfile) with chrome-headless is available for local and CI usage
+A [Docker base image](https://hub.docker.com/r/nimasoroush/differencify/) available for local and CI usage based on this [Dockerfile](Docker/Dockerfile). To see an example look at this [Dockerfile](Dockerfile)
 
-Build the container:
+Usage:
 
-```docker build -t puppeteer-chrome-linux .```
-
-Run the container by passing node -e "<yourscript.js content as a string> as the command:
-
-```docker run -i --rm --name puppeteer-chrome puppeteer-chrome-linux node -e "`cat yourscript.js`"```
+```
+FROM nimasoroush/differencify
+RUN npm install differencify
+...
+```
 
 
 ## Links

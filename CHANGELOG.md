@@ -1,3 +1,12 @@
+## [1.3.0] - 2017-12-15
+### Fixed
+- Support all puppeteer API calls
+- Support multiple toMatchSnapshots
+- Improved logging
+- Improved documentation and examples
+- Added integration tests
+- Bug fixes
+
 ## [1.2.0] - 2017-11-23
 ### Added
 - Add page click functionality
