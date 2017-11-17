@@ -40,12 +40,16 @@ export default class Page {
   async handleFunc(func) {
     if (!this.error) {
       try {
-        await this.tab[func.name](...func.args);
+        const result = await this.tab[func.name](...func.args);
         this.prefixedLogger.log(`Executing ${func.name} step`);
+
+        return result;
       } catch (error) {
         this._logError(error);
       }
     }
+
+    return this;
   }
 
   async capture(options) {

@@ -28,7 +28,7 @@ class ChainObject {
     // eslint-disable-next-line no-restricted-syntax
     for (const action of actions) {
       if (RESULT_FUNCTION_NAME === action.name) {
-        result = await action.args[0].apply(null, [result]);
+        result = await action.args.apply(null, [result]);
       } else {
         result = await this.target[action.name](action.args);
       }
