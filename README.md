@@ -168,4 +168,6 @@ Run the container by passing node -e "<yourscript.js content as a string> as the
 
 See [examples](examples) for usages and CI integration with jest
 
+Visit project [Gitter Chat](https://gitter.im/differencify/QA) for general Q/A around project
+
 See [CONTRIBUTING.md](CONTRIBUTING.md) if you want to contribute.
