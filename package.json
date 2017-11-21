@@ -10,7 +10,7 @@
     "build-docs": "mkdir -p docs && jsdoc2md src/*.js > docs/api.md",
     "pretest": "npm run lint",
     "test": "jest --testPathIgnorePatterns integration.test",
-    "jest:integration": "jest --testPathPattern integration.test",
+    "jest:integration": "jest --testPathPattern integration.test --config src/integration.tests/jest.config.js",
     "test:integration": "docker build -t differencify . && docker run --volume \"$(pwd)/src/integration.tests\":/differencify/src/integration.tests -t  differencify npm run jest:integration"
   },
   "repository": {
@@ -53,6 +53,7 @@
     "fs": "0.0.2",
     "jimp": "^0.2.28",
     "puppeteer": "^1.6.0",
+    "pkg-dir": "2.0.0",
     "type-detect": "^4.0.3"
   },
   "jest": {

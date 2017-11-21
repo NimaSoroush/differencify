@@ -1,7 +1,15 @@
 import Jimp from 'jimp';
 import path from 'path';
 import fs from 'fs';
+
+import pkgDir from 'pkg-dir';
 import logger from './utils/logger';
+import {
+  getSnapshotsDir,
+  getSnapshotPath,
+  getDiffDir,
+  getDiffPath,
+} from './utils/paths';
 
 const saveDiff = (diff, diffPath) => new Promise((resolve, reject) => {
   const cb = (error, obj) => {
@@ -18,7 +26,7 @@ const getSnapshotsDir = (testConfig, globalConfig) => {
   if (testConfig.isJest) {
     testRoot = path.dirname(testConfig.testPath);
   } else {
-    testRoot = path.resolve(globalConfig.imageSnapshotPath);
+    testRoot = path.resolve(pkgDir.sync(), globalConfig.imageSnapshotPath);
     if (!fs.existsSync(testRoot)) {
       fs.mkdirSync(testRoot);
     }
@@ -34,9 +42,9 @@ const compareImage = async (capturedImage, globalConfig, testConfig) => {
     : getSnapshotsDir(testConfig, globalConfig);
 
   const snapshotPath = path.join(snapshotsDir, `${testConfig.testName}.snap.${testConfig.imageType || 'png'}`);
+  const diffDir = getDiffDir(snapshotPath);
+  const diffPath = getDiffPath(snapshotPath, testConfig.testName, testConfig.imageType);
 
-  const diffDir = path.join(snapshotsDir, '__differencified_output__');
-  const diffPath = path.join(diffDir, `${testConfig.testName}.differencified.${testConfig.imageType || 'png'}`);
   if (fs.existsSync(snapshotPath) && !testConfig.isUpdate) {
     let snapshotImage;
     try {
