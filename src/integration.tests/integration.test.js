@@ -1,4 +1,7 @@
+import fs from 'fs';
+import path from 'path';
 import Differencify from '../index';
+import Reporter from '../reporter';
 
 const differencify = new Differencify({ debug: true });
 
@@ -170,5 +173,33 @@ describe('Differencify', () => {
     await page.close();
     expect(result).toEqual(true);
     expect(result2).toEqual(true);
+  }, 20000);
+  it('Save jest custom report to disk', () => {
+    // Unfortunately this test is dependant on snapshot files existing from previous tests.
+    // If previous test names change, we'll need to update these results.
+    const aggregatedResults = {
+      testResults: [
+        {
+          testFilePath: __filename,
+          testResults: [
+            {
+              fullName: 'Differencify simple',
+              status: 'fail',
+            },
+            {
+              fullName: 'Differencify simple unchained',
+              status: 'passed',
+            },
+          ],
+          sourceMaps: {},
+          skipped: false,
+        },
+      ],
+      wasInterrupted: false,
+    };
+    const reporter = new Reporter();
+    reporter.onRunComplete({}, aggregatedResults);
+    expect(fs.existsSync(path.resolve('./differencify_reports/index.html'))).toEqual(true);
+    expect(fs.existsSync(path.resolve('./differencify_reports/index.json'))).toEqual(true);
   }, 20000);
 });

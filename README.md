@@ -105,6 +105,38 @@ As you can see, you don't need to return `result` as `toMatchSnapshot` will auto
 
 Same way as Jest [snapshots testing](http://facebook.github.io/jest/docs/en/snapshot-testing.html), to update the snapshots, run jest with `--updateSnapshot` or `-u` argument.
 
+### Jest reporter
+
+You can generate an index document of the saved images by using the differencify jest reporter.
+
+Enable the reporter in your jest config:
+
+```
+module.exports = {
+  reporters: [
+    'default', // keep the default reporter
+    [
+      'differencify/dist/reporter',
+      {
+        debug: true,
+        reportPath: 'differencify_reports', // relative to root of project
+        reportTypes: {
+          html: 'index.html',
+          json: 'index.json',
+        },
+      },
+    ],
+  ],
+};
+```
+
+Alternatively, enable the reporter with the cli:
+
+```
+jest --reporters default differencify/dist/reporter
+```
+
+
 ## Usage with other test frameworks
 If you are using other test frameworks you can still validate your tests. Differencify will return `true` or `false` by the end of execution. This could be used to assert on. look at the [example](https://github.com/NimaSoroush/differencify#validate-your-changes)
 
