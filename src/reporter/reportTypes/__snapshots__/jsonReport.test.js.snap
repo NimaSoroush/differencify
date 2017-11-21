@@ -1,0 +1,3 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`JSON report generates a JSON report 1`] = `"[{\\"testName\\":\\"default\\",\\"result\\":\\"no mismatch found\\"}]"`;
