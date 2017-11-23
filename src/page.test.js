@@ -19,6 +19,7 @@ jest.mock('./compareImage');
 
 const tabMocks = {
   goto: jest.fn(),
+  click: jest.fn(),
   screenshot: jest.fn(),
   waitFor: jest.fn(),
   evaluate: jest.fn(),
@@ -103,6 +104,21 @@ describe('Page', () => {
       await page.goto('url');
       expect(tabMocks.goto).toHaveBeenCalledWith('url');
       expect(mockLog).toHaveBeenCalledWith('goto -> url');
+    });
+  });
+  describe('click', () => {
+    beforeEach(() => {
+      tabMocks.click.mockClear();
+    });
+    it('Wont run if error happened', async () => {
+      page.error = true;
+      await page.click();
+      expect(mockLog).toHaveBeenCalledTimes(0);
+    });
+    it('Will run correctly', async () => {
+      await page.click('#id');
+      expect(tabMocks.click).toHaveBeenCalledWith('#id');
+      expect(mockLog).toHaveBeenCalledWith('click #id');
     });
   });
   describe('capture', () => {

@@ -1,3 +1,7 @@
+## [1.2.0] - 2017-11-23
+### Added
+- Add page click functionality
+
 ## [1.1.5] - 2017-11-08
 ### Fixed
 - Update to puppeteer@0.12.0

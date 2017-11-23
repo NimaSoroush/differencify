@@ -11,6 +11,7 @@
 |name|type|value|
 |----|----|-----|
 |`goto`|`string`|Url|
+|`click`|`string`|Selector|
 |`wait`|`string`, `integer` or `func`|waiting time in millisecond `or` waiting for a selector `or` waiting until the function you supplied is evaluated as true|
 |`execute`|`func` or `string`|execute an expression in the browser context|
 |`freezeImage`|`string`|Selector name of a <img> tag containing animated image to be freezed before taking screenshot|
