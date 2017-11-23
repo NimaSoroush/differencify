@@ -49,6 +49,17 @@ export default class Page {
     }
   }
 
+  async click(selector) {
+    if (!this.error) {
+      try {
+        await this.tab.click(selector);
+        this.prefixedLogger.log(`click ${selector}`);
+      } catch (error) {
+        this._logError(error);
+      }
+    }
+  }
+
   async capture(options) {
     if (!this.error) {
       try {
