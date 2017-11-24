@@ -3,6 +3,17 @@ import path from 'path';
 import fs from 'fs';
 import logger from './utils/logger';
 
+const saveDiff = (diff, diffPath) =>
+  new Promise((resolve, reject) => {
+    const cb = (err, obj) => {
+      if (err) {
+        reject(err);
+      }
+      resolve(obj);
+    };
+    diff.image.write(diffPath, cb);
+  });
+
 const compareImage = async (capturedImage, globalConfig, testConfig) => {
   const prefixedLogger = logger.prefix(testConfig.testName);
   let testRoot;
@@ -51,7 +62,7 @@ const compareImage = async (capturedImage, globalConfig, testConfig) => {
         if (fs.existsSync(diffPath)) {
           fs.unlinkSync(diffPath);
         }
-        diff.image.write(diffPath);
+        await saveDiff(diff, diffPath);
         prefixedLogger.log(`saved the diff image to disk at ${diffPath}`);
       } catch (err) {
         prefixedLogger.error(`failed to save the diff image: ${err}`);
