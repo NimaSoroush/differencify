@@ -14,11 +14,45 @@ export default class Differencify {
     this.testId = 0;
   }
 
-  async launchBrowser() {
+  async launchBrowser(options) {
     if (!this.browser) {
       logger.log('Launching browser...');
       try {
-        this.browser = await puppeteer.launch(this.configuration.puppeteer);
+        this.browser = await puppeteer.launch(options);
+      } catch (error) {
+        logger.error(error);
+      }
+    } else {
+      logger.log('Using existing browser instance');
+    }
+  }
+
+  static executablePath() {
+    return puppeteer.executablePath();
+  }
+
+  static chromeExecutablePath() {
+    return puppeteer.executablePath();
+  }
+
+  async launch(options) {
+    if (!this.browser) {
+      logger.log('Launching browser...');
+      try {
+        this.browser = await puppeteer.launch(options);
+      } catch (error) {
+        logger.error(error);
+      }
+    } else {
+      logger.log('Using existing browser instance');
+    }
+  }
+
+  async connect(options) {
+    if (!this.browser) {
+      logger.log('Launching browser...');
+      try {
+        this.browser = await puppeteer.connect(options);
       } catch (error) {
         logger.error(error);
       }
@@ -33,11 +67,7 @@ export default class Differencify {
     if (testConfig.isUpdate) {
       logger.warn('Your tests are running on update mode. Test screenshots will be updated');
     }
-    const page = new Page(this.browser, testConfig, this.configuration);
-    if (testConfig.chain) {
-      return chainProxy(page);
-    }
-    return page;
+    return chainProxy(new Page(this.browser, testConfig, this.configuration), testConfig.chain);
   }
 
   async cleanup() {

@@ -4,16 +4,19 @@ import jestMatchers from './utils/jestMatchers';
 import compareImage from './compareImage';
 import functionToString from './helpers/functionToString';
 import freezeImage from './freezeImage';
+import { sanitiseTestConfiguration } from './sanitiser';
 
 export default class Page {
-  constructor(browser, testConfig, globalConfig) {
+  constructor(browser, globalConfig, testId) {
     this.globalConfig = globalConfig;
-    this.testConfig = testConfig;
+    this.testConfig = null;
+    this.testId = testId;
     this.browser = browser;
-    this.tab = null;
+    this.page = null;
     this.prefixedLogger = logger.prefix(this.testConfig.testName);
     this.error = null;
     this.image = null;
+    this.jestTestId = 0;
   }
 
   _logError(error) {
@@ -21,43 +24,95 @@ export default class Page {
     this.prefixedLogger.error(error);
   }
 
-  async _init() {
-    if (!this.browser || this.testConfig.newWindow) {
-      try {
-        this.prefixedLogger.log('Launching browser...');
-        this.browser = await puppeteer.launch(this.globalConfig.puppeteer);
-        this.testConfig.newWindow = true;
-      } catch (error) {
-        this._logError(error);
-      }
+  _logStep(functionName) {
+    this.prefixedLogger.log(`Executing ${functionName} step`);
+  }
+
+  async launch(options) {
+    try {
+      this.prefixedLogger.log('Launching browser...');
+      this.browser = await puppeteer.launch(options);
+    } catch (error) {
+      this._logError(error);
+      throw new Error('Failed to launch the browser');
     }
-    if (!this.tab) {
-      this.prefixedLogger.log('Opening new tab...');
-      this.tab = await this.browser.newPage();
+    return this;
+  }
+
+  async connect(options) {
+    try {
+      this.prefixedLogger.log('Launching browser...');
+      this.browser = await puppeteer.connect(options);
+    } catch (error) {
+      this._logError(error);
+      throw new Error('Failed to launch the browser');
+    }
+    return this;
+  }
+
+  async newPage(options) {
+    try {
+      this.testConfig = sanitiseTestConfiguration(options, this.testId);
+      if (this.testConfig.isUpdate) {
+        logger.warn('Your tests are running on update mode. Test screenshots will be updated');
+      }
+      this._logStep('newPage');
+      this.page = await this.browser.newPage();
+    } catch (error) {
+      this._logError(error);
     }
   }
 
-  async handleFunc(func) {
+  async handleContinueFunc(target, property, args) {
     if (!this.error) {
       try {
-        const result = await this.tab[func.name](...func.args);
-        this.prefixedLogger.log(`Executing ${func.name} step`);
-
-        return result;
+        this._logStep(property);
+        const isFunc = typeof (property) === 'function';
+        return isFunc ? await target[property](...args) : await target[property];
       } catch (error) {
         this._logError(error);
       }
     }
-
     return this;
+  }
+
+  async handleFunc(currentTarget, property, args) {
+    if (!this.error) {
+      try {
+        this._logStep(`${currentTarget}.${property}`);
+        const isFunc = typeof (property) === 'function';
+        if (currentTarget === 'page') {
+          return isFunc ? await this.page[property](...args) : await this.page[property];
+        }
+        return isFunc ? await this.page[currentTarget][property](...args) : await this.page[currentTarget][property];
+      } catch (error) {
+        this._logError(error);
+      }
+    }
+    return this;
+  }
+
+  async screenshot(options) {
+    if (!this.error) {
+      try {
+        this.image = await this.page.screenshot(options);
+        this.testConfig.imageType = (options && options.type) || 'png';
+        this._logStep('screenshot');
+      } catch (error) {
+        this._logError(error);
+      }
+    }
   }
 
   async capture(options) {
     if (!this.error) {
       try {
-        this.image = await this.tab.screenshot(options);
+        logger.warn(
+          `capture() will be deprecated, use screenshot() instead.
+          Please read the API docs at https://github.com/NimaSoroush/differencify'`);
+        this.image = await this.page.screenshot(options);
         this.testConfig.imageType = (options && options.type) || 'png';
-        this.prefixedLogger.log('capturing screenshot');
+        this._logStep('capture');
       } catch (error) {
         this._logError(error);
       }
@@ -67,8 +122,11 @@ export default class Page {
   async wait(value) {
     if (!this.error) {
       try {
-        await this.tab.waitFor(value);
-        this.prefixedLogger.log('waiting...');
+        logger.warn(
+          `wait() will be deprecated, use waitFor() instead.
+          Please read the API docs at https://github.com/NimaSoroush/differencify'`);
+        await this.page.waitFor(value);
+        this._logStep('wait');
       } catch (error) {
         this._logError(error);
       }
@@ -78,8 +136,11 @@ export default class Page {
   async execute(expression) {
     if (!this.error) {
       try {
-        await this.tab.evaluate(expression);
-        this.prefixedLogger.log('waiting for expression to be executed in browser');
+        logger.warn(
+          `execute() will be deprecated, use evaluate() instead.
+          Please read the API docs at https://github.com/NimaSoroush/differencify'`);
+        await this.page.evaluate(expression);
+        this._logStep('execute');
       } catch (error) {
         this._logError(error);
       }
@@ -89,8 +150,11 @@ export default class Page {
   async resize(viewport) {
     if (!this.error) {
       try {
-        await this.tab.setViewport(viewport);
-        this.prefixedLogger.log('Resizing window');
+        logger.warn(
+          `resize() will be deprecated, use setViewport() instead.
+          Please read the API docs at https://github.com/NimaSoroush/differencify'`);
+        await this.page.setViewport(viewport);
+        this._logStep('resize');
       } catch (error) {
         this._logError(error);
       }
@@ -101,7 +165,7 @@ export default class Page {
     if (!this.error) {
       try {
         const strFunc = functionToString(freezeImage, selector);
-        const result = await this.tab.evaluate(strFunc);
+        const result = await this.page.evaluate(strFunc);
         this.prefixedLogger.log(`Freezing image ${selector} in browser`);
         if (!result) {
           this._logError(`Unable to freeze image with selector ${selector}`);
@@ -112,14 +176,20 @@ export default class Page {
     }
   }
 
-  toMatchSnapshot() {
+  async toMatchSnapshot() {
     this.testConfig.isJest = true;
-    this.testStats = (expect.getState && expect.getState()) || null;
-    if (this.testStats) {
-      this.testConfig.testName = this.testStats.currentTestName;
-      this.prefixedLogger = logger.prefix(this.testConfig.testName);
+    if (!this.jestTestId) {
+      this.testStats = (expect.getState && expect.getState()) || null;
+      this.prefixedLogger = logger.prefix(this.testStats.currentTestName);
       this.testConfig.testPath = this.testStats.testPath;
       this.testConfig.isUpdate = this.testStats.snapshotState._updateSnapshot === 'all' || false;
+    }
+    if (this.testStats) {
+      this.testConfig.testName = this.jestTestId
+        ? this.testStats.currentTestName
+        : this.testStats.currentTestName + this.jestTestId;
+      this.jestTestId += 1;
+      await this._evaluateResult();
     } else {
       this._logError('Failed to get Jest test status.');
     }
@@ -156,11 +226,11 @@ export default class Page {
   async close() {
     if (!this.error) {
       try {
-        await this.tab.close();
+        await this.page.close();
         if (this.testConfig.newWindow) {
           await this.browser.close();
         }
-        this.prefixedLogger.log('closing tab');
+        this._logStep('resize');
       } catch (error) {
         this._logError(error);
         return false;

@@ -20,15 +20,13 @@ const checkProperty = (obj, property, checkType) => {
 
 const sanitiseTestConfiguration = (conf, testId) => {
   const configuration = {};
-  configuration.newWindow = checkProperty(conf, 'newWindow', 'boolean')
-    ? conf.newWindow
-    : testConfig.newWindow;
   configuration.chain = checkProperty(conf, 'chain', 'boolean')
     ? conf.chain
     : testConfig.chain;
   configuration.testName = checkProperty(conf, 'testName', 'string')
     ? conf.testName
-    : testConfig.testName + testId;
+    : testConfig.testName;
+  configuration.testId = testId;
   configuration.isUpdate = (process.env.update && process.env.update === 'true')
     ? process.env.update
     : testConfig.isUpdate;
@@ -40,6 +38,9 @@ const sanitiseGlobalConfiguration = (conf) => {
   configuration.debug = checkProperty(conf, 'debug', 'boolean')
     ? conf.debug
     : globalConfig.debug;
+  configuration.chain = checkProperty(conf, 'chain', 'boolean')
+    ? conf.chain
+    : globalConfig.chain;
   configuration.imageSnapshotPath = checkProperty(conf, 'imageSnapshotPath', 'string')
     ? conf.imageSnapshotPath
     : globalConfig.imageSnapshotPath;
@@ -49,29 +50,6 @@ const sanitiseGlobalConfiguration = (conf) => {
   configuration.mismatchThreshold = checkProperty(conf, 'mismatchThreshold', 'number')
     ? conf.mismatchThreshold
     : globalConfig.mismatchThreshold;
-
-  configuration.puppeteer = {};
-  configuration.puppeteer.ignoreHTTPSErrors = checkProperty(conf, 'ignoreHTTPSErrors', 'boolean')
-    ? conf.ignoreHTTPSErrors
-    : globalConfig.ignoreHTTPSErrors;
-  configuration.puppeteer.executablePath = checkProperty(conf, 'executablePath', 'string')
-    ? conf.executablePath
-    : undefined;
-  configuration.puppeteer.slowMo = checkProperty(conf, 'slowMo', 'number')
-    ? conf.slowMo
-    : globalConfig.slowMo;
-  configuration.puppeteer.args = checkProperty(conf, 'browserArgs', 'array')
-    ? conf.browserArgs
-    : globalConfig.browserArgs;
-  configuration.puppeteer.dumpio = checkProperty(conf, 'dumpio', 'boolean')
-    ? conf.dumpio
-    : globalConfig.dumpio;
-  configuration.puppeteer.headless = checkProperty(conf, 'headless', 'boolean')
-    ? conf.headless
-    : globalConfig.headless;
-  configuration.puppeteer.timeout = checkProperty(conf, 'timeout', 'number')
-    ? conf.timeout
-    : globalConfig.timeout;
 
   return configuration;
 };

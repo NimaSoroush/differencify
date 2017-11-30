@@ -1,0 +1,16 @@
+module.exports = [
+  'page',
+  'keyboard',
+  'mouse',
+  'touchscreen',
+  'tracing',
+  'dialog',
+  'consolemessage',
+  'frame',
+  'executioncontext',
+  'jshandle',
+  'elementhandle',
+  'request',
+  'response',
+  'target',
+];

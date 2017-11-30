@@ -1,36 +1,42 @@
 /* eslint-disable prefer-rest-params */
 import logger from '../utils/logger';
-
-const RESULT_FUNCTION_NAME = '___RESULT_FUNCTION';
+import moduleList from './moduleList';
 
 class ChainObject {
   constructor(target, options) {
     this.target = target;
     this.options = options;
+    this.currentTarget = 'page';
     this.actions = [];
   }
 
-  addAction(name, args) {
-    this.actions.push({ name, args });
+  setCurrentTarget(currentTarget) {
+    this.currentTarget = currentTarget;
+  }
+
+  addAction({
+      property = undefined,
+      args = undefined,
+    } = {}) {
+    this.actions.push({ property, args });
   }
 
   async end() {
     let result = null;
-    let actions = this.actions;
+    let continueChain = false;
+    const actions = this.actions;
     this.actions = [];
-    await this.target._init();
-    actions.forEach((action) => {
-      if (action.name === 'toMatchSnapshot') {
-        this.target[action.name](action.args);
-      }
-    });
-    actions = actions.filter(action => action.name !== 'toMatchSnapshot');
     // eslint-disable-next-line no-restricted-syntax
     for (const action of actions) {
-      if (RESULT_FUNCTION_NAME === action.name) {
+      if (continueChain) {
+        result = await this.target.handleContinueFunc(result, action.property, action.args);
+        continueChain = false;
+      } else if (action.property === this.options.continueFunc) {
+        continueChain = true;
+      } else if (action.property === this.options.resultFunc) {
         result = await action.args.apply(null, [result]);
       } else {
-        result = await this.target[action.name](action.args);
+        result = await this.target[this.options.funcHandler](this.currentTarget, action.property, action.args);
       }
     }
     return result;
@@ -39,32 +45,25 @@ class ChainObject {
 
 const makeHandler = (target, options) =>
   ({
-    get: (chainObj, name) => {
-      if (name === options.endFuncName) {
-        return () => {
-          chainObj.addAction(options.updateFunctionName);
-          return chainObj.end()
+    get: (chainObj, property) => {
+      if (options.unchained) {
+        return () =>
+          this.target[this.options.funcHandler](this.currentTarget, property, arguments);
+      }
+      if (property === options.endFunc) {
+        return () =>
+          chainObj.end()
             .then(result => result)
             .catch((e) => {
               logger.error(e);
               throw e;
             });
-        };
-      } else if (name === options.resultFuncName) {
-        return function handle() {
-          chainObj.addAction(RESULT_FUNCTION_NAME, ...arguments);
-          return this;
-        };
-      } else if (typeof (target[name]) === 'function') {
-        return function handle() {
-          chainObj.addAction(name, ...arguments);
-          return this;
-        };
-      } else if (name in target) {
-        return target[name];
+      }
+      if (property in moduleList) {
+        return chainObj.setCurrentTarget(property);
       }
       return function handle() {
-        chainObj.addAction(options.funcHandler, { name, args: arguments });
+        chainObj.addAction({ property, args: arguments });
         return this;
       };
     },
@@ -73,12 +72,13 @@ const makeHandler = (target, options) =>
     },
   });
 
-const chainProxy = (target) => {
+const chainProxy = (target, unchained) => {
   const defaultParams = {
-    resultFuncName: 'result',
-    endFuncName: 'end',
-    updateFunctionName: '_evaluateResult',
+    resultFunc: 'result',
+    endFunc: 'end',
+    continueFunc: 'then',
     funcHandler: 'handleFunc',
+    unchained,
   };
   const chainObject = new ChainObject(target, defaultParams);
   return new Proxy(
