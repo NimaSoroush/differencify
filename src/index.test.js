@@ -34,8 +34,7 @@ describe('Differencify', () => {
     chainProxy.mockClear();
   });
   it('launchBrowser', async () => {
-    await differencify.launchBrowser();
-    expect(puppeteer.launch).toHaveBeenCalledWith({
+    const browserOptions = {
       args: [],
       dumpio: false,
       executablePath: undefined,
@@ -43,7 +42,22 @@ describe('Differencify', () => {
       ignoreHTTPSErrors: false,
       slowMo: 0,
       timeout: 30000,
-    });
+    };
+    await differencify.launchBrowser(browserOptions);
+    expect(puppeteer.launch).toHaveBeenCalledWith(browserOptions);
+    await differencify.launch(browserOptions);
+    expect(puppeteer.launch).toHaveBeenCalledWith(browserOptions);
+    expect(logger.log).toHaveBeenCalledWith('Launching browser...');
+  });
+  it('connect', async () => {
+    const browserOptions = {
+      browserWSEndpoint: 'endpoint',
+      ignoreHTTPSErrors: false,
+    };
+    await differencify.launchBrowser(browserOptions);
+    expect(puppeteer.launch).toHaveBeenCalledWith(browserOptions);
+    await differencify.launch(browserOptions);
+    expect(puppeteer.launch).toHaveBeenCalledWith(browserOptions);
     expect(logger.log).toHaveBeenCalledWith('Launching browser...');
   });
   it('does not relaunch browser if one browser instance exists', async () => {
@@ -61,27 +75,18 @@ describe('Differencify', () => {
     await differencify.init({ chain: false });
     expect(Page).toHaveBeenCalledWith(null,
       {
-        chain: false,
-        newWindow: false,
-        testName: 'test1',
-        isUpdate: 'true',
-      },
-      {
         debug: false,
         mismatchThreshold: 0.001,
-        puppeteer: {
-          args: [],
-          dumpio: false,
-          executablePath: undefined,
-          headless: true,
-          ignoreHTTPSErrors: false,
-          slowMo: 0,
-          timeout: 30000,
-        },
         saveDifferencifiedImage: true,
         imageSnapshotPath: 'differencify_reports',
+      },
+      {
+        chain: false,
+        testName: 'test',
+        isUpdate: 'true',
+        testId: 1,
       });
-    expect(chainProxy).toHaveBeenCalledTimes(0);
+    expect(chainProxy).toHaveBeenCalledTimes(1);
     expect(logger.warn).toHaveBeenCalledWith('Your tests are running on update mode. Test screenshots will be updated');
     delete process.env.update;
   });

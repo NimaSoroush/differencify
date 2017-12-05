@@ -5,12 +5,12 @@ import compareImage from './compareImage';
 import functionToString from './helpers/functionToString';
 import freezeImage from './freezeImage';
 import { sanitiseTestConfiguration } from './sanitiser';
+import { isFunc, handleAsyncFunc } from './helpers/functions';
 
 export default class Page {
-  constructor(browser, globalConfig, testId) {
+  constructor(browser, globalConfig, testConfig) {
     this.globalConfig = globalConfig;
-    this.testConfig = null;
-    this.testId = testId;
+    this.testConfig = testConfig;
     this.browser = browser;
     this.page = null;
     this.prefixedLogger = logger.prefix(this.testConfig.testName);
@@ -32,6 +32,7 @@ export default class Page {
     try {
       this.prefixedLogger.log('Launching browser...');
       this.browser = await puppeteer.launch(options);
+      this.testConfig.newWindow = true;
     } catch (error) {
       this._logError(error);
       throw new Error('Failed to launch the browser');
@@ -63,12 +64,11 @@ export default class Page {
     }
   }
 
-  async handleContinueFunc(target, property, args) {
+  async _handleContinueFunc(target, property, args) {
     if (!this.error) {
       try {
         this._logStep(property);
-        const isFunc = typeof (property) === 'function';
-        return isFunc ? await target[property](...args) : await target[property];
+        return isFunc(target[property]) ? await target[property](...args) : await target[property];
       } catch (error) {
         this._logError(error);
       }
@@ -76,15 +76,19 @@ export default class Page {
     return this;
   }
 
-  async handleFunc(currentTarget, property, args) {
+  _handleFunc(target, property, args) {
     if (!this.error) {
       try {
-        this._logStep(`${currentTarget}.${property}`);
-        const isFunc = typeof (property) === 'function';
-        if (currentTarget === 'page') {
-          return isFunc ? await this.page[property](...args) : await this.page[property];
+        this._logStep(`${target}.${property}`);
+        if (target === 'page') {
+          if (this[property]) {
+            return isFunc(this[property]) ? handleAsyncFunc(this, property, args) : this[property];
+          }
+          return isFunc(this.page[property]) ? handleAsyncFunc(this.page, property, args) : this.page[property];
         }
-        return isFunc ? await this.page[currentTarget][property](...args) : await this.page[currentTarget][property];
+        return isFunc(this.page[target][property])
+          ? handleAsyncFunc(this.page[target], property, args)
+          : this.page[target][property];
       } catch (error) {
         this._logError(error);
       }
@@ -109,7 +113,7 @@ export default class Page {
       try {
         logger.warn(
           `capture() will be deprecated, use screenshot() instead.
-          Please read the API docs at https://github.com/NimaSoroush/differencify'`);
+          Please read the API docs at https://github.com/NimaSoroush/differencify`);
         this.image = await this.page.screenshot(options);
         this.testConfig.imageType = (options && options.type) || 'png';
         this._logStep('capture');
@@ -124,7 +128,7 @@ export default class Page {
       try {
         logger.warn(
           `wait() will be deprecated, use waitFor() instead.
-          Please read the API docs at https://github.com/NimaSoroush/differencify'`);
+          Please read the API docs at https://github.com/NimaSoroush/differencify`);
         await this.page.waitFor(value);
         this._logStep('wait');
       } catch (error) {
@@ -138,7 +142,7 @@ export default class Page {
       try {
         logger.warn(
           `execute() will be deprecated, use evaluate() instead.
-          Please read the API docs at https://github.com/NimaSoroush/differencify'`);
+          Please read the API docs at https://github.com/NimaSoroush/differencify`);
         await this.page.evaluate(expression);
         this._logStep('execute');
       } catch (error) {
@@ -152,7 +156,7 @@ export default class Page {
       try {
         logger.warn(
           `resize() will be deprecated, use setViewport() instead.
-          Please read the API docs at https://github.com/NimaSoroush/differencify'`);
+          Please read the API docs at https://github.com/NimaSoroush/differencify`);
         await this.page.setViewport(viewport);
         this._logStep('resize');
       } catch (error) {
@@ -186,8 +190,8 @@ export default class Page {
     }
     if (this.testStats) {
       this.testConfig.testName = this.jestTestId
-        ? this.testStats.currentTestName
-        : this.testStats.currentTestName + this.jestTestId;
+        ? `${this.testStats.currentTestName} ${this.jestTestId}`
+        : this.testStats.currentTestName;
       this.jestTestId += 1;
       await this._evaluateResult();
     } else {

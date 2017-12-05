@@ -29,25 +29,28 @@ import Differencify from 'differencify';
 const differencify = new Differencify(GlobalOptions);
 ```
 
+Differencify matches [Puppeteer](https://github.com/GoogleChrome/puppeteer/blob/master/docs/api.md)'s API completely. Look at [API.md](API.md) for more details.
+
 ### Validate your changes
 ```js
 (async () => {
   const result = await differencify
     .init(TestOptions)
-    .resize({ width: 1600, height: 1200 })
+    .newPage()
+    .setViewport({ width: 1600, height: 1200 })
     .goto('https://github.com/NimaSoroush/differencify')
     .wait(3000)
-    .capture()
+    .screenshot()
     .close()
     .end();
   
   // or unchained
 
-  const page = await differencify.init({ chain: false });
-  await page.resize({ width: 1600, height: 1200 });
+  const page = await differencify.init({ chain: false }).newPage();
+  await page.setViewport({ width: 1600, height: 1200 });
   await page.goto('https://github.com/NimaSoroush/differencify');
   await page.wait(3000);
-  await page.capture();
+  await page.screenshot();
   result = await page.close();
 
   console.log(result); // Prints true or false
@@ -65,7 +68,7 @@ describe('tests differencify', () => {
     await differencify
       .init()
       .goto('https://github.com/NimaSoroush/differencify')
-      .capture()
+      .screenshot()
       .toMatchSnapshot()
       .close()
       .end();
@@ -129,21 +132,15 @@ See [API.md](API.md) for full list of API calls
 |---------|----|--------|-----------|-------|
 |`headless`|`boolean`|no|Browser is launched in visible mode|true|
 |`debug`|`boolean`|no|Enables console output|false|
-|`timeout`|`integer` (ms)|no|Maximum time in milliseconds to wait for the Chrome instance to start|30000|
 |`imageSnapshotPath`|`string`|no|Stores reference screenshots in this directory|./differencify_reports|
 |`saveDifferencifiedImage`|`boolean`|no|Save differencified image to testReportPath in case of mismatch|true|
 |`mismatchThreshold`|`integer`|no|Difference tolerance between reference/test image|0.001|
-|`ignoreHTTPSErrors`|`boolean`|no|Whether to ignore HTTPS errors during navigation|false|
-|`slowMo`|`integer`|no|Slows down browser operations by the specified amount of milliseconds|0|
-|`browserArgs`|`Array`|no|Additional arguments to pass to the browser instance. List of Chromium flags can be found [here](http://peter.sh/experiments/chromium-command-line-switches/)|[]|
-|`dumpio`|`boolean`|no|Whether to pipe browser process stdout and stderr into process.stdout and process.stderr|false|
 
 ## TestOptions
 
 |Parameter|type|required|description|default|
 |---------|----|--------|-----------|-------|
 |`testName`|`string`|no|Unique name for your test case|test|
-|`newWindow`|`boolean`|no|Whether to open test execution on new browser window or not. By default it opens on new tab|false|
 |`chain`|`boolean`|no|Whether to chain differencify commands or not. More details on [examples](examples)|true|
 
 ## Steps API
@@ -153,15 +150,15 @@ See [API.md](API.md) for full list of Steps API calls
 
 ## Interested on Docker image!
 
-A [Dockerfile](Dockerfile) with chrome-headless is available for local and CI usage
+A [Docker base image](https://hub.docker.com/r/nimasoroush/differencify/) available for local and CI usage based on this [Dockerfile](Dockerfile)
 
-Build the container:
+Usage:
 
-```docker build -t puppeteer-chrome-linux .```
-
-Run the container by passing node -e "<yourscript.js content as a string> as the command:
-
-```docker run -i --rm --name puppeteer-chrome puppeteer-chrome-linux node -e "`cat yourscript.js`"```
+```
+FROM nimasoroush/differencify
+RUN npm install differencify
+...
+```
 
 
 ## Links

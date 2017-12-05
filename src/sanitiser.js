@@ -38,9 +38,6 @@ const sanitiseGlobalConfiguration = (conf) => {
   configuration.debug = checkProperty(conf, 'debug', 'boolean')
     ? conf.debug
     : globalConfig.debug;
-  configuration.chain = checkProperty(conf, 'chain', 'boolean')
-    ? conf.chain
-    : globalConfig.chain;
   configuration.imageSnapshotPath = checkProperty(conf, 'imageSnapshotPath', 'string')
     ? conf.imageSnapshotPath
     : globalConfig.imageSnapshotPath;

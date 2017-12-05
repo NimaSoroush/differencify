@@ -6,6 +6,7 @@ import freezeImage from './freezeImage';
 import { sanitiseGlobalConfiguration } from './sanitiser';
 import jestMatchers from './utils/jestMatchers';
 import compareImage from './compareImage';
+import logger from './utils/logger';
 
 const mockMatcher = jest.fn(() => ({
   message: 'message',
@@ -17,18 +18,26 @@ jestMatchers.toMatchImageSnapshot = mockMatcher;
 
 jest.mock('./compareImage');
 
+const mockKeyboard = {
+  press: jest.fn(),
+};
+
 const tabMocks = {
   goto: jest.fn(),
   screenshot: jest.fn(),
   waitFor: jest.fn(),
   evaluate: jest.fn(),
   setViewport: jest.fn(),
+  keyboard: mockKeyboard,
 };
 
 const mockNewPage = jest.fn(() => (tabMocks));
 
 jest.mock('puppeteer', () => ({
   launch: jest.fn(() => ({
+    newPage: mockNewPage,
+  })),
+  connect: jest.fn(() => ({
     newPage: mockNewPage,
   })),
 }));
@@ -56,6 +65,7 @@ jest.mock('./utils/logger', () => ({
     log: mockLog,
     error: mockErr,
   })),
+  warn: jest.fn(),
 }));
 
 const browser = puppeteer.launch();
@@ -70,13 +80,23 @@ describe('Page', () => {
     mockMatcher.mockClear();
     compareImage.mockClear();
     page.error = false;
+    mockNewPage.mockClear();
+    logger.warn.mockClear();
   });
   beforeEach(() => {
     page.tab = page.browser.newPage();
   });
-  it('_init fn', async () => {
+  it('launch fn', async () => {
     page.browser = null;
-    await page._init();
+    await page.launch({
+      args: [],
+      dumpio: false,
+      executablePath: undefined,
+      headless: true,
+      ignoreHTTPSErrors: false,
+      slowMo: 0,
+      timeout: 30000,
+    });
     expect(mockLog).toHaveBeenCalledWith('Launching browser...');
     expect(puppeteer.launch).toHaveBeenCalledWith({
       args: [],
@@ -90,34 +110,80 @@ describe('Page', () => {
     expect(mockNewPage).toHaveBeenCalledTimes(1);
     expect(page.testConfig.newWindow).toEqual(true);
   });
-  describe('goto', () => {
+  it('connect fn', async () => {
+    page.browser = null;
+    await page.connect({
+      browserWSEndpoint: 'endpoint',
+      ignoreHTTPSErrors: false,
+    });
+    expect(mockLog).toHaveBeenCalledWith('Launching browser...');
+    expect(puppeteer.connect).toHaveBeenCalledWith({
+      browserWSEndpoint: 'endpoint',
+      ignoreHTTPSErrors: false,
+    });
+    expect(mockNewPage).toHaveBeenCalledTimes(1);
+    expect(page.testConfig.newWindow).toEqual(true);
+  });
+  describe('_handleFunc', () => {
     beforeEach(() => {
       tabMocks.goto.mockClear();
     });
     it('Wont run if error happened', async () => {
       page.error = true;
-      await page.goto('url');
+      await page._handleFunc('url');
       expect(mockLog).toHaveBeenCalledTimes(0);
     });
-    it('Will run correctly', async () => {
-      await page.goto('url');
-      expect(tabMocks.goto).toHaveBeenCalledWith('url');
-      expect(mockLog).toHaveBeenCalledWith('goto -> url');
+    it('will return correct property', async () => {
+      page.error = false;
+      const result = await page._handleFunc('page', 'testConfig');
+      expect(result).toEqual({ debug: false,
+        chain: undefined,
+        imageSnapshotPath: 'differencify_reports',
+        saveDifferencifiedImage: true,
+        mismatchThreshold: 0.001,
+        newWindow: true });
+      expect(mockLog).toHaveBeenCalledWith('Executing page.testConfig step');
+    });
+    it('will run goto on page', async () => {
+      page.error = false;
+      await page.newPage();
+      const result = await page._handleFunc('page', 'goto', arguments);
+      expect(tabMocks.goto).toHaveBeenCalledWith(...arguments);
+      expect(result).toEqual();
+      expect(mockLog).toHaveBeenCalledWith('Executing page.goto step');
+    });
+    it('will run press on keyboard', async () => {
+      page.error = false;
+      await page.newPage();
+      const result = await page._handleFunc('keyboard', 'press', arguments);
+      expect(mockKeyboard.press).toHaveBeenCalledWith(...arguments);
+      expect(result).toEqual();
+      expect(mockLog).toHaveBeenCalledWith('Executing keyboard.press step');
     });
   });
-  describe('capture', () => {
+  describe('capture/screenshot', () => {
     beforeEach(() => {
       tabMocks.screenshot.mockClear();
     });
     it('Wont run if error happened', async () => {
       page.error = true;
       await page.capture();
+      await page.screenshot();
       expect(mockLog).toHaveBeenCalledTimes(0);
     });
-    it('Will run correctly', async () => {
+    it('Will run capture correctly', async () => {
+      await page.newPage();
       await page.capture({});
       expect(tabMocks.screenshot).toHaveBeenCalledWith({});
-      expect(mockLog).toHaveBeenCalledWith('capturing screenshot');
+      expect(mockLog).toHaveBeenCalledWith('Executing capture step');
+      expect(logger.warn).toHaveBeenCalledWith(`capture() will be deprecated, use screenshot() instead.
+          Please read the API docs at https://github.com/NimaSoroush/differencify`);
+    });
+    it('Will run screenshot correctly', async () => {
+      await page.newPage();
+      await page.screenshot({});
+      expect(tabMocks.screenshot).toHaveBeenCalledWith({});
+      expect(mockLog).toHaveBeenCalledWith('Executing screenshot step');
     });
   });
   describe('wait', () => {
@@ -129,10 +195,12 @@ describe('Page', () => {
       await page.wait();
       expect(mockLog).toHaveBeenCalledTimes(0);
     });
-    it('Will run correctly', async () => {
+    it('Will run wait correctly', async () => {
       await page.wait(10);
       expect(tabMocks.waitFor).toHaveBeenCalledWith(10);
-      expect(mockLog).toHaveBeenCalledWith('waiting...');
+      expect(mockLog).toHaveBeenCalledWith('Executing wait step');
+      expect(logger.warn).toHaveBeenCalledWith(`wait() will be deprecated, use waitFor() instead.
+          Please read the API docs at https://github.com/NimaSoroush/differencify`);
     });
   });
   describe('execute', () => {
@@ -147,7 +215,9 @@ describe('Page', () => {
     it('Will run correctly', async () => {
       await page.execute('exp');
       expect(tabMocks.evaluate).toHaveBeenCalledWith('exp');
-      expect(mockLog).toHaveBeenCalledWith('waiting for expression to be executed in browser');
+      expect(mockLog).toHaveBeenCalledWith('Executing execute step');
+      expect(logger.warn).toHaveBeenCalledWith(`execute() will be deprecated, use evaluate() instead.
+          Please read the API docs at https://github.com/NimaSoroush/differencify`);
     });
   });
   describe('resize', () => {
@@ -162,7 +232,9 @@ describe('Page', () => {
     it('Will run correctly', async () => {
       await page.resize('exp');
       expect(tabMocks.setViewport).toHaveBeenCalledWith('exp');
-      expect(mockLog).toHaveBeenCalledWith('Resizing window');
+      expect(mockLog).toHaveBeenCalledWith('Executing resize step');
+      expect(logger.warn).toHaveBeenCalledWith(`resize() will be deprecated, use setViewport() instead.
+          Please read the API docs at https://github.com/NimaSoroush/differencify`);
     });
   });
   describe('toMatchSnapshot', () => {
@@ -171,6 +243,18 @@ describe('Page', () => {
       expect(page.testConfig.isJest).toEqual(true);
       expect(page.testStats).not.toBeNull();
       expect(page.testConfig.testName).toEqual('Page toMatchSnapshot will set test to jest mode');
+      expect(page.jestTestId).toEqual(1);
+      expect(mockErr).toHaveBeenCalledTimes(0);
+    });
+    it('will test name with numbers if several times called', async () => {
+      page.jestTestId = 0;
+      page.toMatchSnapshot();
+      page.toMatchSnapshot();
+      expect(page.testConfig.isJest).toEqual(true);
+      expect(page.testStats).not.toBeNull();
+      expect(page.testConfig.testName)
+        .toEqual('Page toMatchSnapshot will test name with numbers if several times called 1');
+      expect(page.jestTestId).toEqual(2);
       expect(mockErr).toHaveBeenCalledTimes(0);
     });
   });
