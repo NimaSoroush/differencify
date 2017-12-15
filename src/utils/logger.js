@@ -19,6 +19,10 @@ class PrefixedLogger {
     this.logger.warn(this.prefix, ...args);
   }
 
+  trace(...args) {
+    this.logger.trace(this.prefix, ...args);
+  }
+
   error(...args) {
     this.logger.error(this.prefix, ...args);
   }
@@ -54,6 +58,12 @@ class Logger {
   warn(...args) {
     if (this.enabled) {
       console.warn(Logger.getTime(), ...args);
+    }
+  }
+
+  trace(...args) {
+    if (this.enabled) {
+      console.trace(Logger.getTime(), ...args);
     }
   }
 

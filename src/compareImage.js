@@ -3,6 +3,17 @@ import path from 'path';
 import fs from 'fs';
 import logger from './utils/logger';
 
+const saveDiff = (diff, diffPath) =>
+  new Promise((resolve, reject) => {
+    const cb = (error, obj) => {
+      if (error) {
+        reject(error);
+      }
+      resolve(obj);
+    };
+    diff.image.write(diffPath, cb);
+  });
+
 const compareImage = async (capturedImage, globalConfig, testConfig) => {
   const prefixedLogger = logger.prefix(testConfig.testName);
   let testRoot;
@@ -17,23 +28,25 @@ const compareImage = async (capturedImage, globalConfig, testConfig) => {
   }
 
   const snapshotsDir = path.join(testRoot, '__image_snapshots__');
-  const snapshotPath = path.join(snapshotsDir, `${testConfig.testName}.snap.${testConfig.imageType}`);
+  const snapshotPath = path.join(snapshotsDir, `${testConfig.testName}.snap.${testConfig.imageType || 'png'}`);
 
   const diffDir = path.join(snapshotsDir, '__differencified_output__');
-  const diffPath = path.join(diffDir, `${testConfig.testName}.differencified.${testConfig.imageType}`);
+  const diffPath = path.join(diffDir, `${testConfig.testName}.differencified.${testConfig.imageType || 'png'}`);
   if (fs.existsSync(snapshotPath) && !testConfig.isUpdate) {
     let snapshotImage;
     try {
       snapshotImage = await Jimp.read(snapshotPath);
-    } catch (err) {
-      prefixedLogger.error(`failed to read reference image ${err}`);
+    } catch (error) {
+      prefixedLogger.error(`failed to read reference image: ${snapshotPath}`);
+      prefixedLogger.trace(error);
       return { matched: false };
     }
     let testImage;
     try {
       testImage = await Jimp.read(capturedImage);
-    } catch (err) {
-      prefixedLogger.error(`failed to read test image ${err}`);
+    } catch (error) {
+      prefixedLogger.error('failed to read current screenshot image');
+      prefixedLogger.trace(error);
       return { matched: false };
     }
     prefixedLogger.log('comparing...');
@@ -51,10 +64,11 @@ const compareImage = async (capturedImage, globalConfig, testConfig) => {
         if (fs.existsSync(diffPath)) {
           fs.unlinkSync(diffPath);
         }
-        diff.image.write(diffPath);
+        await saveDiff(diff, diffPath);
         prefixedLogger.log(`saved the diff image to disk at ${diffPath}`);
-      } catch (err) {
-        prefixedLogger.error(`failed to save the diff image: ${err}`);
+      } catch (error) {
+        prefixedLogger.error(`failed to save the diff image: ${diffPath}`);
+        prefixedLogger.trace(error);
       }
     }
 

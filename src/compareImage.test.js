@@ -22,10 +22,12 @@ jest.mock('path', () => ({
 
 const mockLog = jest.fn();
 const mockError = jest.fn();
+const mockTrace = jest.fn();
 jest.mock('./utils/logger', () => ({
   prefix: jest.fn(() => ({
     log: mockLog,
     error: mockError,
+    trace: mockTrace,
   })),
 }));
 
@@ -108,12 +110,13 @@ describe('Compare Image', () => {
   });
 
   it('throws correct error if it cannot read image', async () => {
-    expect.assertions(2);
+    expect.assertions(3);
     Jimp.read.mockReturnValueOnce(Promise.reject('error1'));
     fs.existsSync.mockReturnValueOnce(true);
     const result = await compareImage(Object, mockConfig, mockTestConfig);
     expect(result).toEqual({ matched: false });
-    expect(mockError).toHaveBeenCalledWith('failed to read reference image error1');
+    expect(mockTrace).toHaveBeenCalledWith('error1');
+    expect(mockError).toHaveBeenCalledWith('failed to read reference image: /parent/__image_snapshots__/test.snap.png');
   });
 
   it('returns correct value if difference below threshold', async () => {
@@ -128,7 +131,9 @@ describe('Compare Image', () => {
     Jimp.diff.mockReturnValue({
       percent: 0.02,
       image: {
-        write: jest.fn(),
+        write: jest.fn((path, cb) => {
+          cb();
+        }),
       },
     });
     fs.existsSync.mockReturnValueOnce(true);
@@ -150,7 +155,9 @@ describe('Compare Image', () => {
     Jimp.diff.mockReturnValue({
       percent: 0,
       image: {
-        write: jest.fn(),
+        write: jest.fn((path, cb) => {
+          cb();
+        }),
       },
     });
     fs.existsSync.mockReturnValueOnce(true);
@@ -172,7 +179,9 @@ describe('Compare Image', () => {
     Jimp.diff.mockReturnValue({
       percent: 0.02,
       image: {
-        write: jest.fn(),
+        write: jest.fn((path, cb) => {
+          cb();
+        }),
       },
     });
     fs.existsSync.mockReturnValueOnce(true);
@@ -192,7 +201,9 @@ describe('Compare Image', () => {
   it('writes to disk diff image if saveDifferencifiedImage is true', async () => {
     Jimp.distance.mockReturnValue(0.02);
     fs.existsSync.mockReturnValueOnce(true);
-    const mockWrite = jest.fn();
+    const mockWrite = jest.fn((path, cb) => {
+      cb();
+    });
     Jimp.diff.mockReturnValue({
       percent: 0.02,
       image: {
@@ -211,6 +222,7 @@ describe('Compare Image', () => {
       matched: false,
     });
     expect(mockWrite)
-      .toHaveBeenCalledWith('/parent/__image_snapshots__/__differencified_output__/test.differencified.png');
+      .toHaveBeenCalledWith('/parent/__image_snapshots__/__differencified_output__/test.differencified.png',
+      expect.any(Function));
   });
 });

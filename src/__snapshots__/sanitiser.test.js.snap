@@ -5,15 +5,6 @@ Object {
   "debug": false,
   "imageSnapshotPath": "differencify_reports",
   "mismatchThreshold": 0.001,
-  "puppeteer": Object {
-    "args": Array [],
-    "dumpio": false,
-    "executablePath": undefined,
-    "headless": true,
-    "ignoreHTTPSErrors": false,
-    "slowMo": 0,
-    "timeout": 30000,
-  },
   "saveDifferencifiedImage": true,
 }
 `;
@@ -23,18 +14,6 @@ Object {
   "debug": false,
   "imageSnapshotPath": "differencify_reports",
   "mismatchThreshold": 0.001,
-  "puppeteer": Object {
-    "args": Array [
-      "--no-sandbox",
-      "--disable-setuid-sandbox",
-    ],
-    "dumpio": false,
-    "executablePath": undefined,
-    "headless": true,
-    "ignoreHTTPSErrors": false,
-    "slowMo": 0,
-    "timeout": 30000,
-  },
   "saveDifferencifiedImage": true,
 }
 `;
@@ -44,15 +23,6 @@ Object {
   "debug": false,
   "imageSnapshotPath": "differencify_reports",
   "mismatchThreshold": 0.001,
-  "puppeteer": Object {
-    "args": Array [],
-    "dumpio": false,
-    "executablePath": undefined,
-    "headless": true,
-    "ignoreHTTPSErrors": false,
-    "slowMo": 0,
-    "timeout": 30000,
-  },
   "saveDifferencifiedImage": true,
 }
 `;
@@ -61,8 +31,8 @@ exports[`sanitiser sanitise test configuration sanitise if no config provided 1`
 Object {
   "chain": true,
   "isUpdate": false,
-  "newWindow": false,
-  "testName": "test1",
+  "testId": 1,
+  "testName": "test",
 }
 `;
 
@@ -70,7 +40,7 @@ exports[`sanitiser sanitise test configuration sanitise if some config provided 
 Object {
   "chain": true,
   "isUpdate": false,
-  "newWindow": true,
-  "testName": "test1",
+  "testId": 1,
+  "testName": "test",
 }
 `;
