@@ -188,3 +188,5 @@ See [examples](examples) for usages and CI integration with jest
 Visit project [Gitter Chat](https://gitter.im/differencify/QA) for general Q/A around project
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) if you want to contribute.
+
+Read [this article](https://medium.com/@nima.soroush.h/make-visual-regression-testing-easier-4a3dc7073737) that explain simple usage of this library
