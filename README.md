@@ -85,7 +85,7 @@ describe('tests differencify', () => {
   });
 });
 ```
-As you can see, you don't need to return `result` as `toMatchSnapshot` will automatically validate result. See more jest examples [here](src/integration.tests/integration.tests.js).
+As you can see, you don't need to return `result` as `toMatchSnapshot` will automatically validate result. See more jest examples [here](src/integration.tests/integration.test.js).
 
 ### Test <span style="color:green">PASS</span>
 
