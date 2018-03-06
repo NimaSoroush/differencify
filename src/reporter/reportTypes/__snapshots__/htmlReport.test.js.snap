@@ -1,0 +1,86 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`HTML report generates a HTML report 1`] = `
+"<html>
+  <head>
+    <title>Differencify report</title>
+    <style type=\\"text/css\\">
+    body {
+      font-family: Helvetica, Arial, sans-serif;
+      color: #24292e;
+    }
+    table {
+      border-collapse: collapse;
+    }
+    table, th, td {
+        border: 1px solid #ccc;
+    }
+    th {
+      font-weight: 600;
+    }
+    th, td {
+      padding: 8px;
+      text-align: left;
+      font-size: 14px;
+    }
+    td img {
+      max-width: 180px;
+    }
+    </style>
+  </head>
+  <body>
+    <h1>Differencify report</h1>
+    <table>
+      <thead>
+        <tr>
+          <th>Status</th>
+          <th>Test name</th>
+          <th>Reference</th>
+          <th>Difference</th>
+        </tr>
+      </thead>
+      <tbody>
+        
+          <tr>
+            <td>
+              ✅ passed
+            </td>
+            <td>
+              default
+            </td>
+            <td>
+              
+            </td>
+            <td>
+              
+            </td>
+        </tr>
+      
+          <tr>
+            <td>
+              ❗ failed
+            </td>
+            <td>
+              default2
+            </td>
+            <td>
+              
+                <a href=\\"default2.png\\">
+                  <img src=\\"default2.png\\" />
+                </a>
+              
+            </td>
+            <td>
+              
+                <a href=\\"default2_differencified.png\\">
+                  <img src=\\"default2_differencified.png\\" />
+                </a>
+              
+            </td>
+        </tr>
+      
+      </tbody>
+    </table>
+  </body>
+</html>"
+`;

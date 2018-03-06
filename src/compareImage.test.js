@@ -20,6 +20,10 @@ jest.mock('path', () => ({
   resolve: jest.fn(() => 'dir'),
 }));
 
+jest.mock('pkg-dir', () => ({
+  sync: () => '../../',
+}));
+
 const mockLog = jest.fn();
 const mockError = jest.fn();
 const mockTrace = jest.fn();
