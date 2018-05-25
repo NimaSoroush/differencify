@@ -171,7 +171,7 @@ describe('Differencify', () => {
     expect(result).toEqual(true);
     expect(result2).toEqual(true);
   }, 20000);
-  fit('Custom test name', async () => {
+  it('Custom test name', async () => {
     const target = differencify.init({
       testName: 'test1',
       chain: false,
