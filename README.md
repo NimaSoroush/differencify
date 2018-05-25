@@ -15,6 +15,9 @@ Differencify is a library for visual regression testing by comparing your local 
 |---------|-------------|
 |<img alt="Differencify" src="images/reference_screenshot.png" width="400">|<img alt="Differencify" src="images/differencified_screenshot.png" width="400">|
 
+## How it works
+<p align="center"><img alt="Differencify" src="images/workflow.png" width="400"></p>
+
 
 ## Installation
 > *Note: Differencify uses async/await and targets Node v7.6.0 or greater* 
