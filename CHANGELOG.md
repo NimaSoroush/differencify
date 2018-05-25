@@ -1,3 +1,7 @@
+## [1.3.1] - 2018-5-25
+### Fixed
+- Bug fixed for testName not being picked up correctly
+
 ## [1.3.0] - 2017-12-15
 ### Fixed
 - Support all puppeteer API calls

@@ -83,6 +83,7 @@ describe('Differencify', () => {
       {
         chain: false,
         testName: 'test',
+        testNameProvided: false,
         isUpdate: 'true',
         testId: 1,
       });

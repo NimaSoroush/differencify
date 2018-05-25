@@ -260,6 +260,33 @@ describe('Target', () => {
       expect(target.testId).toEqual(2);
       expect(mockErr).toHaveBeenCalledTimes(0);
     });
+    it('Will respect to testName if it is provided', async () => {
+      target.testId = 0;
+      target.testConfig.testName = 'test';
+      target.testConfig.testNameProvided = true;
+      target.isJest();
+      target.toMatchSnapshot();
+      expect(target.testConfig.isJest).toEqual(true);
+      expect(target.testStats).not.toBeNull();
+      expect(target.testConfig.testName)
+        .toEqual('test');
+      expect(target.testId).toEqual(1);
+      expect(mockErr).toHaveBeenCalledTimes(0);
+    });
+    it('Will respect to testName if it is provided', async () => {
+      target.testId = 0;
+      target.testConfig.testName = 'test';
+      target.testConfig.testNameProvided = true;
+      target.isJest();
+      target.toMatchSnapshot();
+      target.toMatchSnapshot();
+      expect(target.testConfig.isJest).toEqual(true);
+      expect(target.testStats).not.toBeNull();
+      expect(target.testConfig.testName)
+        .toEqual('test 1');
+      expect(target.testId).toEqual(2);
+      expect(mockErr).toHaveBeenCalledTimes(0);
+    });
   });
   describe('isJest', () => {
     it('will set test to jest mode', async () => {

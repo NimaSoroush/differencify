@@ -171,4 +171,18 @@ describe('Differencify', () => {
     expect(result).toEqual(true);
     expect(result2).toEqual(true);
   }, 20000);
+  it('Custom test name', async () => {
+    const target = differencify.init({
+      testName: 'test1',
+      chain: false,
+    });
+    const page = await target.newPage();
+    await page.goto('http://example.com/');
+    await page.setViewport({ width: 1600, height: 1200 });
+    await page.waitFor(1000);
+    const image = await page.screenshot();
+    const result = await target.toMatchSnapshot(image);
+    await page.close();
+    expect(result).toEqual(true);
+  }, 20000);
 });

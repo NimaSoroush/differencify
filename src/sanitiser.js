@@ -23,6 +23,7 @@ const sanitiseTestConfiguration = (conf, testId) => {
   configuration.chain = checkProperty(conf, 'chain', 'boolean')
     ? conf.chain
     : testConfig.chain;
+  configuration.testNameProvided = checkProperty(conf, 'testName', 'string');
   configuration.testName = checkProperty(conf, 'testName', 'string')
     ? conf.testName
     : testConfig.testName;
