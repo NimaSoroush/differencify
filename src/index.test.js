@@ -70,7 +70,7 @@ describe('Differencify', () => {
     await differencify.init();
     expect(chainProxy).toHaveBeenCalledTimes(1);
   });
-  it('init without chaining', async () => {
+  fit('init without chaining', async () => {
     process.env.update = true;
     await differencify.init({ chain: false });
     expect(Target).toHaveBeenCalledWith(null,
@@ -83,6 +83,7 @@ describe('Differencify', () => {
       {
         chain: false,
         testName: 'test',
+        testNameProvided: false,
         isUpdate: 'true',
         testId: 1,
       });

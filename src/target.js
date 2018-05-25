@@ -198,7 +198,7 @@ export default class Target {
     if (image) {
       this.image = image;
     }
-    if (this.testConfig.isJest) {
+    if (this.testConfig.isJest && !this.testConfig.testNameProvided) {
       this.testConfig.testName = this.testId
         ? `${this.testStats.currentTestName} ${this.testId}`
         : this.testStats.currentTestName;
