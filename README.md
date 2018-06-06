@@ -188,7 +188,7 @@ RUN npm install differencify
 
 ## Links
 
-See [examples](examples) for usages and CI integration with jest
+See [examples](./src/integration.tests) for usages and CI integration with jest
 
 Visit project [Gitter Chat](https://gitter.im/differencify/QA) for general Q/A around project
 

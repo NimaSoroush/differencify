@@ -1,3 +1,4 @@
+/* eslint-disable prefer-object-spread/prefer-object-spread */
 import Jimp from 'jimp';
 import fs from 'fs';
 import compareImage from './compareImage';
@@ -33,6 +34,7 @@ jest.mock('./utils/logger', () => ({
 
 const mockConfig = {
   imageSnapshotPath: './differencify_report',
+  imageSnapshotPathProvided: false,
   saveDifferencifiedImage: true,
   mismatchThreshold: 0.01,
 };
@@ -73,6 +75,22 @@ describe('Compare Image', () => {
       });
       expect(result).toEqual({ updated: true });
       expect(fs.writeFileSync).toHaveBeenCalledWith('/parent/__image_snapshots__/test.snap.png', Object);
+    });
+    it('respects to imageSnapshotPath when in jest mode', async () => {
+      const newGlobalConfig = Object.assign({}, mockConfig,
+        {
+          imageSnapshotPath: './someImagePath',
+          imageSnapshotPathProvided: true,
+        });
+      const result = await compareImage(Object, newGlobalConfig, {
+        isUpdate: true,
+        isJest: true,
+        testName: 'test',
+        testPath: '/src/test.js',
+        imageType: 'png',
+      });
+      expect(result).toEqual({ updated: true });
+      expect(fs.writeFileSync).toHaveBeenCalledWith('./someImagePath/test.snap.png', Object);
     });
   });
 
@@ -210,10 +228,8 @@ describe('Compare Image', () => {
         write: mockWrite,
       },
     });
-    // eslint-disable-next-line prefer-object-spread/prefer-object-spread
     const result = await compareImage(
       Object,
-      // eslint-disable-next-line prefer-object-spread/prefer-object-spread
       Object.assign({}, mockConfig, { saveDifferencifiedImage: true }),
       mockTestConfig,
     );

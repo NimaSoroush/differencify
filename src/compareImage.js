@@ -14,8 +14,7 @@ const saveDiff = (diff, diffPath) =>
     diff.image.write(diffPath, cb);
   });
 
-const compareImage = async (capturedImage, globalConfig, testConfig) => {
-  const prefixedLogger = logger.prefix(testConfig.testName);
+const getSnapshotsDir = (testConfig, globalConfig) => {
   let testRoot;
   if (testConfig.isJest) {
     testRoot = path.dirname(testConfig.testPath);
@@ -26,8 +25,16 @@ const compareImage = async (capturedImage, globalConfig, testConfig) => {
       fs.mkdirSync(testRoot);
     }
   }
+  return path.join(testRoot, '__image_snapshots__');
+};
 
-  const snapshotsDir = path.join(testRoot, '__image_snapshots__');
+const compareImage = async (capturedImage, globalConfig, testConfig) => {
+  const prefixedLogger = logger.prefix(testConfig.testName);
+
+  const snapshotsDir = globalConfig.imageSnapshotPathProvided ?
+    globalConfig.imageSnapshotPath :
+    getSnapshotsDir(testConfig, globalConfig);
+
   const snapshotPath = path.join(snapshotsDir, `${testConfig.testName}.snap.${testConfig.imageType || 'png'}`);
 
   const diffDir = path.join(snapshotsDir, '__differencified_output__');

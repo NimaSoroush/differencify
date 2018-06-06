@@ -143,6 +143,7 @@ describe('Target', () => {
       expect(result).toEqual({ debug: false,
         chain: undefined,
         imageSnapshotPath: 'differencify_reports',
+        imageSnapshotPathProvided: true,
         saveDifferencifiedImage: true,
         mismatchThreshold: 0.001,
         newWindow: true });

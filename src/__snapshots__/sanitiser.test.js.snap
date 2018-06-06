@@ -4,6 +4,7 @@ exports[`sanitiser sanitise global configuration sanitise if no config provided 
 Object {
   "debug": false,
   "imageSnapshotPath": "differencify_reports",
+  "imageSnapshotPathProvided": false,
   "mismatchThreshold": 0.001,
   "saveDifferencifiedImage": true,
 }
@@ -13,6 +14,7 @@ exports[`sanitiser sanitise global configuration sanitise if puppeteer specific 
 Object {
   "debug": false,
   "imageSnapshotPath": "differencify_reports",
+  "imageSnapshotPathProvided": false,
   "mismatchThreshold": 0.001,
   "saveDifferencifiedImage": true,
 }
@@ -22,6 +24,7 @@ exports[`sanitiser sanitise global configuration sanitise if screenshots config 
 Object {
   "debug": false,
   "imageSnapshotPath": "differencify_reports",
+  "imageSnapshotPathProvided": false,
   "mismatchThreshold": 0.001,
   "saveDifferencifiedImage": true,
 }

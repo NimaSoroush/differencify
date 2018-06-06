@@ -338,6 +338,26 @@ In this example, differencify will got to different pages and compare screenshot
 ```
 In this example, differencify will got to different pages and compare screenshots with reference screenshots.
 
+## Custom test path
+
+```js
+(async () => {
+  const differencify = new Differencify({ imageSnapshotPath: './custom_test_path' });
+  const target = differencify.init({ chain: false });
+  await target.launch();
+  const page = await target.newPage();
+  await page.setViewport({ width: 1600, height: 1200 });
+  await page.goto('http://example.com/');
+  await page.waitFor(1000);
+  const image = await page.screenshot();
+  const result = await target.toMatchSnapshot(image);
+  await page.close();
+  console.log(result); // True or False
+  console.log(result2); // True or False
+})();
+```
+In this example, you can specify the custom path for storing images.
+
 
 
 
