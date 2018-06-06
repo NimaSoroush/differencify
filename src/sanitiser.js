@@ -24,7 +24,7 @@ const sanitiseTestConfiguration = (conf, testId) => {
     ? conf.chain
     : testConfig.chain;
   configuration.testNameProvided = checkProperty(conf, 'testName', 'string');
-  configuration.testName = checkProperty(conf, 'testName', 'string')
+  configuration.testName = configuration.testNameProvided
     ? conf.testName
     : testConfig.testName;
   configuration.testId = testId;
@@ -39,7 +39,9 @@ const sanitiseGlobalConfiguration = (conf) => {
   configuration.debug = checkProperty(conf, 'debug', 'boolean')
     ? conf.debug
     : globalConfig.debug;
-  configuration.imageSnapshotPath = checkProperty(conf, 'imageSnapshotPath', 'string')
+
+  configuration.imageSnapshotPathProvided = checkProperty(conf, 'imageSnapshotPath', 'string');
+  configuration.imageSnapshotPath = configuration.imageSnapshotPathProvided
     ? conf.imageSnapshotPath
     : globalConfig.imageSnapshotPath;
   configuration.saveDifferencifiedImage = checkProperty(conf, 'saveDifferencifiedImage', 'boolean')

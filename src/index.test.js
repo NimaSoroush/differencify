@@ -79,6 +79,7 @@ describe('Differencify', () => {
         mismatchThreshold: 0.001,
         saveDifferencifiedImage: true,
         imageSnapshotPath: 'differencify_reports',
+        imageSnapshotPathProvided: false,
       },
       {
         chain: false,

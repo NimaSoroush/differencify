@@ -1,3 +1,7 @@
+## [1.3.1] - 2018-6-6
+### Fixed
+- Bug fixed for custom test path
+
 ## [1.3.1] - 2018-5-25
 ### Fixed
 - Bug fixed for testName not being picked up correctly
