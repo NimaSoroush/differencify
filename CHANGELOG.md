@@ -1,4 +1,4 @@
-## [1.3.1] - 2018-6-6
+## [1.3.3] - 2018-6-6
 ### Fixed
 - Bug fixed for custom test path
 
