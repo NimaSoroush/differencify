@@ -80,3 +80,5 @@ export default class Differencify {
     }
   }
 }
+
+module.exports = Differencify;

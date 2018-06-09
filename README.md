@@ -28,7 +28,7 @@ npm install differencify
 ```
 ## Usage
 ```js
-import Differencify from 'differencify';
+const Differencify = require('differencify');
 const differencify = new Differencify(GlobalOptions);
 ```
 
@@ -43,7 +43,7 @@ Differencify matches [Puppeteer](https://github.com/GoogleChrome/puppeteer/blob/
     .newPage()
     .setViewport({ width: 1600, height: 1200 })
     .goto('https://github.com/NimaSoroush/differencify')
-    .wait(1000)
+    .waitFor(1000)
     .screenshot()
     .toMatchSnapshot()
     .result((result) => {
@@ -59,7 +59,7 @@ Differencify matches [Puppeteer](https://github.com/GoogleChrome/puppeteer/blob/
   const page = await target.newPage();
   await page.setViewport({ width: 1600, height: 1200 });
   await page.goto('https://github.com/NimaSoroush/differencify');
-  await page.wait(1000);
+  await page.waitFor(1000);
   const image = await page.screenshot();
   const result = await page.toMatchSnapshot(image)
   await page.close();
@@ -74,7 +74,6 @@ See more examples [here](API.md)
 
 Only need to wrap your steps into `it()` function
 ```js
-import Differencify from 'differencify';
 const differencify = new Differencify();
 describe('tests differencify', () => {
   it('validate github page appear correctly', async () => {

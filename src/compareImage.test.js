@@ -18,7 +18,7 @@ jest.mock('fs', () => ({
 jest.mock('path', () => ({
   dirname: jest.fn(() => '/parent'),
   join: jest.fn((a, b) => `${a}/${b}`),
-  resolve: jest.fn(() => 'dir'),
+  resolve: jest.fn(path => path),
 }));
 
 const mockLog = jest.fn();
@@ -100,13 +100,12 @@ describe('Compare Image', () => {
         isUpdate: false,
         isJest: false,
         testName: 'test',
-        testPath: '/src/test.js',
         imageType: 'png',
       });
       expect(result).toEqual({ added: true });
       expect(fs.writeFileSync)
       .toHaveBeenCalledWith(
-        'dir/__image_snapshots__/test.snap.png',
+        './differencify_report/__image_snapshots__/test.snap.png',
         Object,
       );
     });
@@ -115,13 +114,12 @@ describe('Compare Image', () => {
         isUpdate: true,
         isJest: false,
         testName: 'test',
-        testPath: '/src/test.js',
         imageType: 'png',
       });
       expect(result).toEqual({ updated: true });
       expect(fs.writeFileSync)
       .toHaveBeenCalledWith(
-        'dir/__image_snapshots__/test.snap.png',
+        './differencify_report/__image_snapshots__/test.snap.png',
         Object,
       );
     });
