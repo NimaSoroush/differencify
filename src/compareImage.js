@@ -19,8 +19,7 @@ const getSnapshotsDir = (testConfig, globalConfig) => {
   if (testConfig.isJest) {
     testRoot = path.dirname(testConfig.testPath);
   } else {
-    const rootPath = path.join(__dirname, '../');
-    testRoot = path.resolve(__dirname, rootPath, globalConfig.imageSnapshotPath);
+    testRoot = path.resolve(globalConfig.imageSnapshotPath);
     if (!fs.existsSync(testRoot)) {
       fs.mkdirSync(testRoot);
     }
@@ -32,7 +31,7 @@ const compareImage = async (capturedImage, globalConfig, testConfig) => {
   const prefixedLogger = logger.prefix(testConfig.testName);
 
   const snapshotsDir = globalConfig.imageSnapshotPathProvided ?
-    globalConfig.imageSnapshotPath :
+    path.resolve(globalConfig.imageSnapshotPath) :
     getSnapshotsDir(testConfig, globalConfig);
 
   const snapshotPath = path.join(snapshotsDir, `${testConfig.testName}.snap.${testConfig.imageType || 'png'}`);

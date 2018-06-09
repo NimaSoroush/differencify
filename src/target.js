@@ -183,13 +183,18 @@ export default class Target {
   }
 
   isJest() {
-    this.testConfig.isJest = (expect && isFunc(expect.getState));
-    if (this.testConfig.isJest) {
-      this.testStats = expect.getState() || null;
-      this.prefixedLogger = logger.prefix(this.testStats.currentTestName);
-      this.testConfig.testPath = this.testStats.testPath;
-      this.testConfig.isUpdate = this.testStats.snapshotState._updateSnapshot === 'all' || false;
-    } else {
+    try {
+      this.testConfig.isJest = (expect && isFunc(expect.getState));
+      if (this.testConfig.isJest) {
+        this.testStats = expect.getState() || null;
+        this.prefixedLogger = logger.prefix(this.testStats.currentTestName);
+        this.testConfig.testPath = this.testStats.testPath;
+        this.testConfig.isUpdate = this.testStats.snapshotState._updateSnapshot === 'all' || false;
+      } else {
+        this.testId = this.testConfig.testId;
+      }
+    } catch (error) {
+      this.testConfig.isJest = false;
       this.testId = this.testConfig.testId;
     }
   }

@@ -20,7 +20,7 @@ describe('Differencify', () => {
       .toMatchSnapshot()
       .close()
       .end();
-  }, 20000);
+  }, 30000);
   it('simple unchained', async () => {
     const target = differencify.init({ chain: false });
     const page = await target.newPage();
@@ -31,7 +31,7 @@ describe('Differencify', () => {
     const result = await target.toMatchSnapshot(image);
     await page.close();
     expect(result).toEqual(true);
-  }, 20000);
+  }, 30000);
   it('Launch new browser per test', async () => {
     await differencify
       .init()
@@ -44,7 +44,7 @@ describe('Differencify', () => {
       .toMatchSnapshot()
       .close()
       .end();
-  }, 20000);
+  }, 30000);
   it('Launch new browser per test when unchained', async () => {
     const target = differencify.init({ chain: false });
     await target.launch({ args: ['--no-sandbox', '--disable-setuid-sandbox'] });
@@ -57,7 +57,7 @@ describe('Differencify', () => {
     await page.close();
     await target.close();
     expect(result).toEqual(true);
-  }, 20000);
+  }, 30000);
   it('Using result function', async () => {
     await differencify
       .init()
@@ -73,7 +73,7 @@ describe('Differencify', () => {
       .toMatchSnapshot()
       .close()
       .end();
-  }, 20000);
+  }, 30000);
   it('Context switching when chained', async () => {
     await differencify
       .init()
@@ -93,7 +93,7 @@ describe('Differencify', () => {
         .toMatchSnapshot()
         .close()
         .end();
-  }, 20000);
+  }, 30000);
   it('Calling Puppeteer specific functions when chained: console', async () => {
     await differencify
       .init()
@@ -106,7 +106,7 @@ describe('Differencify', () => {
       .evaluate(() => console.log('hello'))
       .close()
       .end();
-  }, 20000);
+  }, 30000);
   it('Calling Puppeteer specific functions when chained: dialog', async () => {
     await differencify
       .init()
@@ -118,7 +118,7 @@ describe('Differencify', () => {
       .evaluate(() => alert('1'))
       .close()
       .end();
-  }, 20000);
+  }, 30000);
   it('Continue on chained object', async () => {
     await differencify
       .init()
@@ -132,7 +132,7 @@ describe('Differencify', () => {
         })
       .close()
       .end();
-  }, 20000);
+  }, 30000);
   it('Multiple toMatchSnapshot on chained object', async () => {
     await differencify
       .init()
@@ -153,7 +153,7 @@ describe('Differencify', () => {
       })
       .close()
       .end();
-  }, 20000);
+  }, 30000);
   it('Multiple toMatchSnapshot when unchained', async () => {
     const target = differencify.init({ chain: false });
     const page = await target.newPage();
@@ -170,7 +170,7 @@ describe('Differencify', () => {
     await page.close();
     expect(result).toEqual(true);
     expect(result2).toEqual(true);
-  }, 20000);
+  }, 30000);
   it('Custom test name', async () => {
     const target = differencify.init({
       testName: 'test1',
@@ -184,7 +184,7 @@ describe('Differencify', () => {
     const result = await target.toMatchSnapshot(image);
     await page.close();
     expect(result).toEqual(true);
-  }, 20000);
+  }, 30000);
   it('Custom test path', async () => {
     const customDifferencify = new Differencify({
       imageSnapshotPath: './src/integration.tests/__image_snapshots__/custom_test_path',
@@ -203,5 +203,5 @@ describe('Differencify', () => {
     await page.close();
     await customDifferencify.cleanup();
     expect(result).toEqual(true);
-  }, 20000);
+  }, 30000);
 });
