@@ -196,3 +196,5 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) if you want to contribute.
 Read [this article](https://medium.com/@nima.soroush.h/make-visual-regression-testing-easier-4a3dc7073737) that explain simple usage of this library
 
 Article about how to use [Differencify in Docker](https://medium.com/@nima.soroush.h/using-differencify-in-docker-and-ci-99e3d1ec057c)
+
+[Gist example](https://gist.github.com/NimaSoroush/28c3a5808af393610a33bd32d4c43911) with vanilla node
