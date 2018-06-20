@@ -18,6 +18,7 @@ export default class Target {
     this.error = null;
     this.image = null;
     this.testId = 0;
+    this.result = null;
   }
 
   _logError(error) {
@@ -199,9 +200,15 @@ export default class Target {
     }
   }
 
-  async toMatchSnapshot(image) {
-    if (image) {
+  async toMatchSnapshot(image, callback) {
+    let resultCallback;
+    if (image && !isFunc(image)) {
       this.image = image;
+    } else if (isFunc(image)) {
+      resultCallback = image;
+    }
+    if (callback && isFunc(callback)) {
+      resultCallback = callback;
     }
     if (this.testConfig.isJest && !this.testConfig.testNameProvided) {
       this.testConfig.testName = this.testId
@@ -213,14 +220,20 @@ export default class Target {
         : this.testConfig.testName;
     }
     this.testId += 1;
-    return await this._evaluateResult();
+    const result = await this._evaluateResult();
+    if (resultCallback) {
+      resultCallback({
+        testConfig: this.testConfig,
+        testResult: this.result,
+      });
+    }
+    return result;
   }
 
   async _evaluateResult() {
     if (!this.error) {
-      let result;
       try {
-        result = await compareImage(this.image, this.globalConfig, this.testConfig);
+        this.result = await compareImage(this.image, this.globalConfig, this.testConfig);
       } catch (error) {
         this._logError(error);
       }
@@ -230,9 +243,9 @@ export default class Target {
       if (this.testConfig.isJest === true) {
         const toMatchImageSnapshot = jestMatchers.toMatchImageSnapshot;
         expect.extend({ toMatchImageSnapshot });
-        expect(result).toMatchImageSnapshot(this.testStats);
+        expect(this.result).toMatchImageSnapshot(this.testStats);
       }
-      if (result.matched || result.updated || result.added) {
+      if (this.result.matched || this.result.updated || this.result.added) {
         return true;
       }
     }
