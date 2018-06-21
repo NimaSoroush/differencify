@@ -167,6 +167,88 @@ In this example, differencify will launch a browser instance and share same brow
 ```
 In this example, after calling `result` function it will return the previous step result as an object.
 
+## Detailed Result Information
+
+For programmatic use cases where more information is required than simply whether or not
+a test passed, a callback function may be passed to `toMatchSnapshot` which will be invoked
+after the test and passed additional details.
+
+```js
+(async () => {
+  await differencify
+    .init()
+    .newPage()
+    .setViewport({ width: 1600, height: 1200 })
+    .goto('https://github.com/NimaSoroush/differencify')
+    .screenshot()
+    .toMatchSnapshot((resultDetail) => {
+     console.log(resultDetail);
+     /*
+     Example output:
+      {
+        testConfig: {
+          chain: false,
+          testNameProvided: true,
+          testName: 'TestName',
+          'testId': 2,
+          'isUpdate': false,
+          'isJest': false,
+          'newWindow': true
+        },
+        testResult: {
+          diffPath: '/parent/__image_snapshots__/__differencified_output__/test.differencified.png',
+          matched: false,
+          diffPercent: 0.02,
+          distance: 0,
+          snapshotPath: '/parent/__image_snapshots__/test.snap.png',
+        }
+      }
+    */
+    })
+    .close()
+    .end();
+})();
+```
+
+Similarly, the callback may be passed as a second argument when unchained:
+
+```js
+(async () => {
+  const target = differencify.init({ chain: false });
+  await target.launch();
+  const page = await target.newPage();
+  await page.goto('https://github.com/NimaSoroush/differencify');
+  await page.setViewport({ width: 1600, height: 1200 });
+  await page.waitFor(1000);
+  const image = await page.screenshot();
+  await target.toMatchSnapshot(image, (resultDetail) => {
+   console.log(resultDetail);
+   /*
+   Example output:
+    {
+      testConfig: {
+        chain: false,
+        testNameProvided: true,
+        testName: 'TestName',
+        'testId': 2,
+        'isUpdate': false,
+        'isJest': false,
+        'newWindow': true
+      },
+      testResult: {
+        diffPath: '/parent/__image_snapshots__/__differencified_output__/test.differencified.png',
+        matched: false,
+        diffPercent: 0.02,
+        distance: 0,
+        snapshotPath: '/parent/__image_snapshots__/test.snap.png',
+      }
+    }
+  */
+  });
+  await page.close();
+  await target.close();
+})();
+```
 
 ## Context switching when chained
 

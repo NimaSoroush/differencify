@@ -130,7 +130,10 @@ describe('Compare Image', () => {
     Jimp.read.mockReturnValueOnce(Promise.reject('error1'));
     fs.existsSync.mockReturnValueOnce(true);
     const result = await compareImage(Object, mockConfig, mockTestConfig);
-    expect(result).toEqual({ matched: false });
+    expect(result).toEqual({
+      error: 'Failed to read reference image',
+      matched: false,
+    });
     expect(mockTrace).toHaveBeenCalledWith('error1');
     expect(mockError).toHaveBeenCalledWith('failed to read reference image: /parent/__image_snapshots__/test.snap.png');
   });
@@ -139,7 +142,12 @@ describe('Compare Image', () => {
     expect.assertions(2);
     fs.existsSync.mockReturnValueOnce(true);
     const result = await compareImage(Object, mockConfig, mockTestConfig);
-    expect(result).toEqual({ matched: true });
+    expect(result).toEqual({
+      diffPercent: 0,
+      distance: 0,
+      matched: true,
+      snapshotPath: '/parent/__image_snapshots__/test.snap.png',
+    });
     expect(mockLog).toHaveBeenCalledWith('no mismatch found ✅');
   });
 
@@ -157,6 +165,9 @@ describe('Compare Image', () => {
     expect(result).toEqual({
       diffPath: '/parent/__image_snapshots__/__differencified_output__/test.differencified.png',
       matched: false,
+      diffPercent: 0.02,
+      distance: 0,
+      snapshotPath: '/parent/__image_snapshots__/test.snap.png',
     });
     expect(mockError).toHaveBeenCalledWith(`mismatch found❗
       Result:
@@ -181,6 +192,9 @@ describe('Compare Image', () => {
     expect(result).toEqual({
       diffPath: '/parent/__image_snapshots__/__differencified_output__/test.differencified.png',
       matched: false,
+      diffPercent: 0,
+      distance: 0.02,
+      snapshotPath: '/parent/__image_snapshots__/test.snap.png',
     });
     expect(mockError).toHaveBeenCalledWith(`mismatch found❗
       Result:
@@ -205,6 +219,9 @@ describe('Compare Image', () => {
     expect(result).toEqual({
       diffPath: '/parent/__image_snapshots__/__differencified_output__/test.differencified.png',
       matched: false,
+      diffPercent: 0.02,
+      distance: 0.02,
+      snapshotPath: '/parent/__image_snapshots__/test.snap.png',
     });
     expect(mockError).toHaveBeenCalledWith(`mismatch found❗
       Result:
@@ -234,6 +251,9 @@ describe('Compare Image', () => {
     expect(result).toEqual({
       diffPath: '/parent/__image_snapshots__/__differencified_output__/test.differencified.png',
       matched: false,
+      diffPercent: 0.02,
+      distance: 0.02,
+      snapshotPath: '/parent/__image_snapshots__/test.snap.png',
     });
     expect(mockWrite)
       .toHaveBeenCalledWith('/parent/__image_snapshots__/__differencified_output__/test.differencified.png',

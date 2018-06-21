@@ -74,6 +74,70 @@ describe('Differencify', () => {
       .close()
       .end();
   }, 30000);
+  it('Using toMatchSnapshot callback for result details', async () => {
+    await differencify
+      .init()
+      .newPage()
+      .setViewport({ width: 1600, height: 1200 })
+      .goto('http://example.com/')
+      .waitFor(1000)
+      .title()
+      .screenshot()
+      .toMatchSnapshot((resultDetail) => {
+        expect(resultDetail).toEqual({
+          testConfig: {
+            chain: true,
+            imageType: 'png',
+            isJest: true,
+            isUpdate: false,
+            testId: 6,
+            testName: 'Differencify Using toMatchSnapshot callback for result details',
+            testNameProvided: false,
+            testPath: '/differencify/src/integration.tests/integration.test.js',
+          },
+          testResult: {
+            diffPercent: 0,
+            distance: 0,
+            matched: true,
+            snapshotPath: '/differencify/src/integration.tests/__image_snapshots__/Differencify Using toMatchSnapshot callback for result details.snap.png',
+          },
+        });
+      })
+      .close()
+      .end();
+  }, 30000);
+  it('Using toMatchSnapshot callback for result details when unchained', async () => {
+    const target = differencify.init({ chain: false });
+    await target.launch({ args: ['--no-sandbox', '--disable-setuid-sandbox'] });
+    const page = await target.newPage();
+    await page.goto('http://example.com/');
+    await page.setViewport({ width: 1600, height: 1200 });
+    await page.waitFor(1000);
+    const image = await page.screenshot();
+    await target.toMatchSnapshot(image, (resultDetail) => {
+      expect(resultDetail).toEqual({
+        testConfig: {
+          chain: false,
+          imageType: undefined,
+          isJest: true,
+          isUpdate: false,
+          newWindow: true,
+          testId: 7,
+          testName: 'Differencify Using toMatchSnapshot callback for result details when unchained',
+          testNameProvided: false,
+          testPath: '/differencify/src/integration.tests/integration.test.js',
+        },
+        testResult: {
+          diffPercent: 0,
+          distance: 0,
+          matched: true,
+          snapshotPath: '/differencify/src/integration.tests/__image_snapshots__/Differencify Using toMatchSnapshot callback for result details when unchained.snap.png',
+        },
+      });
+    });
+    await page.close();
+    await target.close();
+  }, 30000);
   it('Context switching when chained', async () => {
     await differencify
       .init()
