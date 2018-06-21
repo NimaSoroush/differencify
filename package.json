@@ -9,8 +9,7 @@
     "build-docs": "mkdir -p docs && jsdoc2md src/*.js > docs/api.md",
     "pretest": "npm run lint",
     "test": "jest --testPathIgnorePatterns integration.test",
-    "test:integration": "jest --testPathPattern integration.test",
-    "test:integration-in-docker": "docker build -t differencify . && docker run --volume \"$(pwd)/src/integration.tests\":/differencify/src/integration.tests -t  differencify npm run test:integration"
+    "test:integration": "docker build -t differencify . && docker run --volume \"$(pwd)/src/integration.tests\":/differencify/src/integration.tests -t  differencify npm run test"
   },
   "repository": {
     "type": "git",
