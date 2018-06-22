@@ -18,9 +18,9 @@ jobs:
           name: test
           command: npm test
       - run:
-          name: test:integration
-          command: npm run test:integration
-      
+          name: jest:integration
+          command: npm run jest:integration
+
 workflows:
   version: 2
   build_and_test:
