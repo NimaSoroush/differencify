@@ -11,7 +11,7 @@
 
 |Method|Arguments|description|
 |------|---------|-----------|
-|`toMatchSnapshot`|no argument|It matches the captured screenshot with reference screenshot|
+|`toMatchSnapshot`|`image` or <br /> `image, callback` or <br />` callback` | Pass an image object to compare it to the snapshot. Optionally, pass a callback to receive [details from the comparison](#detailed-result-information). Alternatively, just pass a callback to receive details of the snapshot currently in the chain. |
 |`result`|`Object`|A function that returns response object of previous step when on chained mode|
 |`launch`|`Object` [puppeteer.launch options](https://github.com/GoogleChrome/puppeteer/blob/master/docs/api.md#puppeteerlaunchoptions)|launches new browser and returns browser object|
 |`connect`|`Object` [puppeteer.connect options](https://github.com/GoogleChrome/puppeteer/blob/master/docs/api.md#puppeteerconnectoptions)|Attaches to an existing browser instance and returns browser object|
