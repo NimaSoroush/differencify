@@ -10,7 +10,7 @@
 ## [1.3.4] - 2018-6-9
 ### Fixed
 - Export module Differencify
-- Make Differencify running with vanila node
+- Make Differencify running with vanilla node
 - Fix screenshot path issue for non jest
 
 ## [1.3.3] - 2018-6-6
