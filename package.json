@@ -1,10 +1,11 @@
 {
   "name": "differencify",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "description": "Perceptual diffing tool",
   "main": "dist/index.js",
   "scripts": {
     "lint": "eslint .",
+    "prepare": "npm run build",
     "build": "babel src --source-maps --out-dir dist --ignore '**/*.test.js'",
     "build-docs": "mkdir -p docs && jsdoc2md src/*.js > docs/api.md",
     "pretest": "npm run lint",
