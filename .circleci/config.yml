@@ -3,6 +3,7 @@ jobs:
   build:
     docker:
       - image: nimasoroush/differencify
+    working_directory: /differencify
     steps:
       - checkout
       - restore_cache:
