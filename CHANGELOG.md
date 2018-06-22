@@ -1,3 +1,12 @@
+## [1.4.0] - 2018-6-21
+### Changed
+- `toMatchScreenshot` updated to accept a callback parameter which is passed
+  details of the comparison (See [API.md](/NimaSoroush/differencify/blob/master/API.md#detailed-result-information)
+  for details.)
+
+### Added
+- NPM script `test:integration` to streamline running integration tests in Docker
+
 ## [1.3.4] - 2018-6-9
 ### Fixed
 - Export module Differencify
