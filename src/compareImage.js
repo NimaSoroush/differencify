@@ -45,7 +45,7 @@ const compareImage = async (capturedImage, globalConfig, testConfig) => {
     } catch (error) {
       prefixedLogger.error(`failed to read reference image: ${snapshotPath}`);
       prefixedLogger.trace(error);
-      return { matched: false };
+      return { error: 'Failed to read reference image', matched: false };
     }
     let testImage;
     try {
@@ -53,14 +53,14 @@ const compareImage = async (capturedImage, globalConfig, testConfig) => {
     } catch (error) {
       prefixedLogger.error('failed to read current screenshot image');
       prefixedLogger.trace(error);
-      return { matched: false };
+      return { error: 'Failed to read current screenshot image', matched: false };
     }
     prefixedLogger.log('comparing...');
     const distance = Jimp.distance(snapshotImage, testImage);
     const diff = Jimp.diff(snapshotImage, testImage, globalConfig.mismatchThreshold);
     if (distance < globalConfig.mismatchThreshold && diff.percent < globalConfig.mismatchThreshold) {
       prefixedLogger.log('no mismatch found ✅');
-      return { matched: true };
+      return { snapshotPath, distance, diffPercent: diff.percent, matched: true };
     }
     if (globalConfig.saveDifferencifiedImage) {
       try {
@@ -84,7 +84,7 @@ const compareImage = async (capturedImage, globalConfig, testConfig) => {
         diff: ${diff.percent}
         misMatchThreshold: ${globalConfig.mismatchThreshold}
     `);
-    return { diffPath, matched: false };
+    return { snapshotPath, distance, diffPercent: diff.percent, diffPath, matched: false };
   }
   prefixedLogger.log(`screenshot saved in -> ${snapshotPath}`);
   if (fs.existsSync(diffPath)) {
