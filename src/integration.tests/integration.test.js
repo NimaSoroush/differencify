@@ -66,8 +66,8 @@ describe('Differencify', () => {
       .goto('http://example.com/')
       .waitFor(1000)
       .title()
-      .result((tittle) => {
-        expect(tittle).toEqual('Example Domain');
+      .result((title) => {
+        expect(title).toEqual('Example Domain');
       })
       .screenshot()
       .toMatchSnapshot()
