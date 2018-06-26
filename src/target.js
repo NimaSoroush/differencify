@@ -215,9 +215,9 @@ export default class Target {
         ? `${this.testStats.currentTestName} ${this.testId}`
         : this.testStats.currentTestName;
     } else {
-      this.testConfig.testName = this.testId
-        ? `${this.testConfig.testName} ${this.testId}`
-        : this.testConfig.testName;
+      let previousTestSuffix = `.${(this.testId - 1)}`;
+      var re = new RegExp(previousTestSuffix, "g");
+      this.testConfig.testName = this.testId ? `${this.testConfig.testName.replace(re, '')}.${this.testId}` : this.testConfig.testName;
     }
     this.testId += 1;
     const result = await this._evaluateResult();
