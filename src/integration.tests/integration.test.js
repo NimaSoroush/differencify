@@ -143,20 +143,20 @@ describe('Differencify', () => {
       .init()
       .newPage()
       .tracing
-        .start({ path: 'trace.json' })
+      .start({ path: 'trace.json' })
       .page
-        .setViewport({ width: 1600, height: 1200 })
-        .goto('http://example.com/')
-        .waitFor(1000)
+      .setViewport({ width: 1600, height: 1200 })
+      .goto('http://example.com/')
+      .waitFor(1000)
       .keyboard
-        .press('Space')
+      .press('Space')
       .tracing
-        .stop()
+      .stop()
       .page
-        .screenshot()
-        .toMatchSnapshot()
-        .close()
-        .end();
+      .screenshot()
+      .toMatchSnapshot()
+      .close()
+      .end();
   }, 30000);
   it('Calling Puppeteer specific functions when chained: console', async () => {
     await differencify
@@ -189,11 +189,11 @@ describe('Differencify', () => {
       .newPage()
       .goto('http://example.com/')
       .mainFrame()
-        .then
-        .url()
-        .result((url) => {
-          expect(url).toEqual('http://example.com/');
-        })
+      .then
+      .url()
+      .result((url) => {
+        expect(url).toEqual('http://example.com/');
+      })
       .close()
       .end();
   }, 30000);
@@ -204,14 +204,52 @@ describe('Differencify', () => {
       .goto('http://example.com/')
       .waitFor(1000)
       .screenshot()
-      .toMatchSnapshot()
+      .toMatchSnapshot((resultDetail) => {
+        expect(resultDetail).toEqual({
+          testConfig: {
+            chain: true,
+            imageType: 'png',
+            isJest: true,
+            isUpdate: false,
+            testId: 11,
+            testName: 'Differencify Multiple toMatchSnapshot on chained object',
+            testNameProvided: false,
+            testPath: '/differencify/src/integration.tests/integration.test.js',
+          },
+          testResult: {
+            diffPercent: 0,
+            distance: 0,
+            matched: true,
+            snapshotPath: '/differencify/src/integration.tests/__image_snapshots__/Differencify Multiple toMatchSnapshot on chained object.1.snap.png',
+          },
+        })
+      })
       .result((result) => {
         expect(result).toEqual(true);
       })
       .goto('http://example.com/')
       .waitFor(1000)
       .screenshot()
-      .toMatchSnapshot()
+      .toMatchSnapshot((resultDetail) => {
+        expect(resultDetail).toEqual({
+          testConfig: {
+            chain: true,
+            imageType: 'png',
+            isJest: true,
+            isUpdate: false,
+            testId: 12,
+            testName: 'Differencify Multiple toMatchSnapshot on chained object',
+            testNameProvided: false,
+            testPath: '/differencify/src/integration.tests/integration.test.js',
+          },
+          testResult: {
+            diffPercent: 0,
+            distance: 0,
+            matched: true,
+            snapshotPath: '/differencify/src/integration.tests/__image_snapshots__/Differencify Multiple toMatchSnapshot on chained object.2.snap.png',
+          },
+        });
+      })
       .result((result) => {
         expect(result).toEqual(true);
       })
