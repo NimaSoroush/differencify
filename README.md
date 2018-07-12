@@ -61,7 +61,7 @@ Differencify matches [Puppeteer](https://github.com/GoogleChrome/puppeteer/blob/
   await page.goto('https://github.com/NimaSoroush/differencify');
   await page.waitFor(1000);
   const image = await page.screenshot();
-  const result = await page.toMatchSnapshot(image)
+  const result = await target.toMatchSnapshot(image)
   await page.close();
   await target.close();
 
