@@ -268,4 +268,17 @@ describe('Differencify', () => {
     await customDifferencify.cleanup();
     expect(result).toEqual(true);
   }, 30000);
+  it('Freeze image in page', async () => {
+    await differencify
+      .init()
+      .newPage()
+      .setViewport({ width: 1600, height: 1200 })
+      .goto('https://www.skyscanner.net/404')
+      .waitFor('.PageNotFoundImage')
+      .freezeImage('.PageNotFoundImage')
+      .screenshot()
+      .toMatchSnapshot()
+      .close()
+      .end();
+  }, 30000);
 });

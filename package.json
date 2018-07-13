@@ -1,6 +1,6 @@
 {
   "name": "differencify",
-  "version": "1.4.1",
+  "version": "1.4.2",
   "description": "Perceptual diffing tool",
   "main": "dist/index.js",
   "scripts": {

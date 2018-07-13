@@ -441,5 +441,25 @@ In this example, differencify will got to different pages and compare screenshot
 In this example, you can specify the custom path for storing images.
 
 
+## Freezing an image
+
+```js
+(async () => {
+  await differencify
+    .init()
+    .newPage()
+    .setViewport({ width: 1600, height: 1200 })
+    .goto('https://www.skyscanner.net/404')
+    .waitFor('.PageNotFoundImage')
+    .freezeImage('.PageNotFoundImage')
+    .screenshot()
+    .toMatchSnapshot()
+    .close()
+    .end();
+})();
+```
+In this example, you can freeze an image by specifying the selector path.
+
+
 
 
