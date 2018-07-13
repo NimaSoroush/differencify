@@ -12,17 +12,9 @@ Differencify operates under a forking model. In order to contribute, please fork
 
 ### steps
 - Open terminal
-- cd to project root and build image
-```
-docker build -t differencify .
-```
-- And then run
-```
-docker run -t -d --name differencify differencify
-```
 - To run integration tests run
 ```
-docker exec -it differencify npm run test:integration
+npm run test:integration
 ```
 - Then copy over generated snapshots
 ```
