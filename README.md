@@ -1,6 +1,6 @@
-<p align="center"><img alt="Differencify" src="images/logo.png" width="150">
+<p align="center"><img alt="Differencify" src="images/logo.gif" width="150">
 <br>
-<strong>Differencify</strong>
+<strong>Differencify <img src="images/logo.png" width="30" height="30"></strong>
 <br>
 Regression Testing suite!
 </p>
