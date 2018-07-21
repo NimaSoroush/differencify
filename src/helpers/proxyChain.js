@@ -1,4 +1,4 @@
-/* eslint-disable prefer-rest-params */
+/* eslint-disable prefer-rest-params, no-await-in-loop */
 import logger from '../utils/logger';
 import moduleList from './moduleList';
 
@@ -15,17 +15,17 @@ class ChainObject {
   }
 
   addAction({
-      target = this.currentTarget,
-      property = undefined,
-      args = undefined,
-    } = {}) {
+    target = this.currentTarget,
+    property = undefined,
+    args = undefined,
+  } = {}) {
     this.actions.push({ target, property, args });
   }
 
   async end() {
     let result = null;
     let continueChain = false;
-    const actions = this.actions;
+    const { actions } = this;
     this.actions = [];
     // eslint-disable-next-line no-restricted-syntax
     for (const action of actions) {
@@ -44,42 +44,40 @@ class ChainObject {
   }
 }
 
-const makeHandler = (target, options) =>
-  ({
-    get: (chainObj, property) => {
-      if (!options.chained) {
-        return (moduleList.includes(property))
-            ? target[options.funcHandler]('page', property)
-            : function handle() {
-              return target[options.funcHandler]('page', property, arguments);
-            };
-      }
-      if (property === options.endFunc) {
-        return () =>
-          chainObj.end()
-            .then(result => result)
-            .catch((e) => {
-              logger.trace(e);
-              throw e;
-            });
-      }
-      if (moduleList.includes(property)) {
-        chainObj.setCurrentTarget(property);
-        return target.chainedTarget;
-      }
-      if (property === options.continueFunc) {
-        chainObj.addAction({ property });
-        return target.chainedTarget;
-      }
-      return function handle() {
-        chainObj.addAction({ property, args: arguments });
-        return this;
-      };
-    },
-    set: (chainObj, name, value) => {
-      throw new Error(`You cannot set a ${value} to Proxy object.`);
-    },
-  });
+const makeHandler = (target, options) => ({
+  get: (chainObj, property) => {
+    if (!options.chained) {
+      return (moduleList.includes(property))
+        ? target[options.funcHandler]('page', property)
+        : function handle() {
+          return target[options.funcHandler]('page', property, arguments);
+        };
+    }
+    if (property === options.endFunc) {
+      return () => chainObj.end()
+        .then(result => result)
+        .catch((e) => {
+          logger.trace(e);
+          throw e;
+        });
+    }
+    if (moduleList.includes(property)) {
+      chainObj.setCurrentTarget(property);
+      return target.chainedTarget;
+    }
+    if (property === options.continueFunc) {
+      chainObj.addAction({ property });
+      return target.chainedTarget;
+    }
+    return function handle() {
+      chainObj.addAction({ property, args: arguments });
+      return this;
+    };
+  },
+  set: (chainObj, name, value) => {
+    throw new Error(`You cannot set a ${value} to Proxy object.`);
+  },
+});
 
 const chain = (target, chained = true) => {
   const defaultParams = {

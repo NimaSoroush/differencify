@@ -48,14 +48,12 @@ jest.mock('path', () => ({
   resolve: jest.fn((a, b, c, d) => `root${b}${d}`),
 }));
 
-jest.mock('./compareImage', () => jest.fn(arg =>
-  new Promise((resolve, reject) => {
-    if (arg.screenshots === './screenshots') {
-      return resolve('Saving the diff image to disk');
-    }
-    return reject('error');
-  }),
-));
+jest.mock('./compareImage', () => jest.fn(arg => new Promise((resolve, reject) => {
+  if (arg.screenshots === './screenshots') {
+    return resolve('Saving the diff image to disk');
+  }
+  return reject(new Error('error'));
+})));
 
 jest.mock('./helpers/functionToString');
 
@@ -140,28 +138,30 @@ describe('Target', () => {
     it('will return correct property', async () => {
       target.error = false;
       const result = await target._handleFunc('page', 'testConfig');
-      expect(result).toEqual({ debug: false,
+      expect(result).toEqual({
+        debug: false,
         chain: undefined,
         imageSnapshotPath: 'differencify_reports',
         imageSnapshotPathProvided: true,
         saveDifferencifiedImage: true,
         mismatchThreshold: 0.001,
-        newWindow: true });
+        newWindow: true,
+      });
       expect(mockLog).toHaveBeenCalledWith('Executing page.testConfig step');
     });
     it('will run goto on page', async () => {
       target.error = false;
       await target.newPage();
-      const result = await target._handleFunc('page', 'goto', arguments);
-      expect(pageMocks.goto).toHaveBeenCalledWith(...arguments);
+      const result = await target._handleFunc('page', 'goto', {});
+      expect(pageMocks.goto).toHaveBeenCalledWith({});
       expect(result).toEqual();
       expect(mockLog).toHaveBeenCalledWith('Executing page.goto step');
     });
-    it('will run press on keyboard', async () => {
+    fit('will run press on keyboard', async () => {
       target.error = false;
       await target.newPage();
-      const result = await target._handleFunc('keyboard', 'press', arguments);
-      expect(mockKeyboard.press).toHaveBeenCalledWith(...arguments);
+      const result = await target._handleFunc('keyboard', 'press', arguments); // eslint-disable-line no-undef
+      expect(mockKeyboard.press).toHaveBeenCalledWith(...arguments); // eslint-disable-line no-undef
       expect(result).toEqual();
       expect(mockLog).toHaveBeenCalledWith('Executing keyboard.press step');
     });

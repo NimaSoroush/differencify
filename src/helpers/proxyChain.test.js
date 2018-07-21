@@ -5,6 +5,7 @@ class Keyboard {
   constructor() {
     this._value = 'keyboard';
   }
+
   value() {
     return this._value;
   }
@@ -14,6 +15,7 @@ class Mouse {
   constructor() {
     this._value = 'mouse';
   }
+
   async value() {
     return this._value;
   }
@@ -31,7 +33,7 @@ class Page {
   }
 
   async pageValue() {
-    return await this.value();
+    return this.value();
   }
 }
 
@@ -40,9 +42,10 @@ class Fake {
     this._value = value;
     this.page = new Page();
   }
+
   async bar() {
-    const newValue = this._value += '4';
-    return newValue;
+    this._value += '4';
+    return this._value;
   }
 }
 
@@ -57,13 +60,14 @@ class ForTest {
   }
 
   async pageValue() {
-    return await this.page.pageValue();
+    return this.page.pageValue();
   }
 
   _evaluateResult() { return this._value; }
+
   // eslint-disable-next-line class-methods-use-this
   async _handleContinueFunc(target, property, args) {
-    return isFunc(target[property]) ? await target[property](...args) : await target[property];
+    return isFunc(target[property]) ? target[property](...args) : target[property];
   }
 
   _handleFunc(target, property, args) {
@@ -88,9 +92,11 @@ class ForTest {
   f1() {
     return this.getValue('1');
   }
+
   f2() {
     return this.getValue('2');
   }
+
   f3() {
     return this.getValue('3');
   }
@@ -147,14 +153,14 @@ describe('chainProxy', () => {
       })
       .catch(() => {
         obj
-        .f3()
-        .end()
-        .then((result) => {
-          expect(result).toEqual('13');
-        })
-        .catch((e) => {
-          throw (e);
-        });
+          .f3()
+          .end()
+          .then((result) => {
+            expect(result).toEqual('13');
+          })
+          .catch((e) => {
+            throw (e);
+          });
       });
   });
   describe('#result', () => {
@@ -189,8 +195,8 @@ describe('chainProxy', () => {
       await obj
         .f1()
         .f4()
-          .then
-          .bar()
+        .then
+        .bar()
         .end()
         .then((result) => {
           expect(result).toEqual('14');
@@ -203,8 +209,8 @@ describe('chainProxy', () => {
       await obj
         .f1()
         .f4()
-          .then
-          .bar()
+        .then
+        .bar()
         .f2()
         .end()
         .then((result) => {
@@ -221,7 +227,7 @@ describe('chainProxy', () => {
         .f1()
         .f4()
         .keyboard
-          .value()
+        .value()
         .end()
         .then((result) => {
           expect(result).toEqual('keyboard');
@@ -234,13 +240,13 @@ describe('chainProxy', () => {
       await obj
         .f1()
         .keyboard
-          .value()
+        .value()
         .page
-          .f4()
-            .then
-            .bar()
-          .mouse
-            .value()
+        .f4()
+        .then
+        .bar()
+        .mouse
+        .value()
         .end()
         .then((result) => {
           expect(result).toEqual('mouse');
@@ -253,14 +259,14 @@ describe('chainProxy', () => {
       await obj
         .f1()
         .keyboard
-          .value()
+        .value()
         .page
-          .f4()
-            .then
-            .bar()
-            .result((result) => { expect(result).toEqual('14'); })
-          .mouse
-            .value()
+        .f4()
+        .then
+        .bar()
+        .result((result) => { expect(result).toEqual('14'); })
+        .mouse
+        .value()
         .end()
         .then((result) => {
           expect(result).toEqual('mouse');

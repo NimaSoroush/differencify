@@ -3,16 +3,15 @@ import path from 'path';
 import fs from 'fs';
 import logger from './utils/logger';
 
-const saveDiff = (diff, diffPath) =>
-  new Promise((resolve, reject) => {
-    const cb = (error, obj) => {
-      if (error) {
-        reject(error);
-      }
-      resolve(obj);
-    };
-    diff.image.write(diffPath, cb);
-  });
+const saveDiff = (diff, diffPath) => new Promise((resolve, reject) => {
+  const cb = (error, obj) => {
+    if (error) {
+      reject(error);
+    }
+    resolve(obj);
+  };
+  diff.image.write(diffPath, cb);
+});
 
 const getSnapshotsDir = (testConfig, globalConfig) => {
   let testRoot;
@@ -30,9 +29,9 @@ const getSnapshotsDir = (testConfig, globalConfig) => {
 const compareImage = async (capturedImage, globalConfig, testConfig) => {
   const prefixedLogger = logger.prefix(testConfig.testName);
 
-  const snapshotsDir = globalConfig.imageSnapshotPathProvided ?
-    path.resolve(globalConfig.imageSnapshotPath) :
-    getSnapshotsDir(testConfig, globalConfig);
+  const snapshotsDir = globalConfig.imageSnapshotPathProvided
+    ? path.resolve(globalConfig.imageSnapshotPath)
+    : getSnapshotsDir(testConfig, globalConfig);
 
   const snapshotPath = path.join(snapshotsDir, `${testConfig.testName}.snap.${testConfig.imageType || 'png'}`);
 
@@ -60,7 +59,9 @@ const compareImage = async (capturedImage, globalConfig, testConfig) => {
     const diff = Jimp.diff(snapshotImage, testImage, globalConfig.mismatchThreshold);
     if (distance < globalConfig.mismatchThreshold && diff.percent < globalConfig.mismatchThreshold) {
       prefixedLogger.log('no mismatch found ✅');
-      return { snapshotPath, distance, diffPercent: diff.percent, matched: true };
+      return {
+        snapshotPath, distance, diffPercent: diff.percent, matched: true,
+      };
     }
     if (globalConfig.saveDifferencifiedImage) {
       try {
@@ -84,7 +85,9 @@ const compareImage = async (capturedImage, globalConfig, testConfig) => {
         diff: ${diff.percent}
         misMatchThreshold: ${globalConfig.mismatchThreshold}
     `);
-    return { snapshotPath, distance, diffPercent: diff.percent, diffPath, matched: false };
+    return {
+      snapshotPath, distance, diffPercent: diff.percent, diffPath, matched: false,
+    };
   }
   prefixedLogger.log(`screenshot saved in -> ${snapshotPath}`);
   if (fs.existsSync(diffPath)) {
