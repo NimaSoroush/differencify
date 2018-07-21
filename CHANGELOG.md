@@ -1,3 +1,8 @@
+## [1.4.3] - 2018-7-21
+### Updated
+- Integrating greenkeeper
+- Updating several packages
+
 ## [1.4.2] - 2018-7-13
 ### Fixed
 - Fixing issue with freezeImage command
