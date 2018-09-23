@@ -66,8 +66,8 @@ describe('Differencify', () => {
       .goto('http://example.com/')
       .waitFor(1000)
       .title()
-      .result((tittle) => {
-        expect(tittle).toEqual('Example Domain');
+      .result((title) => {
+        expect(title).toEqual('Example Domain');
       })
       .screenshot()
       .toMatchSnapshot()
@@ -305,5 +305,18 @@ describe('Differencify', () => {
     await page.close();
     await customDifferencify.cleanup();
     expect(result).toEqual(true);
+  }, 30000);
+  it('Freeze image in page', async () => {
+    await differencify
+      .init()
+      .newPage()
+      .setViewport({ width: 1600, height: 1200 })
+      .goto('https://i.giphy.com/media/xTiTnoUnHxVaaVNWhO/giphy.webp')
+      .waitFor('body > img')
+      .freezeImage('body > img')
+      .screenshot()
+      .toMatchSnapshot()
+      .close()
+      .end();
   }, 30000);
 });

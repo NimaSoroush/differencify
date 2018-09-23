@@ -13,7 +13,7 @@ const functionToString = (func, ...args) => {
     }
   });
   const functionSource = func.toString();
-  return `return (${functionSource})(${funcArguments.join()})`;
+  return `(${functionSource})(${funcArguments.join()})`;
 };
 
 export default functionToString;

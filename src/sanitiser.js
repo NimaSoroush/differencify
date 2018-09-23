@@ -3,8 +3,9 @@ import type from 'type-detect';
 import logger from './utils/logger';
 import { globalConfig, testConfig } from './config/defaultConfigs';
 
-const logError = (name, wrongType, correctType) =>
-  logger.error(`Invalid argument ${name} with type ${wrongType} been passed. Argument should be ${correctType}`);
+const logError = (name, wrongType, correctType) => logger.error(
+  `Invalid argument ${name} with type ${wrongType} been passed. Argument should be ${correctType}`,
+);
 
 const checkProperty = (obj, property, checkType) => {
   if (!obj) {

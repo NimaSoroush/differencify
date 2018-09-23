@@ -1,3 +1,12 @@
+## [1.4.3] - 2018-7-21
+### Updated
+- Integrating greenkeeper
+- Updating several packages
+
+## [1.4.2] - 2018-7-13
+### Fixed
+- Fixing issue with freezeImage command
+
 ## [1.4.1] - 2018-6-22
 ### Added
 - A prepare script to keep the artifact uptodated
