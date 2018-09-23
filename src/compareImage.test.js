@@ -104,10 +104,10 @@ describe('Compare Image', () => {
       });
       expect(result).toEqual({ added: true });
       expect(fs.writeFileSync)
-      .toHaveBeenCalledWith(
-        './differencify_report/__image_snapshots__/test.snap.png',
-        Object,
-      );
+        .toHaveBeenCalledWith(
+          './differencify_report/__image_snapshots__/test.snap.png',
+          Object,
+        );
     });
     it('ًWill update snapshot when isUpdate=true', async () => {
       const result = await compareImage(Object, mockConfig, {
@@ -118,23 +118,23 @@ describe('Compare Image', () => {
       });
       expect(result).toEqual({ updated: true });
       expect(fs.writeFileSync)
-      .toHaveBeenCalledWith(
-        './differencify_report/__image_snapshots__/test.snap.png',
-        Object,
-      );
+        .toHaveBeenCalledWith(
+          './differencify_report/__image_snapshots__/test.snap.png',
+          Object,
+        );
     });
   });
 
   it('throws correct error if it cannot read image', async () => {
     expect.assertions(3);
-    Jimp.read.mockReturnValueOnce(Promise.reject('error1'));
+    Jimp.read.mockReturnValueOnce(Promise.reject(new Error('error1')));
     fs.existsSync.mockReturnValueOnce(true);
     const result = await compareImage(Object, mockConfig, mockTestConfig);
     expect(result).toEqual({
       error: 'Failed to read reference image',
       matched: false,
     });
-    expect(mockTrace).toHaveBeenCalledWith('error1');
+    expect(mockTrace).toHaveBeenCalledWith(new Error('error1'));
     expect(mockError).toHaveBeenCalledWith('failed to read reference image: /parent/__image_snapshots__/test.snap.png');
   });
 
@@ -257,6 +257,6 @@ describe('Compare Image', () => {
     });
     expect(mockWrite)
       .toHaveBeenCalledWith('/parent/__image_snapshots__/__differencified_output__/test.differencified.png',
-      expect.any(Function));
+        expect.any(Function));
   });
 });

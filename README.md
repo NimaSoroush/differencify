@@ -1,12 +1,14 @@
-<p align="center"><img alt="Differencify" src="images/logo.png" width="150">
+<p align="center"><img alt="Differencify" src="images/logo.gif" width="150">
 <br>
-<strong>Differencify</strong>
+<strong>Differencify <img src="images/logo.png" width="30" height="30"></strong>
 <br>
 Regression Testing suite!
 </p>
 <br>
 
-Status: [![CircleCI](https://circleci.com/gh/NimaSoroush/differencify/tree/master.svg?style=svg)](https://circleci.com/gh/NimaSoroush/differencify/tree/master)
+[![CircleCI](https://circleci.com/gh/NimaSoroush/differencify/tree/master.svg?style=svg)](https://circleci.com/gh/NimaSoroush/differencify/tree/master) 
+[![npm version](https://badge.fury.io/js/differencify.svg)](https://badge.fury.io/js/differencify) [![Greenkeeper badge](https://badges.greenkeeper.io/NimaSoroush/differencify.svg)](https://greenkeeper.io/)
+<a href="https://github.com/jest-community/awesome-jest"><img src="https://camo.githubusercontent.com/974d19bae442ae2c1657753f39651ade6bef3411/68747470733a2f2f617765736f6d652e72652f6d656e74696f6e65642d62616467652e737667" alt="Mentioned in Awesome Jest" data-canonical-src="https://awesome.re/mentioned-badge.svg" style="max-width:100%;"></a>
 
 ## About
 Differencify is a library for visual regression testing by comparing your local changes with reference screenshots of your website. It is built on top of chrome headless using [Puppeteer](https://github.com/GoogleChrome/puppeteer)
@@ -61,7 +63,7 @@ Differencify matches [Puppeteer](https://github.com/GoogleChrome/puppeteer/blob/
   await page.goto('https://github.com/NimaSoroush/differencify');
   await page.waitFor(1000);
   const image = await page.screenshot();
-  const result = await page.toMatchSnapshot(image)
+  const result = await target.toMatchSnapshot(image)
   await page.close();
   await target.close();
 

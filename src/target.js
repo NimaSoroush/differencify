@@ -113,7 +113,8 @@ export default class Target {
       try {
         logger.warn(
           `capture() will be deprecated, use screenshot() instead.
-          Please read the API docs at https://github.com/NimaSoroush/differencify`);
+          Please read the API docs at https://github.com/NimaSoroush/differencify`,
+        );
         this.image = await this.page.screenshot(options);
         this.testConfig.imageType = (options && options.type) || 'png';
         return this.image;
@@ -129,7 +130,8 @@ export default class Target {
       try {
         logger.warn(
           `wait() will be deprecated, use waitFor() instead.
-          Please read the API docs at https://github.com/NimaSoroush/differencify`);
+          Please read the API docs at https://github.com/NimaSoroush/differencify`,
+        );
         return await this.page.waitFor(value);
       } catch (error) {
         this._logError(error);
@@ -143,7 +145,8 @@ export default class Target {
       try {
         logger.warn(
           `execute() will be deprecated, use evaluate() instead.
-          Please read the API docs at https://github.com/NimaSoroush/differencify`);
+          Please read the API docs at https://github.com/NimaSoroush/differencify`,
+        );
         return await this.page.evaluate(expression);
       } catch (error) {
         this._logError(error);
@@ -157,7 +160,8 @@ export default class Target {
       try {
         logger.warn(
           `resize() will be deprecated, use setViewport() instead.
-          Please read the API docs at https://github.com/NimaSoroush/differencify`);
+          Please read the API docs at https://github.com/NimaSoroush/differencify`,
+        );
         return await this.page.setViewport(viewport);
       } catch (error) {
         this._logError(error);
@@ -253,7 +257,7 @@ export default class Target {
         return false;
       }
       if (this.testConfig.isJest === true) {
-        const toMatchImageSnapshot = jestMatchers.toMatchImageSnapshot;
+        const { toMatchImageSnapshot } = jestMatchers;
         expect.extend({ toMatchImageSnapshot });
         expect(this.result).toMatchImageSnapshot(this.testStats);
       }
@@ -262,7 +266,7 @@ export default class Target {
       }
     }
     if (this.testConfig.isJest && this.error) {
-      const toNotError = jestMatchers.toNotError;
+      const { toNotError } = jestMatchers;
       expect.extend({ toNotError });
       expect(this.error).toNotError(this.testStats);
     }

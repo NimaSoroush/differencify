@@ -1,6 +1,6 @@
 {
   "name": "differencify",
-  "version": "1.4.1",
+  "version": "1.4.3",
   "description": "Perceptual diffing tool",
   "main": "dist/index.js",
   "scripts": {
@@ -32,27 +32,27 @@
   "license": "MIT",
   "devDependencies": {
     "babel-cli": "^6.18.0",
-    "babel-eslint": "^7.2.3",
-    "babel-jest": "^20.0.3",
+    "babel-eslint": "^9.0.0",
+    "babel-jest": "^23.4.0",
     "babel-preset-env": "^1.5.2",
-    "babel-preset-jest": "^20.0.3",
-    "eslint": "^3.19.0",
-    "eslint-config-airbnb": "^13.0.0",
-    "eslint-plugin-import": "^2.2.0",
-    "eslint-plugin-jsx-a11y": "^2.2.3",
+    "babel-preset-jest": "^23.2.0",
+    "eslint": "^5.1.0",
+    "eslint-config-airbnb": "^17.0.0",
+    "eslint-plugin-import": "^2.13.0",
+    "eslint-plugin-jsx-a11y": "^6.1.1",
     "eslint-plugin-prefer-object-spread": "^1.2.1",
-    "eslint-plugin-react": "6.6.0",
-    "jest": "^20.0.4",
-    "jest-cli": "^20.0.1",
+    "eslint-plugin-react": "7.11.0",
+    "jest": "^23.4.1",
+    "jest-cli": "^23.4.1",
     "jsdoc": "^3.4.3",
-    "jsdoc-to-markdown": "^2.0.1"
+    "jsdoc-to-markdown": "^4.0.1"
   },
   "dependencies": {
     "chalk": "^2.0.1",
     "check-types": "^7.2.0",
-    "fs": "0.0.1-security",
+    "fs": "0.0.2",
     "jimp": "^0.2.28",
-    "puppeteer": "^0.13.0",
+    "puppeteer": "^1.6.0",
     "type-detect": "^4.0.3"
   },
   "jest": {

@@ -66,8 +66,8 @@ describe('Differencify', () => {
       .goto('http://example.com/')
       .waitFor(1000)
       .title()
-      .result((tittle) => {
-        expect(tittle).toEqual('Example Domain');
+      .result((title) => {
+        expect(title).toEqual('Example Domain');
       })
       .screenshot()
       .toMatchSnapshot()
@@ -143,20 +143,20 @@ describe('Differencify', () => {
       .init()
       .newPage()
       .tracing
-        .start({ path: 'trace.json' })
+      .start({ path: 'trace.json' })
       .page
-        .setViewport({ width: 1600, height: 1200 })
-        .goto('http://example.com/')
-        .waitFor(1000)
+      .setViewport({ width: 1600, height: 1200 })
+      .goto('http://example.com/')
+      .waitFor(1000)
       .keyboard
-        .press('Space')
+      .press('Space')
       .tracing
-        .stop()
+      .stop()
       .page
-        .screenshot()
-        .toMatchSnapshot()
-        .close()
-        .end();
+      .screenshot()
+      .toMatchSnapshot()
+      .close()
+      .end();
   }, 30000);
   it('Calling Puppeteer specific functions when chained: console', async () => {
     await differencify
@@ -189,11 +189,11 @@ describe('Differencify', () => {
       .newPage()
       .goto('http://example.com/')
       .mainFrame()
-        .then
-        .url()
-        .result((url) => {
-          expect(url).toEqual('http://example.com/');
-        })
+      .then
+      .url()
+      .result((url) => {
+        expect(url).toEqual('http://example.com/');
+      })
       .close()
       .end();
   }, 30000);
@@ -267,5 +267,18 @@ describe('Differencify', () => {
     await page.close();
     await customDifferencify.cleanup();
     expect(result).toEqual(true);
+  }, 30000);
+  it('Freeze image in page', async () => {
+    await differencify
+      .init()
+      .newPage()
+      .setViewport({ width: 1600, height: 1200 })
+      .goto('https://i.giphy.com/media/xTiTnoUnHxVaaVNWhO/giphy.webp')
+      .waitFor('body > img')
+      .freezeImage('body > img')
+      .screenshot()
+      .toMatchSnapshot()
+      .close()
+      .end();
   }, 30000);
 });
