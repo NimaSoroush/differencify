@@ -6,6 +6,7 @@ Object {
   "imageSnapshotPath": "differencify_reports",
   "imageSnapshotPathProvided": false,
   "mismatchThreshold": 0.001,
+  "saveCurrentImage": true,
   "saveDifferencifiedImage": true,
 }
 `;
@@ -16,6 +17,7 @@ Object {
   "imageSnapshotPath": "differencify_reports",
   "imageSnapshotPathProvided": false,
   "mismatchThreshold": 0.001,
+  "saveCurrentImage": true,
   "saveDifferencifiedImage": true,
 }
 `;
@@ -26,6 +28,7 @@ Object {
   "imageSnapshotPath": "differencify_reports",
   "imageSnapshotPathProvided": false,
   "mismatchThreshold": 0.001,
+  "saveCurrentImage": true,
   "saveDifferencifiedImage": true,
 }
 `;

@@ -6,10 +6,10 @@ module.exports = Object.assign({}, jestConfig, {
   reporters: [
     'default',
     [
-      '../dist/reporter',
+      'differencify-jest-reporter',
       {
         debug: true,
-        reportPath: 'differencify_reports',
+        reportPath: './src/integration.tests/differencify_reports',
         reportTypes: {
           html: 'index.html',
           json: 'index.json',

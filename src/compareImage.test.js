@@ -13,16 +13,17 @@ jest.mock('fs', () => ({
   mkdirSync: jest.fn(),
   existsSync: jest.fn(),
   writeFileSync: jest.fn(),
+  unlinkSync: jest.fn(),
 }));
 
 jest.mock('path', () => ({
   dirname: jest.fn(() => '/parent'),
   join: jest.fn((a, b) => `${a}/${b}`),
-  resolve: jest.fn(path => path),
+  resolve: jest.fn((a, b) => `${a}${b || ''}`),
 }));
 
 jest.mock('pkg-dir', () => ({
-  sync: () => '../../',
+  sync: () => '',
 }));
 
 const mockLog = jest.fn();
@@ -40,6 +41,7 @@ const mockConfig = {
   imageSnapshotPath: './differencify_report',
   imageSnapshotPathProvided: false,
   saveDifferencifiedImage: true,
+  saveCurrentImage: true,
   mismatchThreshold: 0.01,
 };
 
@@ -54,6 +56,7 @@ const mockTestConfig = {
 describe('Compare Image', () => {
   beforeEach(() => {
     fs.writeFileSync.mockClear();
+    fs.existsSync.mockClear();
     Jimp.distance.mockReturnValue(0);
     Jimp.diff.mockReturnValue({ percent: 0 });
   });
@@ -132,10 +135,10 @@ describe('Compare Image', () => {
   it('throws correct error if it cannot read image', async () => {
     expect.assertions(3);
     Jimp.read.mockReturnValueOnce(Promise.reject(new Error('error1')));
-    fs.existsSync.mockReturnValueOnce(true);
+    fs.existsSync.mockReturnValue(true);
     const result = await compareImage(Object, mockConfig, mockTestConfig);
     expect(result).toEqual({
-      error: 'Failed to read reference image',
+      error: 'failed to read reference image',
       matched: false,
     });
     expect(mockTrace).toHaveBeenCalledWith(new Error('error1'));
@@ -237,7 +240,7 @@ describe('Compare Image', () => {
 
   it('writes to disk diff image if saveDifferencifiedImage is true', async () => {
     Jimp.distance.mockReturnValue(0.02);
-    fs.existsSync.mockReturnValueOnce(true);
+    fs.existsSync.mockReturnValue(true);
     const mockWrite = jest.fn((path, cb) => {
       cb();
     });

@@ -144,6 +144,7 @@ describe('Target', () => {
         imageSnapshotPath: 'differencify_reports',
         imageSnapshotPathProvided: true,
         saveDifferencifiedImage: true,
+        saveCurrentImage: true,
         mismatchThreshold: 0.001,
         newWindow: true,
       });
