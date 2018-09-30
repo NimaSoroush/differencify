@@ -33,4 +33,6 @@ dist/
 docs/
 .vscode/
 differencify_reports/
+__differencified_output__/
+__current_output__/
 trace.json

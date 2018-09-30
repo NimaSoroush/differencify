@@ -78,6 +78,7 @@ describe('Differencify', () => {
         debug: false,
         mismatchThreshold: 0.001,
         saveDifferencifiedImage: true,
+        saveCurrentImage: true,
         imageSnapshotPath: 'differencify_reports',
         imageSnapshotPathProvided: false,
       },
