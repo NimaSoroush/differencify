@@ -1,6 +1,7 @@
-## [1.4.4] - 2018-08-30
+## [1.5.0] - 2018-08-30
 ### Added
 - Making Differencify compatible with differencify-jest-reporter
+- Saving all images to disk by default controlled by `saveCurrentImage` flag
 
 ## [1.4.3] - 2018-07-21
 ### Updated
