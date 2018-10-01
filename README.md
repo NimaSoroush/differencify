@@ -147,7 +147,7 @@ jest --reporters default differencify-jest-reporter
 ```
 
 ### Jest reporter output
-<p align="center"><img alt="differencify-report" src="images/differencify-report.png" width="400"></p>
+<p align="center"><img alt="differencify-report" src="images/differencify-report.png" width="500"></p>
 
 ## Usage with other test frameworks
 If you are using other test frameworks you can still validate your tests. Differencify will return `true` or `false` by the end of execution. This could be used to assert on. look at the [example](https://github.com/NimaSoroush/differencify#validate-your-changes)
