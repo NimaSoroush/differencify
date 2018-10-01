@@ -111,7 +111,7 @@ As you can see, you don't need to return `result` as `toMatchSnapshot` will auto
 
 Same way as Jest [snapshots testing](http://facebook.github.io/jest/docs/en/snapshot-testing.html), to update the snapshots, run jest with `--updateSnapshot` or `-u` argument.
 
-### Jest reporter
+## Jest reporter
 
 You can generate an index document of the saved images by using the differencify jest reporter.
 
@@ -146,6 +146,8 @@ Alternatively, enable the reporter with the cli:
 jest --reporters default differencify-jest-reporter
 ```
 
+### Jest reporter output
+<p align="center"><img alt="differencify-report" src="images/differencify-report.png" width="400"></p>
 
 ## Usage with other test frameworks
 If you are using other test frameworks you can still validate your tests. Differencify will return `true` or `false` by the end of execution. This could be used to assert on. look at the [example](https://github.com/NimaSoroush/differencify#validate-your-changes)
