@@ -1,7 +1,7 @@
 ## [1.5.0] - 2018-08-30
 ### Added
 - Making Differencify compatible with differencify-jest-reporter
-- Saving all images to disk by default controlled by `saveCurrentImage` flag
+- Save the captured image from current test run to test report path by default
 
 ## [1.4.3] - 2018-07-21
 ### Updated
