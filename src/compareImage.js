@@ -1,7 +1,16 @@
 import Jimp from 'jimp';
 import path from 'path';
 import fs from 'fs';
+
 import logger from './utils/logger';
+import {
+  getSnapshotsDir,
+  getSnapshotPath,
+  getDiffDir,
+  getDiffPath,
+  getCurrentImageDir,
+  getCurrentImagePath,
+} from './utils/paths';
 
 const saveDiff = (diff, diffPath) => new Promise((resolve, reject) => {
   const cb = (error, obj) => {
@@ -13,30 +22,17 @@ const saveDiff = (diff, diffPath) => new Promise((resolve, reject) => {
   diff.image.write(diffPath, cb);
 });
 
-const getSnapshotsDir = (testConfig, globalConfig) => {
-  let testRoot;
-  if (testConfig.isJest) {
-    testRoot = path.dirname(testConfig.testPath);
-  } else {
-    testRoot = path.resolve(globalConfig.imageSnapshotPath);
-    if (!fs.existsSync(testRoot)) {
-      fs.mkdirSync(testRoot);
-    }
-  }
-  return path.join(testRoot, '__image_snapshots__');
-};
-
 const compareImage = async (capturedImage, globalConfig, testConfig) => {
   const prefixedLogger = logger.prefix(testConfig.testName);
-
   const snapshotsDir = globalConfig.imageSnapshotPathProvided
     ? path.resolve(globalConfig.imageSnapshotPath)
     : getSnapshotsDir(testConfig, globalConfig);
 
-  const snapshotPath = path.join(snapshotsDir, `${testConfig.testName}.snap.${testConfig.imageType || 'png'}`);
+  const snapshotPath = getSnapshotPath(snapshotsDir, testConfig);
 
-  const diffDir = path.join(snapshotsDir, '__differencified_output__');
-  const diffPath = path.join(diffDir, `${testConfig.testName}.differencified.${testConfig.imageType || 'png'}`);
+  const diffDir = getDiffDir(snapshotsDir);
+  const diffPath = getDiffPath(diffDir, testConfig);
+
   if (fs.existsSync(snapshotPath) && !testConfig.isUpdate) {
     let snapshotImage;
     try {
@@ -44,7 +40,7 @@ const compareImage = async (capturedImage, globalConfig, testConfig) => {
     } catch (error) {
       prefixedLogger.error(`failed to read reference image: ${snapshotPath}`);
       prefixedLogger.trace(error);
-      return { error: 'Failed to read reference image', matched: false };
+      return { error: 'failed to read reference image', matched: false };
     }
     let testImage;
     try {
@@ -52,7 +48,7 @@ const compareImage = async (capturedImage, globalConfig, testConfig) => {
     } catch (error) {
       prefixedLogger.error('failed to read current screenshot image');
       prefixedLogger.trace(error);
-      return { error: 'Failed to read current screenshot image', matched: false };
+      return { error: 'failed to read current screenshot image', matched: false };
     }
     prefixedLogger.log('comparing...');
     const distance = Jimp.distance(snapshotImage, testImage);
@@ -62,6 +58,22 @@ const compareImage = async (capturedImage, globalConfig, testConfig) => {
       return {
         snapshotPath, distance, diffPercent: diff.percent, matched: true,
       };
+    }
+    if (globalConfig.saveCurrentImage) {
+      const currentImageDir = getCurrentImageDir(snapshotsDir);
+      const currentImagePath = getCurrentImagePath(currentImageDir, testConfig);
+      try {
+        if (!fs.existsSync(currentImageDir)) {
+          fs.mkdirSync(currentImageDir);
+        }
+        if (fs.existsSync(currentImagePath)) {
+          fs.unlinkSync(currentImagePath);
+        }
+        fs.writeFileSync(currentImagePath, capturedImage);
+      } catch (error) {
+        prefixedLogger.error(`failed to save the current image: ${currentImagePath}`);
+        prefixedLogger.trace(error);
+      }
     }
     if (globalConfig.saveDifferencifiedImage) {
       try {

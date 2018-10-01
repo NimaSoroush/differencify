@@ -111,6 +111,44 @@ As you can see, you don't need to return `result` as `toMatchSnapshot` will auto
 
 Same way as Jest [snapshots testing](http://facebook.github.io/jest/docs/en/snapshot-testing.html), to update the snapshots, run jest with `--updateSnapshot` or `-u` argument.
 
+## Jest reporter
+
+You can generate an index document of the saved images by using the differencify jest reporter.
+
+```bash
+$ npm i -D differencify-jest-reporter
+```
+
+Enable the reporter in your jest config:
+
+```
+module.exports = {
+  reporters: [
+    'default', // keep the default reporter
+    [
+      'differencify-jest-reporter',
+      {
+        debug: true,
+        reportPath: 'differencify_reports', // relative to root of project
+        reportTypes: {
+          html: 'index.html',
+          json: 'index.json',
+        },
+      },
+    ],
+  ],
+};
+```
+
+Alternatively, enable the reporter with the cli:
+
+```
+jest --reporters default differencify-jest-reporter
+```
+
+### Jest reporter output
+<p align="center"><img alt="differencify-report" src="images/differencify-report.png" width="500"></p>
+
 ## Usage with other test frameworks
 If you are using other test frameworks you can still validate your tests. Differencify will return `true` or `false` by the end of execution. This could be used to assert on. look at the [example](https://github.com/NimaSoroush/differencify#validate-your-changes)
 
@@ -159,7 +197,8 @@ See [API.md](API.md) for full list of API calls
 |---------|----|--------|-----------|-------|
 |`debug`|`boolean`|no|Enables console output|false|
 |`imageSnapshotPath`|`string`|no|Stores reference screenshots in this directory|./differencify_reports|
-|`saveDifferencifiedImage`|`boolean`|no|Save differencified image to testReportPath in case of mismatch|true|
+|`saveDifferencifiedImage`|`boolean`|no|Save differencified image to test report path in case of mismatch|true|
+|`saveCurrentImage`|`boolean`|no|Save the captured image from current test run to test report path|true|
 |`mismatchThreshold`|`integer`|no|Difference tolerance between reference/test image|0.001|
 
 ## TestOptions

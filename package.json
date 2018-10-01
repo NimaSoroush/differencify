@@ -1,6 +1,6 @@
 {
   "name": "differencify",
-  "version": "1.4.3",
+  "version": "1.5.0",
   "description": "Perceptual diffing tool",
   "main": "dist/index.js",
   "scripts": {
@@ -10,7 +10,7 @@
     "build-docs": "mkdir -p docs && jsdoc2md src/*.js > docs/api.md",
     "pretest": "npm run lint",
     "test": "jest --testPathIgnorePatterns integration.test",
-    "jest:integration": "jest --testPathPattern integration.test",
+    "jest:integration": "jest --testPathPattern integration.test --config src/integration.tests/jest.config.js",
     "test:integration": "docker build -t differencify . && docker run --volume \"$(pwd)/src/integration.tests\":/differencify/src/integration.tests -t  differencify npm run jest:integration"
   },
   "repository": {
@@ -32,28 +32,30 @@
   "license": "MIT",
   "devDependencies": {
     "babel-cli": "^6.18.0",
-    "babel-eslint": "^10.0.0",
-    "babel-jest": "^23.4.0",
-    "babel-preset-env": "^1.5.2",
+    "babel-eslint": "^9.0.0",
+    "babel-jest": "^23.4.2",
+    "babel-preset-env": "^1.7.0",
     "babel-preset-jest": "^23.2.0",
-    "eslint": "^5.1.0",
-    "eslint-config-airbnb": "^17.0.0",
-    "eslint-plugin-import": "^2.13.0",
+    "differencify-jest-reporter": "0.0.1",
+    "eslint": "^5.5.0",
+    "eslint-config-airbnb": "^17.1.0",
+    "eslint-plugin-import": "^2.14.0",
     "eslint-plugin-jsx-a11y": "^6.1.1",
     "eslint-plugin-prefer-object-spread": "^1.2.1",
     "eslint-plugin-react": "7.11.0",
-    "jest": "^23.4.1",
-    "jest-cli": "^23.4.1",
+    "jest": "^23.5.0",
+    "jest-cli": "^23.5.0",
     "jsdoc": "^3.4.3",
     "jsdoc-to-markdown": "^4.0.1"
   },
   "dependencies": {
-    "chalk": "^2.0.1",
-    "check-types": "^7.2.0",
+    "chalk": "^2.4.1",
+    "check-types": "^7.4.0",
     "fs": "0.0.2",
     "jimp": "^0.2.28",
-    "puppeteer": "^1.6.0",
-    "type-detect": "^4.0.3"
+    "pkg-dir": "2.0.0",
+    "puppeteer": "^1.8.0",
+    "type-detect": "^4.0.8"
   },
   "jest": {
     "rootDir": "src",

@@ -48,6 +48,9 @@ const sanitiseGlobalConfiguration = (conf) => {
   configuration.saveDifferencifiedImage = checkProperty(conf, 'saveDifferencifiedImage', 'boolean')
     ? conf.saveDifferencifiedImage
     : globalConfig.saveDifferencifiedImage;
+  configuration.saveCurrentImage = checkProperty(conf, 'saveCurrentImage', 'boolean')
+    ? conf.saveCurrentImage
+    : globalConfig.saveCurrentImage;
   configuration.mismatchThreshold = checkProperty(conf, 'mismatchThreshold', 'number')
     ? conf.mismatchThreshold
     : globalConfig.mismatchThreshold;

@@ -1,17 +1,22 @@
-## [1.4.3] - 2018-7-21
+## [1.5.0] - 2018-08-30
+### Added
+- Making Differencify compatible with differencify-jest-reporter
+- Save the captured image from current test run to test report path by default
+
+## [1.4.3] - 2018-07-21
 ### Updated
 - Integrating greenkeeper
 - Updating several packages
 
-## [1.4.2] - 2018-7-13
+## [1.4.2] - 2018-07-13
 ### Fixed
 - Fixing issue with freezeImage command
 
-## [1.4.1] - 2018-6-22
+## [1.4.1] - 2018-06-22
 ### Added
 - A prepare script to keep the artifact uptodated
 
-## [1.4.0] - 2018-6-21
+## [1.4.0] - 2018-06-21
 ### Changed
 - `toMatchScreenshot` updated to accept a callback parameter which is passed
   details of the comparison (See [API.md](/NimaSoroush/differencify/blob/master/API.md#detailed-result-information)
@@ -20,17 +25,17 @@
 ### Added
 - NPM script `test:integration` to streamline running integration tests in Docker
 
-## [1.3.4] - 2018-6-9
+## [1.3.4] - 2018-06-09
 ### Fixed
 - Export module Differencify
 - Make Differencify running with vanilla node
 - Fix screenshot path issue for non jest
 
-## [1.3.3] - 2018-6-6
+## [1.3.3] - 2018-06-06
 ### Fixed
 - Bug fixed for custom test path
 
-## [1.3.1] - 2018-5-25
+## [1.3.1] - 2018-05-25
 ### Fixed
 - Bug fixed for testName not being picked up correctly
 
