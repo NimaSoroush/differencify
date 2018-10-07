@@ -22,6 +22,16 @@ const saveDiff = (diff, diffPath) => new Promise((resolve, reject) => {
   diff.image.write(diffPath, cb);
 });
 
+const cleanUpImages = (images) => {
+  images.forEach((image) => {
+    try {
+      fs.unlinkSync(image);
+    } catch (e) {
+      // ignore error as left over image may not exist
+    }
+  });
+};
+
 const compareImage = async (capturedImage, globalConfig, testConfig) => {
   const prefixedLogger = logger.prefix(testConfig.testName);
   const snapshotsDir = globalConfig.imageSnapshotPathProvided
@@ -32,6 +42,11 @@ const compareImage = async (capturedImage, globalConfig, testConfig) => {
 
   const diffDir = getDiffDir(snapshotsDir);
   const diffPath = getDiffPath(diffDir, testConfig);
+
+  const currentImageDir = getCurrentImageDir(snapshotsDir);
+  const currentImagePath = getCurrentImagePath(currentImageDir, testConfig);
+
+  cleanUpImages([diffPath, currentImagePath]);
 
   if (fs.existsSync(snapshotPath) && !testConfig.isUpdate) {
     let snapshotImage;
@@ -60,8 +75,6 @@ const compareImage = async (capturedImage, globalConfig, testConfig) => {
       };
     }
     if (globalConfig.saveCurrentImage) {
-      const currentImageDir = getCurrentImageDir(snapshotsDir);
-      const currentImagePath = getCurrentImagePath(currentImageDir, testConfig);
       try {
         if (!fs.existsSync(currentImageDir)) {
           fs.mkdirSync(currentImageDir);
