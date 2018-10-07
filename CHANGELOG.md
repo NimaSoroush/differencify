@@ -1,3 +1,7 @@
+## [1.5.1] - 2018-10-07
+### Fixed
+- Fix issue with cleanig up leftover images from previous runs
+
 ## [1.5.0] - 2018-08-30
 ### Added
 - Making Differencify compatible with differencify-jest-reporter
