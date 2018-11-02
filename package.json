@@ -54,7 +54,7 @@
     "fs": "0.0.2",
     "jimp": "^0.2.28",
     "pkg-dir": "2.0.0",
-    "puppeteer": "^1.8.0",
+    "puppeteer": "^1.10.0",
     "type-detect": "^4.0.8"
   },
   "jest": {
