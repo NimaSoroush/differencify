@@ -6,12 +6,12 @@ Regression Testing suite!
 </p>
 <br>
 
-[![CircleCI](https://circleci.com/gh/NimaSoroush/differencify/tree/master.svg?style=svg)](https://circleci.com/gh/NimaSoroush/differencify/tree/master) 
+[![CircleCI](https://circleci.com/gh/NimaSoroush/differencify/tree/master.svg?style=svg)](https://circleci.com/gh/NimaSoroush/differencify/tree/master)
 [![npm version](https://badge.fury.io/js/differencify.svg)](https://badge.fury.io/js/differencify) [![Greenkeeper badge](https://badges.greenkeeper.io/NimaSoroush/differencify.svg)](https://greenkeeper.io/)
 <a href="https://github.com/jest-community/awesome-jest"><img src="https://camo.githubusercontent.com/974d19bae442ae2c1657753f39651ade6bef3411/68747470733a2f2f617765736f6d652e72652f6d656e74696f6e65642d62616467652e737667" alt="Mentioned in Awesome Jest" data-canonical-src="https://awesome.re/mentioned-badge.svg" style="max-width:100%;"></a>
 
 ## About
-Differencify is a library for visual regression testing by comparing your local changes with reference screenshots of your website. It is built on top of chrome headless using [Puppeteer](https://github.com/GoogleChrome/puppeteer)
+Differencify is a library for visual regression testing via comparing your local changes with reference screenshots of your website. It is built on top of chrome headless using [Puppeteer](https://github.com/GoogleChrome/puppeteer).
 
 |Reference|Local changes|
 |---------|-------------|
@@ -22,7 +22,7 @@ Differencify is a library for visual regression testing by comparing your local 
 
 
 ## Installation
-> *Note: Differencify uses async/await and targets Node v7.6.0 or greater* 
+> *Note: Differencify uses async/await and targets Node v7.6.0 or greater*
 
 Install the module:
 ```bash
@@ -53,9 +53,9 @@ Differencify matches [Puppeteer](https://github.com/GoogleChrome/puppeteer/blob/
     })
     .close()
     .end();
-  
+
   // or unchained
-  
+
   const target = differencify.init({ chain: false });
   await target.launch();
   const page = await target.newPage();
@@ -91,7 +91,7 @@ describe('tests differencify', () => {
   });
 });
 ```
-As you can see, you don't need to return `result` as `toMatchSnapshot` will automatically validate result. See more jest examples [here](src/integration.tests/integration.test.js).
+As you can see, you don't need to return `result` as `toMatchSnapshot` will automatically validate the result. See more jest examples [here](src/integration.tests/integration.test.js).
 
 ### Test <span style="color:green">PASS</span>
 
@@ -150,7 +150,7 @@ jest --reporters default differencify-jest-reporter
 <p align="center"><img alt="differencify-report" src="images/differencify-report.png" width="500"></p>
 
 ## Usage with other test frameworks
-If you are using other test frameworks you can still validate your tests. Differencify will return `true` or `false` by the end of execution. This could be used to assert on. look at the [example](https://github.com/NimaSoroush/differencify#validate-your-changes)
+If you are using other test frameworks you can still validate your tests. Differencify will return `true` or `false` by the end of execution. This can be used to assert on. See this [example](https://github.com/NimaSoroush/differencify#validate-your-changes).
 
 To Create/Update reference screenshots, simply set environment variable `update=true` and run the same code.
 
@@ -169,7 +169,7 @@ const differencify = new Differencify({ debug: true });
 </p>
 
 ## Visible mode
-By default differencify runs chrome in headless mode. If you want to see browser in non-headless mode set `headless:false` when launching browser. See more details [here](https://github.com/GoogleChrome/puppeteer/blob/master/docs/api.md#puppeteerlaunchoptions)
+By default differencify runs chrome in headless mode. If you want to see the browser in non-headless mode set `headless:false` when launching the browser. See more details [here](https://github.com/GoogleChrome/puppeteer/blob/master/docs/api.md#puppeteerlaunchoptions).
 
 ```js
 const differencify = new Differencify();
@@ -189,7 +189,7 @@ const differencify = new Differencify();
 
 ## API
 
-See [API.md](API.md) for full list of API calls
+See [API.md](API.md) for a full list of API calls and examples.
 
 ## GlobalOptions
 
@@ -210,12 +210,12 @@ See [API.md](API.md) for full list of API calls
 
 ## Steps API
 
-See [API.md](API.md) for full list of API calls and examples
+See [API.md](API.md) for a full list of API calls and examples.
 
 
 ## Interested on Docker image!
 
-A [Docker base image](https://hub.docker.com/r/nimasoroush/differencify/) available for local and CI usage based on this [Dockerfile](Docker/Dockerfile). To see an example look at this [Dockerfile](Dockerfile)
+A [Docker base image](https://hub.docker.com/r/nimasoroush/differencify/) is available for local and CI usage based on this [Dockerfile](Docker/Dockerfile). To see an example look at this [Dockerfile](Dockerfile).
 
 Usage:
 
@@ -228,7 +228,7 @@ RUN npm install differencify
 
 ## Links
 
-See [examples](./src/integration.tests) for usages and CI integration with jest
+See the [integration test example](./src/integration.tests) for working usages and CI integration with jest, and mock examples in [API.md](API.md)
 
 Visit project [Gitter Chat](https://gitter.im/differencify/QA) for general Q/A around project
 

@@ -136,7 +136,7 @@ In this example, differencify will launch a browser instance and unchain steps. 
     })
     .close()
     .end();
-  
+
   await differencify.cleanup();
 })();
 ```
@@ -153,8 +153,8 @@ In this example, differencify will launch a browser instance and share same brow
     .setViewport({ width: 1600, height: 1200 })
     .goto('https://github.com/NimaSoroush/differencify')
     .title()
-    .result((tittle) => {
-      console.log(tittle)
+    .result((title) => {
+      console.log(title)
     })
     .screenshot()
     .toMatchSnapshot()
@@ -461,5 +461,25 @@ In this example, you can specify the custom path for storing images.
 In this example, you can freeze an image by specifying the selector path.
 
 
+## Page interactions
 
-
+```js
+(async () => {
+  await differencify
+    .init()
+    .newPage()
+    .goto('https://nimasoroush.github.io/differencify/')
+    .waitFor(2000)
+    .click('[id=js-repo-pjax-container] div nav a')
+    .waitFor(2000)
+    .url()
+    .result((url) => {
+      expect(url).toContain('pulls');
+    })
+    .screenshot()
+    .toMatchSnapshot()
+    .close()
+    .end();
+})();
+```
+In this example an element is clicked on that performs navigation, and the url checked to see it has been successful.

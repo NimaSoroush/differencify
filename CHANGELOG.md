@@ -1,3 +1,7 @@
+## [1.5.2] - 2018-11-11
+### Updated
+- Added example of using `.click(selector)` to `API.md`
+
 ## [1.5.1] - 2018-10-07
 ### Fixed
 - Fix issue with cleanig up leftover images from previous runs
