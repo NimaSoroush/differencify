@@ -470,12 +470,14 @@ In this example, you can freeze an image by specifying the selector path.
     .newPage()
     .goto('https://nimasoroush.github.io/differencify/')
     .waitFor(2000)
-    .click('[id=js-repo-pjax-container] div nav span a')
+    .click('[id=js-repo-pjax-container] div nav a')
     .waitFor(2000)
     .url()
     .result((url) => {
       expect(url).toContain('pulls');
     })
+    .screenshot()
+    .toMatchSnapshot()
     .close()
     .end();
 })();
