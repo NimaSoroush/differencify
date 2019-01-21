@@ -206,7 +206,7 @@ See [API.md](API.md) for a full list of API calls and examples.
 |Parameter|type|required|description|default|
 |---------|----|--------|-----------|-------|
 |`testName`|`string`|no|Unique name for your test case|test|
-|`chain`|`boolean`|no|Whether to chain differencify commands or not. More details on [examples](examples)|true|
+|`chain`|`boolean`|no|Whether to chain differencify commands or not. See [API.md](API.md) for more details|true|
 
 ## Steps API
 
