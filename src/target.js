@@ -67,7 +67,8 @@ export default class Target {
   async mockRequests(options) {
     if (!this.error) {
       try {
-        await recorder(this.browser, { ...options, ...{ page: this.page } });
+        const mockeerOptions = Object.assign({}, options, { page: this.page }); // eslint-disable-line prefer-object-spread/prefer-object-spread
+        await recorder(this.browser, mockeerOptions);
         this.testConfig.imageType = (options && options.type) || 'png';
         return this.image;
       } catch (error) {
