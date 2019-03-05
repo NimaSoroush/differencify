@@ -1,4 +1,5 @@
 import puppeteer from 'puppeteer';
+import recorder from 'mockeer';
 import Target from './target';
 import { globalConfig, testConfig } from './config/defaultConfigs';
 import functionToString from './helpers/functionToString';
@@ -47,6 +48,8 @@ jest.mock('path', () => ({
   join: jest.fn(() => '/'),
   resolve: jest.fn((a, b, c, d) => `root${b}${d}`),
 }));
+
+jest.mock('mockeer');
 
 jest.mock('./compareImage', () => jest.fn(arg => new Promise((resolve, reject) => {
   if (arg.screenshots === './screenshots') {
@@ -153,12 +156,12 @@ describe('Target', () => {
     it('will run goto on page', async () => {
       target.error = false;
       await target.newPage();
-      const result = await target._handleFunc('page', 'goto', {});
-      expect(pageMocks.goto).toHaveBeenCalledWith({});
+      const result = await target._handleFunc('page', 'goto', ['http://example.com', {}]);
+      expect(pageMocks.goto).toHaveBeenCalledWith('http://example.com', {});
       expect(result).toEqual();
       expect(mockLog).toHaveBeenCalledWith('Executing page.goto step');
     });
-    fit('will run press on keyboard', async () => {
+    it('will run press on keyboard', async () => {
       target.error = false;
       await target.newPage();
       const result = await target._handleFunc('keyboard', 'press', arguments); // eslint-disable-line no-undef
@@ -188,6 +191,23 @@ describe('Target', () => {
       await target.newPage();
       await target.screenshot({});
       expect(pageMocks.screenshot).toHaveBeenCalledWith({});
+    });
+  });
+  describe('mockRequests', () => {
+    it('calls Mockeer correctly', async () => {
+      await target.mockRequests();
+      expect(recorder).toHaveBeenCalledTimes(1);
+    });
+    it('calls Mockeer correctly with options', async () => {
+      await target.mockRequests({
+        replaceImage: true,
+        allowImageRecourses: false,
+      });
+      expect(recorder).toHaveBeenCalledWith(expect.any(Object), {
+        page: expect.any(Object),
+        replaceImage: true,
+        allowImageRecourses: false,
+      });
     });
   });
   describe('wait', () => {

@@ -1,3 +1,7 @@
+## [1.5.3] - 2018-11-11
+### Added
+- `mockRequests` method to wrap Mockeer functionality
+
 ## [1.5.2] - 2018-11-11
 ### Updated
 - Added example of using `.click(selector)` to `API.md`

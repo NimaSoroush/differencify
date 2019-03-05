@@ -16,6 +16,7 @@
 |`launch`|`Object` [puppeteer.launch options](https://github.com/GoogleChrome/puppeteer/blob/master/docs/api.md#puppeteerlaunchoptions)|launches new browser and returns browser object|
 |`connect`|`Object` [puppeteer.connect options](https://github.com/GoogleChrome/puppeteer/blob/master/docs/api.md#puppeteerconnectoptions)|Attaches to an existing browser instance and returns browser object|
 |`freezeImage`|`string`|Selector name of a `<img>` tag containing animated image to be freezed before taking screenshot|
+|`mockRequests`|`Object`|Runs chrome headless browser in isolation using [Mockeer](https://github.com/NimaSoroush/Mockeer)|
 
 ## Puppeteer methods
 

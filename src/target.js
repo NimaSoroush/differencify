@@ -1,4 +1,5 @@
 import puppeteer from 'puppeteer';
+import recorder from 'mockeer';
 import logger from './utils/logger';
 import jestMatchers from './utils/jestMatchers';
 import compareImage from './compareImage';
@@ -61,6 +62,19 @@ export default class Target {
       this._logError(error);
     }
     return this.page;
+  }
+
+  async mockRequests(options) {
+    if (!this.error) {
+      try {
+        await recorder(this.browser, { ...options, ...{ page: this.page } });
+        this.testConfig.imageType = (options && options.type) || 'png';
+        return this.image;
+      } catch (error) {
+        this._logError(error);
+      }
+    }
+    return null;
   }
 
   async _handleContinueFunc(target, property, args) {
