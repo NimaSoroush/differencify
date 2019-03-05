@@ -281,4 +281,83 @@ describe('Differencify', () => {
       .close()
       .end();
   }, 30000);
+  it('simple with mock requests', async () => {
+    await differencify
+      .init()
+      .newPage()
+      .mockRequests()
+      .setViewport({ width: 1600, height: 1200 })
+      .goto('http://example.com/')
+      .waitFor(1000)
+      .screenshot()
+      .toMatchSnapshot()
+      .close()
+      .end();
+  }, 30000);
+  it('simple unchained with mock requests', async () => {
+    const target = differencify.init({ chain: false });
+    const page = await target.newPage();
+    await target.mockRequests();
+    await page.goto('http://example.com/');
+    await page.setViewport({ width: 1600, height: 1200 });
+    await page.waitFor(1000);
+    const image = await page.screenshot();
+    const result = await target.toMatchSnapshot(image);
+    await page.close();
+    expect(result).toEqual(true);
+  }, 30000);
+  it('simple with mock requests', async () => {
+    process.env.CI = 'true'; // This will simulate CI/CD environment
+    await differencify
+      .init()
+      .newPage()
+      .mockRequests()
+      .setViewport({ width: 1600, height: 1200 })
+      .goto('http://example.com/')
+      .waitFor(1000)
+      .screenshot()
+      .toMatchSnapshot()
+      .close()
+      .end();
+  }, 30000);
+  it('simple unchained with mock requests', async () => {
+    process.env.CI = 'true'; // This will simulate CI/CD environment
+    const target = differencify.init({ chain: false });
+    const page = await target.newPage();
+    await target.mockRequests();
+    await page.goto('http://example.com/');
+    await page.setViewport({ width: 1600, height: 1200 });
+    await page.waitFor(1000);
+    const image = await page.screenshot();
+    const result = await target.toMatchSnapshot(image);
+    await page.close();
+    expect(result).toEqual(true);
+  }, 30000);
+  it('mock requests and replace image', async () => {
+    await differencify
+      .init()
+      .newPage()
+      .mockRequests({ replaceImage: true })
+      .setViewport({ width: 1600, height: 1200 })
+      .goto('https://nimasoroush.github.io/differencify/')
+      .waitFor(1000)
+      .screenshot()
+      .toMatchSnapshot()
+      .close()
+      .end();
+  }, 30000);
+  it('mock requests and replace image', async () => {
+    process.env.CI = 'true'; // This will simulate CI/CD environment
+    await differencify
+      .init()
+      .newPage()
+      .mockRequests({ replaceImage: true })
+      .setViewport({ width: 1600, height: 1200 })
+      .goto('https://nimasoroush.github.io/differencify/')
+      .waitFor(1000)
+      .screenshot()
+      .toMatchSnapshot()
+      .close()
+      .end();
+  }, 30000);
 });

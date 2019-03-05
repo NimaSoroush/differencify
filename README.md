@@ -43,6 +43,7 @@ Differencify matches [Puppeteer](https://github.com/GoogleChrome/puppeteer/blob/
     .init(TestOptions)
     .launch()
     .newPage()
+    .mockRequests()
     .setViewport({ width: 1600, height: 1200 })
     .goto('https://github.com/NimaSoroush/differencify')
     .waitFor(1000)
@@ -59,6 +60,7 @@ Differencify matches [Puppeteer](https://github.com/GoogleChrome/puppeteer/blob/
   const target = differencify.init({ chain: false });
   await target.launch();
   const page = await target.newPage();
+  await target.mockRequests();
   await page.setViewport({ width: 1600, height: 1200 });
   await page.goto('https://github.com/NimaSoroush/differencify');
   await page.waitFor(1000);
@@ -157,6 +159,44 @@ To Create/Update reference screenshots, simply set environment variable `update=
 ```
 > update=true node test.js
 ```
+
+## Mocking browser requests
+Differencify uses [Mockeer](https://github.com/NimaSoroush/Mockeer) to run chrome headless browser in isolation. This will help with more consistent and stable results when it comes dealing with a website that has inconsistent downstream dependencies. (e.g. unique API call returns different results based on request time). More details [here](https://github.com/NimaSoroush/Mockeer)
+
+To use this feature call `mockRequests` during your tests.
+
+```js
+(async () => {
+  const result = await differencify
+    .init(TestOptions)
+    .launch()
+    .newPage()
+    .mockRequests()
+    .goto('https://github.com/NimaSoroush/differencify')
+    .screenshot()
+    .toMatchSnapshot()
+    .result((result) => {
+      console.log(result);
+    })
+    .close()
+    .end();
+
+  // or unchained
+
+  const target = differencify.init({ chain: false });
+  await target.launch();
+  const page = await target.newPage();
+  await target.mockRequests();
+  await page.goto('https://github.com/NimaSoroush/differencify');
+  const image = await page.screenshot();
+  const result = await target.toMatchSnapshot(image)
+  await page.close();
+  await target.close();
+
+  console.log(result);
+})();
+```
+More examples [here](src/integration.tests/integration.test.js)
 
 ## Debugging
 It is possible to debug your tests execution by passing `debug:true` as global config in Differencify class. See full list of configs [below](https://github.com/NimaSoroush/differencify#globaloptions)
