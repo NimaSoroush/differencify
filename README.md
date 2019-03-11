@@ -43,7 +43,6 @@ Differencify matches [Puppeteer](https://github.com/GoogleChrome/puppeteer/blob/
     .init(TestOptions)
     .launch()
     .newPage()
-    .mockRequests()
     .setViewport({ width: 1600, height: 1200 })
     .goto('https://github.com/NimaSoroush/differencify')
     .waitFor(1000)
