@@ -59,7 +59,6 @@ Differencify matches [Puppeteer](https://github.com/GoogleChrome/puppeteer/blob/
   const target = differencify.init({ chain: false });
   await target.launch();
   const page = await target.newPage();
-  await target.mockRequests();
   await page.setViewport({ width: 1600, height: 1200 });
   await page.goto('https://github.com/NimaSoroush/differencify');
   await page.waitFor(1000);
