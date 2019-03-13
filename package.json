@@ -50,7 +50,7 @@
   },
   "dependencies": {
     "chalk": "^2.4.1",
-    "check-types": "^7.4.0",
+    "check-types": "^8.0.2",
     "fs": "0.0.2",
     "jimp": "^0.2.28",
     "mockeer": "0.0.3",
