@@ -53,7 +53,7 @@
     "check-types": "^8.0.2",
     "fs": "0.0.2",
     "jimp": "^0.6.1",
-    "mockeer": "0.0.3",
+    "mockeer": "0.0.4",
     "pkg-dir": "4.1.0",
     "puppeteer": "^1.8.0",
     "type-detect": "^4.0.8"
