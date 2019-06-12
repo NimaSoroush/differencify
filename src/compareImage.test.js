@@ -158,6 +158,27 @@ describe('Compare Image', () => {
     expect(mockLog).toHaveBeenCalledWith('no mismatch found ✅');
   });
 
+  it('returns correct value if difference below threshold when the threshold is set to zero', async () => {
+    expect.assertions(2);
+
+    fs.existsSync.mockReturnValueOnce(true);
+
+    const config = {
+      ...mockConfig,
+      mismatchThreshold: 0,
+    };
+    const result = await compareImage(Object, config, mockTestConfig);
+
+    expect(result).toEqual({
+      diffPercent: 0,
+      distance: 0,
+      matched: true,
+      snapshotPath: '/parent/__image_snapshots__/test.snap.png',
+    });
+
+    expect(mockLog).toHaveBeenCalledWith('no mismatch found ✅');
+  });
+
   it('returns mismatch found❗ if only difference above threshold', async () => {
     Jimp.diff.mockReturnValue({
       percent: 0.02,

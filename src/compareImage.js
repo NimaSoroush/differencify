@@ -68,7 +68,7 @@ const compareImage = async (capturedImage, globalConfig, testConfig) => {
     prefixedLogger.log('comparing...');
     const distance = Jimp.distance(snapshotImage, testImage);
     const diff = Jimp.diff(snapshotImage, testImage, globalConfig.mismatchThreshold);
-    if (distance < globalConfig.mismatchThreshold && diff.percent < globalConfig.mismatchThreshold) {
+    if (distance <= globalConfig.mismatchThreshold && diff.percent <= globalConfig.mismatchThreshold) {
       prefixedLogger.log('no mismatch found ✅');
       return {
         snapshotPath, distance, diffPercent: diff.percent, matched: true,
