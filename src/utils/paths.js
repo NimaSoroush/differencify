@@ -15,6 +15,8 @@ const getTestRoot = (testConfig, globalConfig) => {
   return testRoot;
 };
 
+const getSanitizedName = name => name.replace(/\//g, '-');
+
 export const getSnapshotsDir = (testConfig, globalConfig) => path.join(
   getTestRoot(testConfig, globalConfig),
   '__image_snapshots__',
@@ -26,14 +28,16 @@ export const getSnapshotPath = (snapshotsDir, testConfig) => {
   if (!snapshotsDir || !testConfig) {
     throw new Error('Incorrect arguments passed to getSnapshotPath');
   }
-  return path.join(snapshotsDir, `${testConfig.testName}.snap.${testConfig.imageType || 'png'}`);
+  const testName = getSanitizedName(testConfig.testName);
+  return path.join(snapshotsDir, `${testName}.snap.${testConfig.imageType || 'png'}`);
 };
 
 export const getDiffPath = (diffDir, testConfig) => {
   if (!diffDir || !testConfig) {
     throw new Error('Incorrect arguments passed to getDiffPath');
   }
-  return path.join(diffDir, `${testConfig.testName}.differencified.${testConfig.imageType || 'png'}`);
+  const testName = getSanitizedName(testConfig.testName);
+  return path.join(diffDir, `${testName}.differencified.${testConfig.imageType || 'png'}`);
 };
 
 export const getCurrentImageDir = snapshotsDir => path.join(snapshotsDir, '__current_output__');
@@ -42,5 +46,6 @@ export const getCurrentImagePath = (currentImageDir, testConfig) => {
   if (!currentImageDir || !testConfig) {
     throw new Error('Incorrect arguments passed to getDiffPath');
   }
-  return path.join(currentImageDir, `${testConfig.testName}.current.${testConfig.imageType || 'png'}`);
+  const testName = getSanitizedName(testConfig.testName);
+  return path.join(currentImageDir, `${testName}.current.${testConfig.imageType || 'png'}`);
 };
