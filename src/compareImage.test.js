@@ -132,6 +132,19 @@ describe('Compare Image', () => {
     });
   });
 
+  it('sanitizes paths', async () => {
+    await compareImage(Object, mockConfig, {
+      testName: 'check /test.html',
+      testPath: '/src/test.js',
+      imageType: 'png',
+    });
+    expect(fs.writeFileSync)
+      .toHaveBeenCalledWith(
+        './differencify_report/__image_snapshots__/check -test.html.snap.png',
+        Object,
+      );
+  });
+
   it('throws correct error if it cannot read image', async () => {
     expect.assertions(3);
     Jimp.read.mockReturnValueOnce(Promise.reject(new Error('error1')));
