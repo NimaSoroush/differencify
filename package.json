@@ -46,7 +46,7 @@
     "jest": "^23.5.0",
     "jest-cli": "^23.5.0",
     "jsdoc": "^3.4.3",
-    "jsdoc-to-markdown": "^5.0.0"
+    "jsdoc-to-markdown": "^5.0.1"
   },
   "dependencies": {
     "chalk": "^2.4.1",
