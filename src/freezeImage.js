@@ -12,7 +12,9 @@ const freezeImage = (selector) => {
   canvas.width = image.width;
   canvas.height = image.height;
   ctx.drawImage(image, 0, 0);
-  [...image.attributes].forEach(({ name, value }) => canvas.setAttribute(name, value));
+  if (image.attributes) {
+    [...image.attributes].forEach(({ name, value }) => canvas.setAttribute(name, value));
+  }
   return true;
 };
 
