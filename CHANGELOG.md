@@ -1,3 +1,7 @@
+## [1.5.4] - 2019-10-04
+### Update
+- Enhanced the freezeImage functionality
+
 ## [1.5.3] - 2018-11-11
 ### Added
 - `mockRequests` method to wrap Mockeer functionality
