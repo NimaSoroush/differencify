@@ -11,7 +11,7 @@ export default class Differencify {
     }
     this.configuration = sanitiseGlobalConfiguration(conf);
     this.browser = null;
-    this.testId = 0;
+    conf.removePostFix === true ? this.testId = undefined : this.testId = 0
   }
 
   async launchBrowser(options) {
