@@ -49,7 +49,7 @@
     "jsdoc-to-markdown": "^5.0.0"
   },
   "dependencies": {
-    "chalk": "^2.4.1",
+    "chalk": "^4.0.0",
     "check-types": "^10.0.0",
     "fs": "0.0.2",
     "jimp": "^0.7.0",
