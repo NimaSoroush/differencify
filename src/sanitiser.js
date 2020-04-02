@@ -28,7 +28,9 @@ const sanitiseTestConfiguration = (conf, testId) => {
   configuration.testName = configuration.testNameProvided
     ? conf.testName
     : testConfig.testName;
-  configuration.testId = testId;
+  if (testId !== undefined) {
+    configuration.testId = testId;
+  }
   configuration.isUpdate = (process.env.update && process.env.update === 'true')
     ? process.env.update
     : testConfig.isUpdate;
