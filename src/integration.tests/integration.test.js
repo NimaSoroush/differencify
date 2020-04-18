@@ -127,7 +127,7 @@ describe('Differencify', () => {
           testId: expect.any(Number),
           testName: 'Differencify Using toMatchSnapshot callback for result details when unchained',
           testNameProvided: false,
-          testPath: expect.stringMatching(/differencify\/src\/integration\.tests\/integration\.test\.js/)
+          testPath: expect.stringMatching(/differencify\/src\/integration\.tests\/integration\.test\.js/),
         },
         testResult: {
           diffPercent: 0,
