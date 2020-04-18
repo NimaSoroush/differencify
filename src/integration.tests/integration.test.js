@@ -303,7 +303,6 @@ describe('Differencify', () => {
     await target.mockRequests();
     const contentHtml = fs.readFileSync(`${path.join(__dirname, 'example-website/example.htm')}`, 'utf8');
     await page.setContent(contentHtml);
-    // await page.goto(`file:${path.join(__dirname, 'example-website/example.htm')}`);
     await page.setViewport({ width: 1600, height: 1200 });
     await page.waitFor(1000);
     const image = await page.screenshot();
