@@ -1,3 +1,5 @@
+import path from 'path';
+import fs from 'fs';
 import Differencify from '../index';
 
 const differencify = new Differencify({ debug: true });
@@ -14,7 +16,7 @@ describe('Differencify', () => {
       .init()
       .newPage()
       .setViewport({ width: 1600, height: 1200 })
-      .goto('http://example.com/')
+      .goto(`file:${path.join(__dirname, 'example-website/example.htm')}`)
       .waitFor(1000)
       .screenshot()
       .toMatchSnapshot()
@@ -24,7 +26,7 @@ describe('Differencify', () => {
   it('simple unchained', async () => {
     const target = differencify.init({ chain: false });
     const page = await target.newPage();
-    await page.goto('http://example.com/');
+    await page.goto(`file:${path.join(__dirname, 'example-website/example.htm')}`);
     await page.setViewport({ width: 1600, height: 1200 });
     await page.waitFor(1000);
     const image = await page.screenshot();
@@ -38,7 +40,7 @@ describe('Differencify', () => {
       .launch({ args: ['--no-sandbox', '--disable-setuid-sandbox'] })
       .newPage()
       .setViewport({ width: 1600, height: 1200 })
-      .goto('http://example.com/')
+      .goto(`file:${path.join(__dirname, 'example-website/example.htm')}`)
       .waitFor(1000)
       .screenshot()
       .toMatchSnapshot()
@@ -49,7 +51,7 @@ describe('Differencify', () => {
     const target = differencify.init({ chain: false });
     await target.launch({ args: ['--no-sandbox', '--disable-setuid-sandbox'] });
     const page = await target.newPage();
-    await page.goto('http://example.com/');
+    await page.goto(`file:${path.join(__dirname, 'example-website/example.htm')}`);
     await page.setViewport({ width: 1600, height: 1200 });
     await page.waitFor(1000);
     const image = await page.screenshot();
@@ -63,7 +65,7 @@ describe('Differencify', () => {
       .init()
       .newPage()
       .setViewport({ width: 1600, height: 1200 })
-      .goto('http://example.com/')
+      .goto(`file:${path.join(__dirname, 'example-website/example.htm')}`)
       .waitFor(1000)
       .title()
       .result((title) => {
@@ -79,27 +81,27 @@ describe('Differencify', () => {
       .init()
       .newPage()
       .setViewport({ width: 1600, height: 1200 })
-      .goto('http://example.com/')
+      .goto(`file:${path.join(__dirname, 'example-website/example.htm')}`)
       .waitFor(1000)
       .title()
       .screenshot()
       .toMatchSnapshot((resultDetail) => {
-        expect(resultDetail).toEqual({
+        expect(resultDetail).toMatchObject({
           testConfig: {
             chain: true,
             imageType: 'png',
             isJest: true,
             isUpdate: false,
-            testId: 6,
+            testId: expect.any(Number),
             testName: 'Differencify Using toMatchSnapshot callback for result details',
             testNameProvided: false,
-            testPath: '/differencify/src/integration.tests/integration.test.js',
+            testPath: expect.stringMatching(/differencify\/src\/integration\.tests\/integration\.test\.js/),
           },
           testResult: {
             diffPercent: 0,
             distance: 0,
             matched: true,
-            snapshotPath: '/differencify/src/integration.tests/__image_snapshots__/Differencify Using toMatchSnapshot callback for result details.snap.png',
+            snapshotPath: expect.stringMatching(/integration\.tests\/__image_snapshots__\/Differencify Using toMatchSnapshot callback for result details\.snap\.png/),
           },
         });
       })
@@ -110,28 +112,28 @@ describe('Differencify', () => {
     const target = differencify.init({ chain: false });
     await target.launch({ args: ['--no-sandbox', '--disable-setuid-sandbox'] });
     const page = await target.newPage();
-    await page.goto('http://example.com/');
+    await page.goto(`file:${path.join(__dirname, 'example-website/example.htm')}`);
     await page.setViewport({ width: 1600, height: 1200 });
     await page.waitFor(1000);
     const image = await page.screenshot();
     await target.toMatchSnapshot(image, (resultDetail) => {
-      expect(resultDetail).toEqual({
+      expect(resultDetail).toMatchObject({
         testConfig: {
           chain: false,
           imageType: undefined,
           isJest: true,
           isUpdate: false,
           newWindow: true,
-          testId: 7,
+          testId: expect.any(Number),
           testName: 'Differencify Using toMatchSnapshot callback for result details when unchained',
           testNameProvided: false,
-          testPath: '/differencify/src/integration.tests/integration.test.js',
+          testPath: expect.stringMatching(/differencify\/src\/integration\.tests\/integration\.test\.js/)
         },
         testResult: {
           diffPercent: 0,
           distance: 0,
           matched: true,
-          snapshotPath: '/differencify/src/integration.tests/__image_snapshots__/Differencify Using toMatchSnapshot callback for result details when unchained.snap.png',
+          snapshotPath: expect.stringMatching(/integration\.tests\/__image_snapshots__\/Differencify Using toMatchSnapshot callback for result details when unchained\.snap\.png/),
         },
       });
     });
@@ -146,7 +148,7 @@ describe('Differencify', () => {
       .start({ path: 'trace.json' })
       .page
       .setViewport({ width: 1600, height: 1200 })
-      .goto('http://example.com/')
+      .goto(`file:${path.join(__dirname, 'example-website/example.htm')}`)
       .waitFor(1000)
       .keyboard
       .press('Space')
@@ -187,12 +189,12 @@ describe('Differencify', () => {
     await differencify
       .init()
       .newPage()
-      .goto('http://example.com/')
+      .goto(`file:${path.join(__dirname, 'example-website/example.htm')}`)
       .mainFrame()
       .then
       .url()
       .result((url) => {
-        expect(url).toEqual('http://example.com/');
+        expect(url).toEqual(`file://${path.join(__dirname, 'example-website/example.htm')}`);
       })
       .close()
       .end();
@@ -201,14 +203,14 @@ describe('Differencify', () => {
     await differencify
       .init()
       .newPage()
-      .goto('http://example.com/')
+      .goto(`file:${path.join(__dirname, 'example-website/example.htm')}`)
       .waitFor(1000)
       .screenshot()
       .toMatchSnapshot()
       .result((result) => {
         expect(result).toEqual(true);
       })
-      .goto('http://example.com/')
+      .goto(`file:${path.join(__dirname, 'example-website/example.htm')}`)
       .waitFor(1000)
       .screenshot()
       .toMatchSnapshot()
@@ -221,12 +223,12 @@ describe('Differencify', () => {
   it('Multiple toMatchSnapshot when unchained', async () => {
     const target = differencify.init({ chain: false });
     const page = await target.newPage();
-    await page.goto('http://example.com/');
+    await page.goto(`file:${path.join(__dirname, 'example-website/example.htm')}`);
     await page.setViewport({ width: 1600, height: 1200 });
     await page.waitFor(1000);
     const image = await page.screenshot();
     const result = await target.toMatchSnapshot(image);
-    await page.goto('http://example.net/');
+    await page.goto(`file:${path.join(__dirname, 'example-website/example.htm')}`);
     await page.setViewport({ width: 1600, height: 1200 });
     await page.waitFor(1000);
     const image2 = await page.screenshot();
@@ -241,7 +243,7 @@ describe('Differencify', () => {
       chain: false,
     });
     const page = await target.newPage();
-    await page.goto('http://example.com/');
+    await page.goto(`file:${path.join(__dirname, 'example-website/example.htm')}`);
     await page.setViewport({ width: 1600, height: 1200 });
     await page.waitFor(1000);
     const image = await page.screenshot();
@@ -260,7 +262,7 @@ describe('Differencify', () => {
     });
     const page = await target.newPage();
     await page.setViewport({ width: 1600, height: 1200 });
-    await page.goto('http://example.com/');
+    await page.goto(`file:${path.join(__dirname, 'example-website/example.htm')}`);
     await page.waitFor(1000);
     const image = await page.screenshot();
     const result = await target.toMatchSnapshot(image);
@@ -273,7 +275,7 @@ describe('Differencify', () => {
       .init()
       .newPage()
       .setViewport({ width: 1600, height: 1200 })
-      .goto('https://i.giphy.com/media/xTiTnoUnHxVaaVNWhO/giphy.webp')
+      .goto(`file:${path.join(__dirname, 'example-website/animation.htm')}`)
       .waitFor('body > img')
       .freezeImage('body > img')
       .screenshot()
@@ -282,12 +284,13 @@ describe('Differencify', () => {
       .end();
   }, 30000);
   it('simple with mock requests', async () => {
+    const contentHtml = fs.readFileSync(`${path.join(__dirname, 'example-website/example.htm')}`, 'utf8');
     await differencify
       .init()
       .newPage()
       .mockRequests()
       .setViewport({ width: 1600, height: 1200 })
-      .goto('http://example.com/')
+      .setContent(contentHtml)
       .waitFor(1000)
       .screenshot()
       .toMatchSnapshot()
@@ -298,7 +301,9 @@ describe('Differencify', () => {
     const target = differencify.init({ chain: false });
     const page = await target.newPage();
     await target.mockRequests();
-    await page.goto('http://example.com/');
+    const contentHtml = fs.readFileSync(`${path.join(__dirname, 'example-website/example.htm')}`, 'utf8');
+    await page.setContent(contentHtml);
+    // await page.goto(`file:${path.join(__dirname, 'example-website/example.htm')}`);
     await page.setViewport({ width: 1600, height: 1200 });
     await page.waitFor(1000);
     const image = await page.screenshot();
@@ -307,13 +312,14 @@ describe('Differencify', () => {
     expect(result).toEqual(true);
   }, 30000);
   it('simple with mock requests', async () => {
+    const contentHtml = fs.readFileSync(`${path.join(__dirname, 'example-website/example.htm')}`, 'utf8');
     process.env.CI = 'true'; // This will simulate CI/CD environment
     await differencify
       .init()
       .newPage()
       .mockRequests()
       .setViewport({ width: 1600, height: 1200 })
-      .goto('http://example.com/')
+      .setContent(contentHtml)
       .waitFor(1000)
       .screenshot()
       .toMatchSnapshot()
@@ -325,7 +331,8 @@ describe('Differencify', () => {
     const target = differencify.init({ chain: false });
     const page = await target.newPage();
     await target.mockRequests();
-    await page.goto('http://example.com/');
+    const contentHtml = fs.readFileSync(`${path.join(__dirname, 'example-website/example.htm')}`, 'utf8');
+    await page.setContent(contentHtml);
     await page.setViewport({ width: 1600, height: 1200 });
     await page.waitFor(1000);
     const image = await page.screenshot();
