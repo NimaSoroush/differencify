@@ -55,7 +55,7 @@
     "jimp": "^0.10.3",
     "mockeer": "0.0.4",
     "pkg-dir": "4.2.0",
-    "puppeteer": "^2.0.0",
+    "puppeteer": "^3.0.2",
     "type-detect": "^4.0.8"
   },
   "jest": {
