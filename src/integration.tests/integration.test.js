@@ -206,14 +206,52 @@ describe('Differencify', () => {
       .goto(`file:${path.join(__dirname, 'example-website/example.htm')}`)
       .waitFor(1000)
       .screenshot()
-      .toMatchSnapshot()
+      .toMatchSnapshot((resultDetail) => {
+        expect(resultDetail).toEqual({
+          testConfig: {
+            chain: true,
+            imageType: 'png',
+            isJest: true,
+            isUpdate: false,
+            testId: 11,
+            testName: 'Differencify Multiple toMatchSnapshot on chained object',
+            testNameProvided: false,
+            testPath: '/differencify/src/integration.tests/integration.test.js',
+          },
+          testResult: {
+            diffPercent: 0,
+            distance: 0,
+            matched: true,
+            snapshotPath: '/differencify/src/integration.tests/__image_snapshots__/Differencify Multiple toMatchSnapshot on chained object.1.snap.png',
+          },
+        })
+      })
       .result((result) => {
         expect(result).toEqual(true);
       })
       .goto(`file:${path.join(__dirname, 'example-website/example.htm')}`)
       .waitFor(1000)
       .screenshot()
-      .toMatchSnapshot()
+      .toMatchSnapshot((resultDetail) => {
+        expect(resultDetail).toEqual({
+          testConfig: {
+            chain: true,
+            imageType: 'png',
+            isJest: true,
+            isUpdate: false,
+            testId: 12,
+            testName: 'Differencify Multiple toMatchSnapshot on chained object',
+            testNameProvided: false,
+            testPath: '/differencify/src/integration.tests/integration.test.js',
+          },
+          testResult: {
+            diffPercent: 0,
+            distance: 0,
+            matched: true,
+            snapshotPath: '/differencify/src/integration.tests/__image_snapshots__/Differencify Multiple toMatchSnapshot on chained object.2.snap.png',
+          },
+        });
+      })
       .result((result) => {
         expect(result).toEqual(true);
       })
