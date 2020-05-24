@@ -219,24 +219,36 @@ export default class Target {
     }
   }
 
-  async toMatchSnapshot(image, callback) {
+  async toMatchSnapshot(image, callback, settings) {
     let resultCallback;
-    if (image && !isFunc(image)) {
+    let providedName = false;
+    if (image && !isFunc(image) && !image.name) {
       this.image = image;
     } else if (isFunc(image)) {
       resultCallback = image;
+    } else if (image && image.name) {
+      providedName = image.name;
     }
     if (callback && isFunc(callback)) {
       resultCallback = callback;
+    } else if (callback && callback.name) {
+      providedName = callback.name;
+    }
+    if (settings && settings.name) {
+      providedName = settings.name;
     }
     if (this.testConfig.isJest && !this.testConfig.testNameProvided) {
       this.testConfig.testName = this.testId
         ? `${this.testStats.currentTestName} ${this.testId}`
         : this.testStats.currentTestName;
     } else {
-      this.testConfig.testName = this.testId
-        ? `${this.testConfig.testName} ${this.testId}`
-        : this.testConfig.testName;
+      if (providedName) {
+        this.testConfig.testName = providedName;
+      } else {
+        this.testConfig.testName = this.testId
+          ? `${this.testConfig.testName} ${this.testId}`
+          : this.testConfig.testName;
+      }
     }
     this.testId += 1;
     const result = await this._evaluateResult();
