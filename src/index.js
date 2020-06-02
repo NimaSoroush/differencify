@@ -11,7 +11,7 @@ export default class Differencify {
     }
     this.configuration = sanitiseGlobalConfiguration(conf);
     this.browser = null;
-    this.testId = 0;
+    conf.removePostFix === true ? this.testId = undefined : this.testId = 0
   }
 
   async launchBrowser(options) {
@@ -57,7 +57,9 @@ export default class Differencify {
   }
 
   init(config) {
-    this.testId += 1;
+    if (this.testId !== undefined) {
+      this.testId += 1;
+    }
     const testConfig = sanitiseTestConfiguration(config, this.testId);
     if (testConfig.isUpdate) {
       logger.warn('Your tests are running on update mode. Test screenshots will be updated');
